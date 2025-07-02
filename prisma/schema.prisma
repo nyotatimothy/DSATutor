@@ -11,34 +11,87 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  firebaseUid   String   @unique
-  email         String   @unique
-  fullName      String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  transactions  Transaction[]
+  id        String   @id @default(uuid())
+  email     String   @unique
+  fullName  String
+  role      String   @default("student") // student | creator | admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firebaseUid String? @unique
+  
+  // Relations
   notifications Notification[]
-}
-
-model Transaction {
-  id                String   @id @default(uuid())
-  userId            String
-  pesapalTrackingId String   @unique
-  amount            Float
-  currency          String
-  status            String
-  paymentMethod     String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id])
+  payments      Payment[]
+  progress      Progress[]
+  attempts      Attempt[]
+  courses       Course[] // for creators/admins
 }
 
 model Notification {
-  id         String   @id @default(uuid())
-  userId     String
-  message    String
-  status     String   @default("unread")
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  status    String   @default("unread") // read | unread
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  topics      Topic[]
+  creator     User     @relation(fields: [createdBy], references: [id])
+}
+
+model Topic {
+  id        String   @id @default(uuid())
+  title     String
+  position  Int
+  content   String   // markdown or HTML
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id])
+  progress  Progress[]
+  attempts  Attempt[]
+}
+
+model Progress {
+  id        String   @id @default(uuid())
+  userId    String
+  topicId   String
+  status    String   @default("not_started") // not_started | in_progress | complete
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  topic     Topic    @relation(fields: [topicId], references: [id])
+
+  @@unique([userId, topicId])
+}
+
+model Attempt {
+  id          String   @id @default(uuid())
+  userId      String
+  topicId     String
+  code        String
+  result      String   // pass | fail
+  timeTaken   Int      // seconds
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  topic       Topic    @relation(fields: [topicId], references: [id])
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  userId         String
+  paystackRef    String   @unique
+  amount         Int
+  currency       String   @default("NGN")
+  status         String   @default("pending") // pending | success | failed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id])
 } 

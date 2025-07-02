@@ -58,15 +58,33 @@ A full-stack, AI-powered adaptive learning platform for Data Structures & Algori
 
 ## 🧪 Testing Integrations
 
-### Test Authentication
+### Comprehensive Test Suite
+Run all tests including legacy and new auth systems:
+```bash
+node scripts/run-all-tests.js
+```
+
+### Individual Test Suites
+
+#### Legacy Authentication (Phase 1)
 ```bash
 node scripts/test-auth.js
 ```
 
-### Test Payments
+#### New Auth System (Phase 2)
+```bash
+node scripts/test-auth-new.js
+```
+
+#### Payment Integration
 ```bash
 node scripts/test-payments.js
 ```
+
+### Test Results
+- View detailed test results at: `http://localhost:3000/report.html`
+- Test results are also saved to: `test-results.json`
+- Both legacy and new auth systems are tested for comparison
 
 ## 📁 Project Structure
 
@@ -76,21 +94,31 @@ dsatutor/
 │   ├── schema.prisma      # Database schema
 │   └── seed.ts           # Database seeding
 ├── src/
+│   ├── controllers/      # Business logic controllers
+│   │   └── authController.ts
+│   ├── middlewares/      # Authentication & validation
+│   │   └── auth.ts
 │   ├── lib/
 │   │   └── prisma.ts     # Prisma client
 │   ├── services/
 │   │   ├── firebase.ts   # Firebase auth service
 │   │   ├── email.ts      # Resend email service
-│   │   └── pesapal.ts    # Pesapal payment service
+│   │   └── paystack.ts   # Paystack payment service
 │   ├── pages/
 │   │   ├── api/
-│   │   │   ├── auth/     # Auth API routes
+│   │   │   ├── auth/     # Auth API routes (legacy + new)
 │   │   │   └── payments/ # Payment API routes
 │   │   └── payment/
 │   │       └── callback.tsx # Payment callback page
 │   └── utils/
 │       └── validateEnv.ts # Environment validation
 ├── scripts/              # Test scripts
+│   ├── test-auth.js      # Legacy auth tests
+│   ├── test-auth-new.js  # New auth system tests
+│   ├── test-payments.js  # Payment tests
+│   └── run-all-tests.js  # Comprehensive test suite
+├── public/
+│   └── report.html       # Test results report
 └── package.json
 ```
 

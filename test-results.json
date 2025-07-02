@@ -1,0 +1,233 @@
+{
+  "timestamp": "2025-07-02T19:32:05.912Z",
+  "summary": {
+    "totalTests": 31,
+    "passed": 31,
+    "failed": 0,
+    "successRate": 100
+  },
+  "details": {
+    "authentication": [
+      {
+        "name": "Create Test User",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:08.198Z",
+        "details": null
+      },
+      {
+        "name": "Login Test User",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:08.774Z",
+        "details": null
+      },
+      {
+        "name": "Create Admin User",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:10.411Z",
+        "details": null
+      },
+      {
+        "name": "Login Admin User",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:10.982Z",
+        "details": null
+      }
+    ],
+    "courses": [
+      {
+        "name": "Get Courses (Empty)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:10.998Z",
+        "details": {
+          "count": 3
+        }
+      },
+      {
+        "name": "Create Course (Unauthorized)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.002Z",
+        "details": null
+      },
+      {
+        "name": "Create Course (Admin)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.007Z",
+        "details": {
+          "courseId": "ffcf30ce-2cae-49b4-9764-bbf143e10fc2"
+        }
+      },
+      {
+        "name": "Get Courses (With Data)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.011Z",
+        "details": {
+          "count": 4
+        }
+      },
+      {
+        "name": "Get Single Course",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.015Z",
+        "details": {
+          "title": "Test Course"
+        }
+      },
+      {
+        "name": "Update Course (Unauthorized)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.018Z",
+        "details": null
+      },
+      {
+        "name": "Update Course (Admin)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.021Z",
+        "details": {
+          "newTitle": "Updated Course Title"
+        }
+      },
+      {
+        "name": "Get Courses (Final)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.023Z",
+        "details": {
+          "count": 4
+        }
+      }
+    ],
+    "topics": [
+      {
+        "name": "Get Topics (Empty)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.025Z",
+        "details": {
+          "count": 0
+        }
+      },
+      {
+        "name": "Create Topic (Unauthorized)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.027Z",
+        "details": null
+      },
+      {
+        "name": "Create Topic (Admin)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.030Z",
+        "details": {
+          "topicId": "9ddfeed1-4854-40fc-8ab1-22919423bf3b"
+        }
+      },
+      {
+        "name": "Get Topics (With Data)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.031Z",
+        "details": {
+          "count": 1
+        }
+      },
+      {
+        "name": "Get Single Topic",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.033Z",
+        "details": {
+          "title": "Test Topic"
+        }
+      },
+      {
+        "name": "Update Topic (Unauthorized)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.035Z",
+        "details": null
+      },
+      {
+        "name": "Update Topic (Admin)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.038Z",
+        "details": {
+          "newTitle": "Updated Topic Title"
+        }
+      },
+      {
+        "name": "Create Second Topic",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.041Z",
+        "details": {
+          "topicId": "b54a889e-2972-4393-93fe-6f55c5c9cc91"
+        }
+      },
+      {
+        "name": "Reorder Topics",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.043Z",
+        "details": null
+      },
+      {
+        "name": "Get Topics (Final)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.045Z",
+        "details": {
+          "count": 2
+        }
+      }
+    ],
+    "validation": [
+      {
+        "name": "Missing Course Title",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.046Z",
+        "details": null
+      },
+      {
+        "name": "Missing Course Description",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.048Z",
+        "details": null
+      },
+      {
+        "name": "Invalid Topic Position",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.049Z",
+        "details": null
+      },
+      {
+        "name": "Non-existent Course",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.051Z",
+        "details": null
+      },
+      {
+        "name": "Non-existent Topic",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.052Z",
+        "details": null
+      }
+    ],
+    "errorHandling": [
+      {
+        "name": "Invalid HTTP Method (Course)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.053Z",
+        "details": null
+      },
+      {
+        "name": "Invalid HTTP Method (Topic)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.054Z",
+        "details": null
+      },
+      {
+        "name": "Missing Required Fields (Course)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.055Z",
+        "details": null
+      },
+      {
+        "name": "Missing Required Fields (Topic)",
+        "passed": true,
+        "timestamp": "2025-07-02T19:32:11.057Z",
+        "details": null
+      }
+    ]
+  }
+}

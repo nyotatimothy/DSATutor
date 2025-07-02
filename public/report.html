@@ -36,7 +36,7 @@
                     Actual test results from backend integration tests
                 </p>
                 <p class="text-sm text-gray-500 mt-2" id="timestamp">
-                    Generated on <span id="current-time"></span>
+                    Generated on <span id="current-time">7/2/2025, 6:24:17 PM</span>
                 </p>
             </div>
 
@@ -179,12 +179,32 @@
                     Actual Test Results from Terminal
                 </h2>
                 <div class="space-y-6">
-                    <!-- Authentication Tests -->
+                    <!-- New Auth System Tests -->
                     <div class="border rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div>
-                                <h3 class="font-medium text-gray-900">Authentication Tests</h3>
-                                <p class="text-sm text-gray-500">User signup, login, and password reset</p>
+                                <h3 class="font-medium text-gray-900">New Auth System Tests (Phase 2)</h3>
+                                <p class="text-sm text-gray-500">Controller-based architecture with JWT authentication</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
+                                SUCCESS
+                            </span>
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-sm">
+                            <p><strong>Test Summary:</strong> 12 tests total, 12 passed, 0 failed (100% success rate)</p>
+                            <p><strong>✅ Working:</strong> Signup, login, profile, update, password reset, logout, invalid HTTP methods, unauthorized access</p>
+                            <p><strong>❌ Issues:</strong> None</p>
+                            <p><strong>Architecture:</strong> ✅ Controller-based design with middleware, JWT tokens, role-based access</p>
+                            <p><strong>Endpoints:</strong> ✅ /api/auth/signup-new, /api/auth/login-new, /api/auth/reset-new, /api/auth/profile, /api/auth/logout</p>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Authentication Tests -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">Legacy Authentication Tests (Phase 1)</h3>
+                                <p class="text-sm text-gray-500">Original user signup, login, and password reset</p>
                             </div>
                             <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
                                 SUCCESS
@@ -217,12 +237,152 @@
                         </div>
                     </div>
 
-                    <!-- Terminal Output -->
+                    <!-- Course & Topic API Tests -->
                     <div class="border rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div>
-                                <h3 class="font-medium text-gray-900">Terminal Test Output</h3>
-                                <p class="text-sm text-gray-500">Actual results from running test scripts</p>
+                                <h3 class="font-medium text-gray-900">Course & Topic API Tests (Phase 2)</h3>
+                                <p class="text-sm text-gray-500">Comprehensive testing of course and topic management APIs</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
+                                SUCCESS
+                            </span>
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-sm">
+                            <p><strong>Test Summary:</strong> 31 tests total, 31 passed, 0 failed (100% success rate)</p>
+                            <p><strong>✅ Authentication:</strong> User and admin creation, login, role assignment</p>
+                            <p><strong>✅ Course APIs:</strong> CRUD operations, authorization, validation</p>
+                            <p><strong>✅ Topic APIs:</strong> CRUD operations, reordering, authorization, validation</p>
+                            <p><strong>✅ Validation:</strong> Missing fields, invalid data, non-existent resources</p>
+                            <p><strong>✅ Error Handling:</strong> Invalid HTTP methods, unauthorized access</p>
+                            <p><strong>Architecture:</strong> ✅ Controller-based design with middleware, role-based access control</p>
+                            <p><strong>Endpoints:</strong> ✅ /api/courses, /api/courses/[id], /api/topics, /api/topics/[id], /api/topics/reorder</p>
+                        </div>
+                    </div>
+
+                    <!-- New Auth System Terminal Output -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">New Auth System Terminal Output</h3>
+                                <p class="text-sm text-gray-500">Detailed results from controller-based auth tests</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
+                                SUCCESS
+                            </span>
+                        </div>
+                        <div class="bg-gray-900 text-green-400 rounded p-3 text-sm font-mono">
+                            <p>$ node scripts/test-auth-new.js</p>
+                            <p>🚀 Starting New Auth System Tests...</p>
+                            <p>📧 Test Email: test-1751471058741@example.com</p>
+                            <p>🔑 Test Password: TestPassword123!</p>
+                            <p>👤 Test Name: Test User</p>
+                            <br>
+                            <p>🧪 Testing User Signup...</p>
+                            <p>✅ User Signup</p>
+                            <p>🧪 Testing Duplicate Signup...</p>
+                            <p>✅ Duplicate Signup</p>
+                            <p>🧪 Testing User Login...</p>
+                            <p>✅ User Login</p>
+                            <p>🧪 Testing Invalid Login...</p>
+                            <p>✅ Invalid Login</p>
+                            <p>🧪 Testing Get Profile...</p>
+                            <p>✅ Get Profile</p>
+                            <p>🧪 Testing Get Profile (Unauthorized)...</p>
+                            <p>✅ Get Profile Unauthorized</p>
+                            <p>🧪 Testing Update Profile...</p>
+                            <p>✅ Update Profile</p>
+                            <p>🧪 Testing Password Reset...</p>
+                            <p>✅ Password Reset</p>
+                            <p>🧪 Testing Password Reset (Invalid Email)...</p>
+                            <p>✅ Password Reset Invalid Email</p>
+                            <p>🧪 Testing Logout...</p>
+                            <p>✅ Logout</p>
+                            <p>🧪 Testing Invalid HTTP Methods...</p>
+                            <p>✅ Invalid Method - GET Signup</p>
+                            <p>✅ Invalid Method - PUT Login</p>
+                            <br>
+                            <p>📊 Test Summary:</p>
+                            <p>Total Tests: 12</p>
+                            <p>✅ Passed: 12</p>
+                            <p>❌ Failed: 0</p>
+                            <p>📈 Success Rate: 100.0%</p>
+                        </div>
+                    </div>
+
+                    <!-- Course & Topic Terminal Output -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">Course & Topic Terminal Output</h3>
+                                <p class="text-sm text-gray-500">Detailed results from course and topic API tests</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
+                                SUCCESS
+                            </span>
+                        </div>
+                        <div class="bg-gray-900 text-green-400 rounded p-3 text-sm font-mono">
+                            <p>$ node scripts/test-courses-topics.js</p>
+                            <p>🚀 Starting Course & Topic API Tests...</p>
+                            <p>📧 Test User Email: test-1751484725912@example.com</p>
+                            <p>👤 Test Admin Email: admin-1751484725912@example.com</p>
+                            <p>📚 Test Course: Test Course</p>
+                            <p>📖 Test Topic: Test Topic</p>
+                            <br>
+                            <p>🔐 Testing Authentication...</p>
+                            <p>1. Creating test user... ✅ Test user created</p>
+                            <p>2. Logging in test user... ✅ Test user logged in</p>
+                            <p>3. Creating admin user... ✅ Admin user created</p>
+                            <p>4. Logging in admin user... ✅ Admin user logged in</p>
+                            <br>
+                            <p>📚 Testing Course APIs...</p>
+                            <p>1. Getting courses (empty)... ✅ Get courses successful (Found 3 courses)</p>
+                            <p>2. Creating course (unauthorized)... ✅ Create course unauthorized (expected)</p>
+                            <p>3. Creating course (admin)... ✅ Course created successfully (Course ID: ffcf30ce-2cae-49b4-9764-bbf143e10fc2)</p>
+                            <p>4. Getting courses (with data)... ✅ Get courses successful (Found 4 courses)</p>
+                            <p>5. Getting single course... ✅ Get single course successful</p>
+                            <p>6. Updating course (unauthorized)... ✅ Update course unauthorized (expected)</p>
+                            <p>7. Updating course (admin)... ✅ Course updated successfully</p>
+                            <p>8. Getting courses... ✅ Get courses successful (Found 4 courses)</p>
+                            <br>
+                            <p>📖 Testing Topic APIs...</p>
+                            <p>1. Getting topics (empty)... ✅ Get topics successful (Found 0 topics)</p>
+                            <p>2. Creating topic (unauthorized)... ✅ Create topic unauthorized (expected)</p>
+                            <p>3. Creating topic (admin)... ✅ Topic created successfully (Topic ID: 9ddfeed1-4854-40fc-8ab1-22919423bf3b)</p>
+                            <p>4. Getting topics (with data)... ✅ Get topics successful (Found 1 topics)</p>
+                            <p>5. Getting single topic... ✅ Get single topic successful</p>
+                            <p>6. Updating topic (unauthorized)... ✅ Update topic unauthorized (expected)</p>
+                            <p>7. Updating topic (admin)... ✅ Topic updated successfully</p>
+                            <p>8. Creating second topic... ✅ Second topic created successfully</p>
+                            <p>9. Reordering topics... ✅ Topics reordered successfully</p>
+                            <p>10. Getting topics... ✅ Get topics successful (Found 2 topics)</p>
+                            <br>
+                            <p>🔍 Testing Validation...</p>
+                            <p>1. Creating course with missing title... ✅ Missing title validation (expected)</p>
+                            <p>2. Creating course with missing description... ✅ Missing description validation (expected)</p>
+                            <p>3. Creating topic with invalid position... ✅ Invalid position validation (expected)</p>
+                            <p>4. Getting non-existent course... ✅ Non-existent course validation (expected)</p>
+                            <p>5. Getting non-existent topic... ✅ Non-existent topic validation (expected)</p>
+                            <br>
+                            <p>⚠️ Testing Error Handling...</p>
+                            <p>1. Testing invalid HTTP methods... ✅ Invalid method course (expected) ✅ Invalid method topic (expected)</p>
+                            <p>2. Testing missing required fields... ✅ Missing fields course (expected) ✅ Missing fields topic (expected)</p>
+                            <br>
+                            <p>🎉 Course & Topic API Tests Completed!</p>
+                            <p>📊 Test Summary:</p>
+                            <p>Total Tests: 31</p>
+                            <p>✅ Passed: 31</p>
+                            <p>❌ Failed: 0</p>
+                            <p>📈 Success Rate: 100.0%</p>
+                        </div>
+                    </div>
+
+                    <!-- Legacy Terminal Output -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">Legacy Terminal Test Output</h3>
+                                <p class="text-sm text-gray-500">Original test results from Phase 1</p>
                             </div>
                             <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
                                 PASSED
@@ -253,12 +413,15 @@
 
             <!-- Footer -->
             <div class="text-center mt-8 text-gray-500">
-                <p>DSATutor Integration Report - All backend tests completed successfully</p>
+                <p>DSATutor Integration Report - Phase 2 Course & Topic APIs Implementation</p>
                 <p class="text-sm mt-2">
-                    Mock fallbacks are used when external services are not available
+                    Controller-based architecture with JWT authentication and role-based access control
                 </p>
                 <p class="text-sm mt-2">
-                    <strong>Status:</strong> Ready for development and testing
+                    <strong>Status:</strong> Auth, Course, and Topic APIs fully working and passing all tests (100% success rate)
+                </p>
+                <p class="text-sm mt-2">
+                    <strong>Next Steps:</strong> Implement Progress API, Attempt API, and Payment API
                 </p>
             </div>
         </div>
