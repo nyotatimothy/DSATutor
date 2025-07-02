@@ -1,111 +1,115 @@
 {
-  "timestamp": "2025-07-02T19:43:13.199Z",
+  "timestamp": "2025-07-02T20:04:52.280Z",
   "summary": {
     "totalTests": 20,
-    "passed": 18,
-    "failed": 2,
-    "successRate": 90
+    "passed": 20,
+    "failed": 0,
+    "successRate": 100
   },
   "details": {
     "authentication": [
       {
         "name": "Create Test User",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:15.383Z",
+        "timestamp": "2025-07-02T20:04:54.662Z",
         "details": null
       },
       {
         "name": "Login Test User",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.063Z",
-        "details": null
-      },
-      {
-        "name": "Get Existing Course",
-        "passed": true,
-        "timestamp": "2025-07-02T19:43:16.078Z",
+        "timestamp": "2025-07-02T20:04:55.913Z",
         "details": null
       },
       {
         "name": "Get Existing Topic",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.084Z",
+        "timestamp": "2025-07-02T20:04:55.933Z",
         "details": null
       }
     ],
-    "progress": [
+    "attempts": [
       {
-        "name": "Get Progress (Empty)",
+        "name": "Get Attempts (Empty)",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.090Z",
+        "timestamp": "2025-07-02T20:04:55.993Z",
         "details": {
           "count": 0
         }
       },
       {
-        "name": "Create Progress",
+        "name": "Create Attempt",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.096Z",
+        "timestamp": "2025-07-02T20:04:55.996Z",
         "details": {
-          "progressId": "6a760c33-b879-476a-9375-e7df45e3c185"
+          "attemptId": "cbe745f6-c00c-40ca-b6b7-b8b25187fc15"
         }
       },
       {
-        "name": "Get Progress (With Data)",
+        "name": "Get Attempts (With Data)",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.098Z",
+        "timestamp": "2025-07-02T20:04:55.999Z",
         "details": {
           "count": 1
         }
       },
       {
-        "name": "Get Specific Progress",
+        "name": "Get Specific Attempt",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.102Z",
+        "timestamp": "2025-07-02T20:04:56.021Z",
         "details": {
-          "status": "in_progress"
+          "result": "pass",
+          "timeTaken": 120
         }
       },
       {
-        "name": "Update Progress",
+        "name": "Update Attempt",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.108Z",
+        "timestamp": "2025-07-02T20:04:56.025Z",
         "details": {
-          "status": "complete"
+          "result": "fail",
+          "timeTaken": 180
         }
       },
       {
-        "name": "Create Progress (Upsert)",
+        "name": "Create Second Attempt",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.111Z",
+        "timestamp": "2025-07-02T20:04:56.029Z",
         "details": {
-          "status": "in_progress"
+          "attemptId": "7a929997-a819-4ffc-9f96-16388823587f"
         }
       }
     ],
     "stats": [
       {
-        "name": "Get Progress Stats",
+        "name": "Get Attempt Stats",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.114Z",
+        "timestamp": "2025-07-02T20:04:56.048Z",
         "details": {
-          "totalTopics": 1,
-          "completedTopics": 0,
-          "inProgressTopics": 1,
-          "notStartedTopics": 0,
-          "completionRate": 0
+          "totalAttempts": 2,
+          "passedAttempts": 1,
+          "failedAttempts": 1,
+          "successRate": 50,
+          "averageTimeTaken": 135
         }
       },
       {
-        "name": "Get Course Progress Stats",
+        "name": "Get Topic Attempt Stats",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.116Z",
+        "timestamp": "2025-07-02T20:04:56.050Z",
         "details": {
-          "totalTopics": 1,
-          "completedTopics": 0,
-          "inProgressTopics": 1,
-          "notStartedTopics": 0,
-          "completionRate": 0
+          "totalAttempts": 2,
+          "passedAttempts": 1,
+          "failedAttempts": 1,
+          "successRate": 50,
+          "averageTimeTaken": 135
+        }
+      },
+      {
+        "name": "Filter Attempts by Result",
+        "passed": true,
+        "timestamp": "2025-07-02T20:04:56.052Z",
+        "details": {
+          "count": 1
         }
       }
     ],
@@ -113,67 +117,51 @@
       {
         "name": "Missing Topic ID",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.118Z",
+        "timestamp": "2025-07-02T20:04:56.054Z",
         "details": null
       },
       {
-        "name": "Invalid Status",
+        "name": "Missing Code",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.120Z",
+        "timestamp": "2025-07-02T20:04:56.056Z",
+        "details": null
+      },
+      {
+        "name": "Invalid Result",
+        "passed": true,
+        "timestamp": "2025-07-02T20:04:56.057Z",
+        "details": null
+      },
+      {
+        "name": "Negative Time",
+        "passed": true,
+        "timestamp": "2025-07-02T20:04:56.060Z",
         "details": null
       },
       {
         "name": "Non-existent Topic",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.122Z",
+        "timestamp": "2025-07-02T20:04:56.062Z",
         "details": null
       },
       {
-        "name": "Non-existent Progress",
+        "name": "Non-existent Attempt",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.125Z",
+        "timestamp": "2025-07-02T20:04:56.064Z",
         "details": null
       }
     ],
     "errorHandling": [
       {
-        "name": "Invalid HTTP Method (Progress)",
-        "passed": false,
-        "timestamp": "2025-07-02T19:43:16.127Z",
-        "details": {
-          "success": false,
-          "error": {
-            "success": false,
-            "error": "Access token required",
-            "message": "Please provide a valid authentication token"
-          },
-          "status": 401
-        }
-      },
-      {
-        "name": "Invalid HTTP Method (Stats)",
-        "passed": false,
-        "timestamp": "2025-07-02T19:43:16.128Z",
-        "details": {
-          "success": false,
-          "error": {
-            "success": false,
-            "error": "Access token required",
-            "message": "Please provide a valid authentication token"
-          },
-          "status": 401
-        }
-      },
-      {
-        "name": "Unauthorized Progress Access",
+        "name": "Unauthorized Attempts Access",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.129Z",
+        "timestamp": "2025-07-02T20:04:56.065Z",
         "details": null
       },
       {
         "name": "Unauthorized Stats Access",
         "passed": true,
-        "timestamp": "2025-07-02T19:43:16.130Z",
+        "timestamp": "2025-07-02T20:04:56.066Z",
         "details": null
       }
     ]
