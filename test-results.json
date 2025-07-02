@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-07-02T20:04:52.280Z",
+  "timestamp": "2025-07-02T20:27:08.798Z",
   "summary": {
-    "totalTests": 20,
-    "passed": 20,
+    "totalTests": 18,
+    "passed": 18,
     "failed": 0,
     "successRate": 100
   },
@@ -11,157 +11,139 @@
       {
         "name": "Create Test User",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:54.662Z",
+        "timestamp": "2025-07-02T20:27:11.210Z",
         "details": null
       },
       {
         "name": "Login Test User",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:55.913Z",
-        "details": null
-      },
-      {
-        "name": "Get Existing Topic",
-        "passed": true,
-        "timestamp": "2025-07-02T20:04:55.933Z",
+        "timestamp": "2025-07-02T20:27:11.786Z",
         "details": null
       }
     ],
-    "attempts": [
+    "payments": [
       {
-        "name": "Get Attempts (Empty)",
+        "name": "Get Payments (Empty)",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:55.993Z",
+        "timestamp": "2025-07-02T20:27:11.789Z",
         "details": {
           "count": 0
         }
       },
       {
-        "name": "Create Attempt",
+        "name": "Create Payment",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:55.996Z",
+        "timestamp": "2025-07-02T20:27:11.792Z",
         "details": {
-          "attemptId": "cbe745f6-c00c-40ca-b6b7-b8b25187fc15"
+          "paymentId": "384b5f53-1d0d-44a3-a332-7fbd8e2a0799"
         }
       },
       {
-        "name": "Get Attempts (With Data)",
+        "name": "Get Payments (With Data)",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:55.999Z",
+        "timestamp": "2025-07-02T20:27:11.796Z",
         "details": {
           "count": 1
         }
       },
       {
-        "name": "Get Specific Attempt",
+        "name": "Get Specific Payment",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.021Z",
+        "timestamp": "2025-07-02T20:27:11.799Z",
         "details": {
-          "result": "pass",
-          "timeTaken": 120
+          "status": "pending",
+          "amount": 1500
         }
       },
       {
-        "name": "Update Attempt",
+        "name": "Update Payment",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.025Z",
+        "timestamp": "2025-07-02T20:27:11.802Z",
         "details": {
-          "result": "fail",
-          "timeTaken": 180
+          "status": "success"
         }
       },
       {
-        "name": "Create Second Attempt",
+        "name": "Create Second Payment",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.029Z",
+        "timestamp": "2025-07-02T20:27:11.805Z",
         "details": {
-          "attemptId": "7a929997-a819-4ffc-9f96-16388823587f"
+          "paymentId": "826b8111-0df4-4aff-8849-13f9b0952eae"
         }
       }
     ],
     "stats": [
       {
-        "name": "Get Attempt Stats",
+        "name": "Get Payment Stats",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.048Z",
+        "timestamp": "2025-07-02T20:27:11.809Z",
         "details": {
-          "totalAttempts": 2,
-          "passedAttempts": 1,
-          "failedAttempts": 1,
-          "successRate": 50,
-          "averageTimeTaken": 135
+          "totalPayments": 2,
+          "successfulPayments": 1,
+          "failedPayments": 0,
+          "pendingPayments": 1,
+          "totalAmount": 1500,
+          "successRate": 50
         }
       },
       {
-        "name": "Get Topic Attempt Stats",
+        "name": "Filter Payments by Status",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.050Z",
+        "timestamp": "2025-07-02T20:27:11.811Z",
         "details": {
-          "totalAttempts": 2,
-          "passedAttempts": 1,
-          "failedAttempts": 1,
-          "successRate": 50,
-          "averageTimeTaken": 135
-        }
-      },
-      {
-        "name": "Filter Attempts by Result",
-        "passed": true,
-        "timestamp": "2025-07-02T20:04:56.052Z",
-        "details": {
-          "count": 1
+          "count": 0
         }
       }
     ],
     "validation": [
       {
-        "name": "Missing Topic ID",
+        "name": "Payment Verification (Invalid Reference)",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.054Z",
+        "timestamp": "2025-07-02T20:27:11.814Z",
         "details": null
       },
       {
-        "name": "Missing Code",
+        "name": "Missing Amount",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.056Z",
+        "timestamp": "2025-07-02T20:27:11.815Z",
         "details": null
       },
       {
-        "name": "Invalid Result",
+        "name": "Negative Amount",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.057Z",
+        "timestamp": "2025-07-02T20:27:11.817Z",
         "details": null
       },
       {
-        "name": "Negative Time",
+        "name": "Invalid Currency",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.060Z",
+        "timestamp": "2025-07-02T20:27:11.818Z",
         "details": null
       },
       {
-        "name": "Non-existent Topic",
+        "name": "Non-existent Payment",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.062Z",
+        "timestamp": "2025-07-02T20:27:11.820Z",
         "details": null
       },
       {
-        "name": "Non-existent Attempt",
+        "name": "Invalid Status",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.064Z",
+        "timestamp": "2025-07-02T20:27:11.823Z",
         "details": null
       }
     ],
     "errorHandling": [
       {
-        "name": "Unauthorized Attempts Access",
+        "name": "Unauthorized Payments Access",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.065Z",
+        "timestamp": "2025-07-02T20:27:11.824Z",
         "details": null
       },
       {
         "name": "Unauthorized Stats Access",
         "passed": true,
-        "timestamp": "2025-07-02T20:04:56.066Z",
+        "timestamp": "2025-07-02T20:27:11.825Z",
         "details": null
       }
     ]
