@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-03T13:53:31.527Z",
+  "timestamp": "2025-07-03T14:10:48.252Z",
   "summary": {
     "totalTests": 15,
     "passed": 15,
@@ -11,7 +11,7 @@
       {
         "name": "Super Admin Login",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.126Z",
+        "timestamp": "2025-07-03T14:10:48.871Z",
         "details": null
       }
     ],
@@ -19,19 +19,19 @@
       {
         "name": "Get Content Overview",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.208Z",
+        "timestamp": "2025-07-03T14:10:48.879Z",
         "details": {
-          "totalCourses": 15,
-          "totalTopics": 12,
-          "totalAttempts": 11,
-          "totalProgress": 6,
+          "totalCourses": 20,
+          "totalTopics": 22,
+          "totalAttempts": 41,
+          "totalProgress": 49,
           "totalAssessments": 0
         }
       },
       {
         "name": "Bulk Content Operations",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.211Z",
+        "timestamp": "2025-07-03T14:10:48.881Z",
         "details": {
           "success": true,
           "data": {
@@ -45,7 +45,7 @@
       {
         "name": "Get System Config",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.233Z",
+        "timestamp": "2025-07-03T14:10:48.886Z",
         "details": {
           "aiEnabled": true,
           "paymentsEnabled": true,
@@ -56,7 +56,7 @@
       {
         "name": "Update System Config",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.236Z",
+        "timestamp": "2025-07-03T14:10:48.888Z",
         "details": null
       }
     ],
@@ -64,7 +64,7 @@
       {
         "name": "Get Audit Logs",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.262Z",
+        "timestamp": "2025-07-03T14:10:48.891Z",
         "details": {
           "count": 2
         }
@@ -74,14 +74,14 @@
       {
         "name": "Export Data",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.289Z",
+        "timestamp": "2025-07-03T14:10:48.896Z",
         "details": {
-          "exportedAt": "2025-07-03T13:53:32.288Z",
+          "exportedAt": "2025-07-03T14:10:48.895Z",
           "entities": [
             "users",
             "courses"
           ],
-          "recordCount": 70
+          "recordCount": 91
         }
       }
     ],
@@ -89,12 +89,12 @@
       {
         "name": "Get Performance Metrics",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.320Z",
+        "timestamp": "2025-07-03T14:10:48.899Z",
         "details": {
-          "cpuUsage": 9.228953279894014,
-          "memoryUsage": 28.601845486091037,
-          "diskUsage": 81.75558521537616,
-          "uptime": 15861212319
+          "cpuUsage": 70.50434658883388,
+          "memoryUsage": 85.08294944300422,
+          "diskUsage": 18.67257666294282,
+          "uptime": 15862248899
         }
       }
     ],
@@ -102,7 +102,7 @@
       {
         "name": "Get System Notifications",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.354Z",
+        "timestamp": "2025-07-03T14:10:48.903Z",
         "details": {
           "count": 2
         }
@@ -110,16 +110,16 @@
       {
         "name": "Create System Notification",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.357Z",
+        "timestamp": "2025-07-03T14:10:48.905Z",
         "details": {
-          "id": "1751550812357",
+          "id": "1751551848905",
           "type": "SYSTEM_MAINTENANCE",
           "title": "Test Maintenance Notice",
           "message": "This is a test notification for system maintenance",
           "priority": "medium",
           "status": "active",
-          "createdAt": "2025-07-03T13:53:32.357Z",
-          "expiresAt": "2025-07-10T13:53:32.357Z"
+          "createdAt": "2025-07-03T14:10:48.905Z",
+          "expiresAt": "2025-07-10T14:10:48.905Z"
         }
       }
     ],
@@ -127,7 +127,7 @@
       {
         "name": "Get Rate Limit Config",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.389Z",
+        "timestamp": "2025-07-03T14:10:48.908Z",
         "details": {
           "requestsPerMinute": 100,
           "requestsPerHour": 1000,
@@ -139,26 +139,26 @@
       {
         "name": "Get Database Health",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.421Z",
+        "timestamp": "2025-07-03T14:10:48.911Z",
         "details": {
           "status": "healthy",
           "responseTime": 0,
           "connection": "active",
           "tables": {
-            "users": 55,
-            "courses": 15,
-            "topics": 12,
-            "payments": 17,
-            "attempts": 11,
-            "progress": 6
+            "users": 71,
+            "courses": 20,
+            "topics": 22,
+            "payments": 33,
+            "attempts": 41,
+            "progress": 49
           },
-          "lastChecked": "2025-07-03T13:53:32.420Z"
+          "lastChecked": "2025-07-03T14:10:48.911Z"
         }
       },
       {
         "name": "Run Database Maintenance",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.423Z",
+        "timestamp": "2025-07-03T14:10:48.913Z",
         "details": {
           "success": true,
           "data": {
@@ -172,7 +172,7 @@
       {
         "name": "Get Backup History",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.456Z",
+        "timestamp": "2025-07-03T14:10:48.915Z",
         "details": {
           "count": 2
         }
@@ -180,17 +180,17 @@
       {
         "name": "Create System Backup",
         "passed": true,
-        "timestamp": "2025-07-03T13:53:32.459Z",
+        "timestamp": "2025-07-03T14:10:48.916Z",
         "details": {
-          "id": "backup-1751550812458",
-          "timestamp": "2025-07-03T13:53:32.458Z",
+          "id": "backup-1751551848916",
+          "timestamp": "2025-07-03T14:10:48.916Z",
           "size": "2.5GB",
           "includes": {
             "data": true,
             "config": true
           },
           "status": "completed",
-          "downloadUrl": "/api/super-admin/backups/1751550812458/download"
+          "downloadUrl": "/api/super-admin/backups/1751551848916/download"
         }
       }
     ]
