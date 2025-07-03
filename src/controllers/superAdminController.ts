@@ -609,7 +609,7 @@ class SuperAdminController {
   // Course Management
   static async getAllCourses(req: NextApiRequest, res: NextApiResponse) {
     try {
-      const { page = 1, limit = 10, search } = req.query
+      const { page = 1, limit = 10, search, status = 'all' } = req.query
       const skip = (Number(page) - 1) * Number(limit)
 
       const where: any = {}
@@ -619,6 +619,14 @@ class SuperAdminController {
           { description: { contains: String(search), mode: 'insensitive' } }
         ]
       }
+
+      // Filter by status
+      if (status === 'active') {
+        where.isActive = true
+      } else if (status === 'inactive') {
+        where.isActive = false
+      }
+      // 'all' includes both active and inactive courses
 
       const [courses, total] = await Promise.all([
         prisma.course.findMany({
@@ -676,6 +684,7 @@ class SuperAdminController {
   static async deleteCourse(req: NextApiRequest, res: NextApiResponse) {
     try {
       const { id } = req.query
+      const { force = 'false', cascade = 'false' } = req.body
 
       if (!id || typeof id !== 'string') {
         return res.status(400).json({
@@ -705,33 +714,225 @@ class SuperAdminController {
         })
       }
 
-      // Check if course has any activity
-      const hasActivity = course.topics.some((topic: any) => 
-        topic.progress.length > 0 || topic.attempts.length > 0
-      )
+      // Calculate activity statistics
+      const totalTopics = course.topics.length
+      const topicsWithProgress = course.topics.filter((topic: any) => topic.progress.length > 0).length
+      const topicsWithAttempts = course.topics.filter((topic: any) => topic.attempts.length > 0).length
+      const totalProgress = course.topics.reduce((sum: number, topic: any) => sum + topic.progress.length, 0)
+      const totalAttempts = course.topics.reduce((sum: number, topic: any) => sum + topic.attempts.length, 0)
 
-      if (hasActivity) {
+      const hasActivity = totalProgress > 0 || totalAttempts > 0
+
+      // If course has activity and force delete is not enabled
+      if (hasActivity && force !== 'true') {
         return res.status(400).json({
           success: false,
           error: 'Cannot delete course with activity',
-          message: 'Course has user progress or attempts and cannot be deleted'
+          message: 'Course has user progress or attempts and cannot be deleted',
+          data: {
+            activitySummary: {
+              totalTopics,
+              topicsWithProgress,
+              topicsWithAttempts,
+              totalProgress,
+              totalAttempts
+            },
+            options: {
+              softDelete: 'Use soft delete to deactivate the course instead',
+              forceDelete: 'Use force=true to delete despite activity (will cascade delete all related data)',
+              cascadeDelete: 'Use cascade=true to also delete all related topics, progress, and attempts'
+            }
+          }
         })
       }
 
-      // Delete course and all related topics
-      await prisma.course.delete({
-        where: { id }
+      // Handle cascade delete
+      if (cascade === 'true' && hasActivity) {
+        // Delete all related data first
+        await prisma.$transaction(async (tx: any) => {
+          // Delete all progress records
+          for (const topic of course.topics) {
+            if (topic.progress.length > 0) {
+              await tx.progress.deleteMany({
+                where: { topicId: topic.id }
+              })
+            }
+            if (topic.attempts.length > 0) {
+              await tx.attempt.deleteMany({
+                where: { topicId: topic.id }
+              })
+            }
+          }
+
+          // Delete all topics
+          await tx.topic.deleteMany({
+            where: { courseId: id }
+          })
+
+          // Delete the course
+          await tx.course.delete({
+            where: { id }
+          })
+        })
+
+        return res.status(200).json({
+          success: true,
+          message: 'Course and all related data deleted successfully',
+          data: {
+            deletedData: {
+              course: 1,
+              topics: totalTopics,
+              progress: totalProgress,
+              attempts: totalAttempts
+            }
+          }
+        })
+      }
+
+      // Handle force delete (without cascade)
+      if (force === 'true' && hasActivity) {
+        // Delete course and topics, but leave progress/attempts (they'll become orphaned)
+        await prisma.$transaction(async (tx: any) => {
+          // Delete all topics (this will cascade to progress/attempts if foreign key constraints exist)
+          await tx.topic.deleteMany({
+            where: { courseId: id }
+          })
+
+          // Delete the course
+          await tx.course.delete({
+            where: { id }
+          })
+        })
+
+        return res.status(200).json({
+          success: true,
+          message: 'Course deleted successfully (related data may be orphaned)',
+          data: {
+            deletedData: {
+              course: 1,
+              topics: totalTopics
+            },
+            warning: 'Progress and attempt records may be orphaned. Consider using cascade=true for complete cleanup.'
+          }
+        })
+      }
+
+      // Regular delete (no activity or soft delete)
+      if (!hasActivity) {
+        // Delete course and all related topics
+        await prisma.course.delete({
+          where: { id }
+        })
+
+        return res.status(200).json({
+          success: true,
+          message: 'Course deleted successfully',
+          data: {
+            deletedData: {
+              course: 1,
+              topics: totalTopics
+            }
+          }
+        })
+      }
+
+      // Soft delete (default behavior when activity exists)
+      await prisma.course.update({
+        where: { id },
+        data: { isActive: false }
       })
 
       return res.status(200).json({
         success: true,
-        message: 'Course deleted successfully'
+        message: 'Course deactivated successfully (soft delete)',
+        data: {
+          activitySummary: {
+            totalTopics,
+            topicsWithProgress,
+            topicsWithAttempts,
+            totalProgress,
+            totalAttempts
+          },
+          note: 'Course is now inactive but data is preserved. Use force=true to permanently delete.'
+        }
       })
     } catch (error) {
       console.error('Error deleting course:', error)
       return res.status(500).json({
         success: false,
         error: 'Failed to delete course',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Reactivate Course (soft delete recovery)
+  static async reactivateCourse(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { id } = req.query
+
+      if (!id || typeof id !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid course ID',
+          message: 'Course ID is required'
+        })
+      }
+
+      const course = await prisma.course.findUnique({
+        where: { id },
+        include: {
+          topics: {
+            select: {
+              id: true,
+              title: true,
+              position: true
+            },
+            orderBy: { position: 'asc' }
+          }
+        }
+      })
+
+      if (!course) {
+        return res.status(404).json({
+          success: false,
+          error: 'Course not found',
+          message: 'Course with the specified ID does not exist'
+        })
+      }
+
+      if (course.isActive) {
+        return res.status(400).json({
+          success: false,
+          error: 'Course is already active',
+          message: 'This course is already active and does not need reactivation'
+        })
+      }
+
+      // Reactivate the course
+      await prisma.course.update({
+        where: { id },
+        data: { isActive: true }
+      })
+
+      return res.status(200).json({
+        success: true,
+        message: 'Course reactivated successfully',
+        data: {
+          course: {
+            id: course.id,
+            title: course.title,
+            description: course.description,
+            isActive: true,
+            topicsCount: course.topics.length
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Error reactivating course:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to reactivate course',
         message: 'Internal server error'
       })
     }

@@ -931,5 +931,3 @@ runTests()
     console.error('❌ Test Failed:', error.response?.data || error.message)
   }
 }
-
-testPayments() 
