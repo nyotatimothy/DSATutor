@@ -33,8 +33,8 @@ const testResults = {
 
 // Test data
 const superAdminCredentials = {
-  email: 'superadmin@dsatutor.com',
-  password: 'SuperAdmin123!'
+  email: 'superadmin@example.com',
+  password: 'TestPassword123!'
 }
 
 console.log('🚀 Starting Enhanced Super Admin API Tests...')

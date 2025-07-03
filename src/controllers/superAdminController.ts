@@ -1326,8 +1326,7 @@ class SuperAdminController {
             updatedAt: true,
             _count: {
               select: {
-                topics: true,
-                progress: true
+                topics: true
               }
             }
           }

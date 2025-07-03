@@ -1,24 +1,198 @@
 {
-  "timestamp": "2025-07-03T12:40:33.112Z",
-  "auth": {
-    "status": "completed",
-    "output": "[dotenv@17.0.1] injecting env (13) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting New Auth System Tests...\n📧 Test Email: test-1751546433168@example.com\n🔑 Test Password: TestPassword123!\n👤 Test Name: Test User\n\n🧪 Testing User Signup...\n✅ User Signup\n\n🧪 Testing Duplicate Signup...\n✅ Duplicate Signup\n\n🧪 Testing User Login...\n✅ User Login\n\n🧪 Testing Invalid Login...\n✅ Invalid Login\n\n🧪 Testing Get Profile...\n✅ Get Profile\n\n🧪 Testing Get Profile (Unauthorized)...\n✅ Get Profile Unauthorized\n\n🧪 Testing Update Profile...\n✅ Update Profile\n\n🧪 Testing Password Reset...\n✅ Password Reset\n\n🧪 Testing Password Reset (Invalid Email)...\n✅ Password Reset Invalid Email\n\n🧪 Testing Logout...\n✅ Logout\n\n🧪 Testing Invalid HTTP Methods...\n✅ Invalid Method - GET Signup\n✅ Invalid Method - PUT Login\n\n📊 Test Summary:\nTotal Tests: 12\n✅ Passed: 12\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🎉 Auth System Tests Completed!\n"
+  "timestamp": "2025-07-03T13:06:50.182Z",
+  "summary": {
+    "totalTests": 15,
+    "passed": 15,
+    "failed": 0,
+    "successRate": 100
   },
-  "courses": {
-    "status": "completed",
-    "output": "[dotenv@17.0.1] injecting env (13) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Course & Topic API Tests...\n📧 Test User Email: test-1751546438173@example.com\n👤 Test Admin Email: admin-1751546438173@example.com\n📚 Test Course: Test Course\n📖 Test Topic: Test Topic\n\n🔐 Testing Authentication...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n3. Creating admin user...\n✅ Admin user created\n4. Logging in admin user...\n✅ Admin user logged in\n\n📚 Testing Course APIs...\n1. Getting courses (empty)...\n✅ Get courses successful\n   Found 10 courses\n2. Creating course (unauthorized)...\n✅ Create course unauthorized (expected)\n3. Creating course (admin)...\n✅ Course created successfully\n   Course ID: 37011877-9716-49d1-a1ad-943106c0d70e\n4. Getting courses (with data)...\n✅ Get courses successful\n   Found 10 courses\n5. Getting single course...\n✅ Get single course successful\n   Course: Test Course\n6. Updating course (unauthorized)...\n✅ Update course unauthorized (expected)\n7. Updating course (admin)...\n✅ Course updated successfully\n   New title: Updated Course Title\n8. Getting courses...\n✅ Get courses successful\n   Found 10 courses\n\n📖 Testing Topic APIs...\n1. Getting topics (empty)...\n✅ Get topics successful\n   Found 0 topics\n2. Creating topic (unauthorized)...\n✅ Create topic unauthorized (expected)\n3. Creating topic (admin)...\n✅ Topic created successfully\n   Topic ID: d9bd649c-c9cb-46ee-9118-0391bd69d026\n4. Getting topics (with data)...\n✅ Get topics successful\n   Found 1 topics\n5. Getting single topic...\n✅ Get single topic successful\n   Topic: Test Topic\n6. Updating topic (unauthorized)...\n✅ Update topic unauthorized (expected)\n7. Updating topic (admin)...\n✅ Topic updated successfully\n   New title: Updated Topic Title\n8. Creating second topic...\n✅ Second topic created successfully\n9. Reordering topics...\n✅ Topics reordered successfully\n10. Getting topics...\n✅ Get topics successful\n   Found 2 topics\n\n🔍 Testing Validation...\n1. Creating course with missing title...\n✅ Missing title validation (expected)\n2. Creating course with missing description...\n✅ Missing description validation (expected)\n3. Creating topic with invalid position...\n✅ Invalid position validation (expected)\n4. Getting non-existent course...\n✅ Non-existent course validation (expected)\n5. Getting non-existent topic...\n✅ Non-existent topic validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing invalid HTTP methods...\n✅ Invalid method course (expected)\n✅ Invalid method topic (expected)\n2. Testing missing required fields...\n✅ Missing fields course (expected)\n✅ Missing fields topic (expected)\n\n🎉 Course & Topic API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 31\n✅ Passed: 31\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🔗 Available Endpoints:\n   GET    /api/courses - List courses\n   POST   /api/courses - Create course (admin only)\n   GET    /api/courses/[id] - Get single course\n   PUT    /api/courses/[id] - Update course (admin only)\n   DELETE /api/courses/[id] - Delete course (admin only)\n   GET    /api/topics - List topics for course\n   POST   /api/topics - Create topic (admin only)\n   GET    /api/topics/[id] - Get single topic\n   PUT    /api/topics/[id] - Update topic (admin only)\n   DELETE /api/topics/[id] - Delete topic (admin only)\n   POST   /api/topics/reorder - Reorder topics (admin only)\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
-  },
-  "progress": {
-    "status": "completed",
-    "output": "[dotenv@17.0.1] injecting env (13) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Progress API Tests...\n📧 Test User Email: test-1751546442391@example.com\n📊 Test Progress Status: in_progress\n\n🔧 Setting up test data...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n3. Getting existing course...\n✅ Using existing course\n   Course ID: 37011877-9716-49d1-a1ad-943106c0d70e\n4. Getting existing topic...\n✅ Using existing topic\n   Topic ID: 01e6bc1a-8e19-4d04-b2d2-3e46ec59cdd3\n\n📊 Testing Progress CRUD Operations...\n1. Getting progress (empty)...\n✅ Get progress successful\n   Found 0 progress entries\n2. Creating progress...\n✅ Progress created successfully\n   Progress ID: 15ea6147-6258-455b-a219-0dde1c87922b\n3. Getting progress (with data)...\n✅ Get progress successful\n   Found 1 progress entries\n4. Getting specific progress...\n✅ Get specific progress successful\n   Status: in_progress\n5. Updating progress...\n✅ Progress updated successfully\n   New status: complete\n6. Creating progress for same topic (should update)...\n✅ Progress updated via create (upsert)\n   Status: in_progress\n\n📈 Testing Progress Statistics...\n1. Getting progress stats...\n✅ Get progress stats successful\n   Total Topics: 1\n   Completed: 0\n   In Progress: 1\n   Not Started: 0\n   Completion Rate: 0.0%\n2. Getting progress stats for specific course...\n✅ Get course progress stats successful\n   Total Topics: 1\n   Completion Rate: 0.0%\n\n🔍 Testing Validation...\n1. Creating progress with missing topicId...\n✅ Missing topicId validation (expected)\n2. Creating progress with invalid status...\n✅ Invalid status validation (expected)\n3. Creating progress with non-existent topic...\n✅ Non-existent topic validation (expected)\n4. Getting non-existent progress...\n✅ Non-existent progress validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing invalid HTTP methods...\n❌ Invalid method progress failed: {\n  success: false,\n  error: {\n    success: false,\n    error: 'Access token required',\n    message: 'Please provide a valid authentication token'\n  },\n  status: 401\n}\n❌ Invalid method stats failed: {\n  success: false,\n  error: {\n    success: false,\n    error: 'Access token required',\n    message: 'Please provide a valid authentication token'\n  },\n  status: 401\n}\n2. Testing unauthorized access...\n✅ Unauthorized progress access (expected)\n✅ Unauthorized stats access (expected)\n\n🎉 Progress API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 20\n✅ Passed: 18\n❌ Failed: 2\n📈 Success Rate: 90.0%\n\n🔗 Available Endpoints:\n   GET    /api/progress - Get user progress\n   POST   /api/progress - Create/update progress\n   GET    /api/progress/[id] - Get specific progress\n   PUT    /api/progress/[id] - Update progress\n   DELETE /api/progress/[id] - Delete progress\n   GET    /api/progress/stats - Get progress statistics\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
-  },
-  "attempts": {
-    "status": "completed",
-    "output": "[dotenv@17.0.1] injecting env (13) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Attempt API Tests...\n📧 Test User Email: test-1751546444269@example.com\n💻 Test Code: function fibonacci(n) { return n <= 1 ? n : fibona...\n✅ Test Result: pass\n⏱️ Test Time: 120 seconds\n\n🔧 Setting up test data...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n3. Getting existing topic...\n✅ Using existing topic\n   Topic ID: 01e6bc1a-8e19-4d04-b2d2-3e46ec59cdd3\n\n💻 Testing Attempt CRUD Operations...\n1. Getting attempts (empty)...\n✅ Get attempts successful\n   Found 0 attempts\n2. Creating attempt...\n✅ Attempt created successfully\n   Attempt ID: b5cc1199-bb38-4361-b5d9-3cdc45e4b964\n3. Getting attempts (with data)...\n✅ Get attempts successful\n   Found 1 attempts\n4. Getting specific attempt...\n✅ Get specific attempt successful\n   Result: pass\n   Time: 120s\n5. Updating attempt...\n✅ Attempt updated successfully\n   New result: fail\n   New time: 180s\n6. Creating second attempt...\n✅ Second attempt created successfully\n   Attempt ID: c4be9db2-9f76-4390-9b89-238683853ff7\n\n📊 Testing Attempt Statistics...\n1. Getting attempt stats...\n✅ Get attempt stats successful\n   Total Attempts: 2\n   Passed: 1\n   Failed: 1\n   Success Rate: 50%\n   Average Time: 135s\n2. Getting attempt stats for specific topic...\n✅ Get topic attempt stats successful\n   Total Attempts: 2\n   Success Rate: 50%\n3. Filtering attempts by result...\n✅ Get passed attempts successful\n   Found 1 passed attempts\n\n🔍 Testing Validation...\n1. Creating attempt with missing topicId...\n✅ Missing topicId validation (expected)\n2. Creating attempt with missing code...\n✅ Missing code validation (expected)\n3. Creating attempt with invalid result...\n✅ Invalid result validation (expected)\n4. Creating attempt with negative time...\n✅ Negative time validation (expected)\n5. Creating attempt with non-existent topic...\n✅ Non-existent topic validation (expected)\n6. Getting non-existent attempt...\n✅ Non-existent attempt validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing unauthorized access...\n✅ Unauthorized attempts access (expected)\n✅ Unauthorized stats access (expected)\n\n🎉 Attempt API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 20\n✅ Passed: 20\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🔗 Available Endpoints:\n   GET    /api/attempts - Get user attempts\n   POST   /api/attempts - Create attempt\n   GET    /api/attempts/[id] - Get specific attempt\n   PUT    /api/attempts/[id] - Update attempt\n   DELETE /api/attempts/[id] - Delete attempt\n   GET    /api/attempts/stats - Get attempt statistics\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
-  },
-  "payments": {
-    "status": "completed",
-    "output": "[dotenv@17.0.1] injecting env (13) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Payment API Tests...\n📧 Test User Email: test-1751546446860@example.com\n💰 Test Amount: 1500 NGN\n\n🔧 Setting up test data...\n1. Creating test user...\n🔧 Setting up test data...\n1. Creating test user...\n❌ Test user creation failed: {\n  success: false,\n  error: 'User already exists',\n  message: 'A user with this email already exists'\n}\n2. Logging in test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n\n💰 Testing Payment CRUD Operations...\n1. Getting payments (empty)...\n✅ Test user logged in\n\n💰 Testing Payment CRUD Operations...\n1. Getting payments (empty)...\n✅ Get payments successful\n   Found 0 payments\n2. Creating payment...\n✅ Get payments successful\n   Found 0 payments\n2. Creating payment...\n✅ Payment created successfully\n   Payment ID: 1d069d3b-b7c1-4e2c-be38-ef3e39d7bde8\n   External Reference: undefined\n   Authorization URL: https://example.com/mock-payment\n3. Getting payments (with data)...\n✅ Payment created successfully\n   Payment ID: 19efe778-ee0f-4c4b-b77b-2ba050b9127d\n   External Reference: undefined\n   Authorization URL: https://example.com/mock-payment\n3. Getting payments (with data)...\n✅ Get payments successful\n   Found 2 payments\n4. Getting specific payment...\n✅ Get payments successful\n   Found 2 payments\n4. Getting specific payment...\n✅ Get specific payment successful\n   Status: pending\n   Amount: 1500 NGN\n5. Updating payment...\n✅ Get specific payment successful\n   Status: pending\n   Amount: 1500 NGN\n5. Updating payment...\n✅ Payment updated successfully\n   New status: success\n   Transaction ID: undefined\n6. Creating second payment...\n✅ Payment updated successfully\n   New status: success\n   Transaction ID: undefined\n6. Creating second payment...\n✅ Second payment created successfully\n   Payment ID: c036ded8-8b4f-4186-8b9b-8dbfae82fabd\n\n📊 Testing Payment Statistics...\n1. Getting payment stats...\n✅ Second payment created successfully\n   Payment ID: 5b338c1e-9df6-4be7-be74-0675502c933a\n\n📊 Testing Payment Statistics...\n1. Getting payment stats...\n✅ Get payment stats successful\n   Total Payments: 4\n   Successful: 1\n   Failed: 0\n   Pending: 3\n   Total Amount: 1500\n   Success Rate: 25%\n2. Filtering payments by status...\n✅ Get payment stats successful\n   Total Payments: 4\n   Successful: 1\n   Failed: 0\n   Pending: 3\n   Total Amount: 1500\n   Success Rate: 25%\n2. Filtering payments by status...\n✅ Get successful payments successful\n   Found 0 successful payments\n\n🔍 Testing Payment Verification...\n1. Verifying payment with reference...\n✅ Get successful payments successful\n   Found 0 successful payments\n\n🔍 Testing Payment Verification...\n1. Verifying payment with reference...\n✅ Payment verification failed as expected (invalid reference)\n\n🔍 Testing Validation...\n1. Creating payment with missing amount...\n✅ Payment verification failed as expected (invalid reference)\n\n🔍 Testing Validation...\n1. Creating payment with missing amount...\n✅ Missing amount validation (expected)\n2. Creating payment with negative amount...\n✅ Missing amount validation (expected)\n2. Creating payment with negative amount...\n✅ Negative amount validation (expected)\n3. Creating payment with invalid currency...\n✅ Negative amount validation (expected)\n3. Creating payment with invalid currency...\n✅ Invalid currency validation (expected)\n4. Getting non-existent payment...\n✅ Invalid currency validation (expected)\n4. Getting non-existent payment...\n✅ Non-existent payment validation (expected)\n5. Updating payment with invalid status...\n✅ Non-existent payment validation (expected)\n5. Updating payment with invalid status...\n✅ Invalid status validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing unauthorized access...\n✅ Invalid status validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing unauthorized access...\n✅ Unauthorized payments access (expected)\n✅ Unauthorized payments access (expected)\n✅ Unauthorized stats access (expected)\n\n🎉 Payment API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 35\n✅ Passed: 34\n❌ Failed: 1\n📈 Success Rate: 97.1%\n\n🔗 Available Endpoints:\n   GET    /api/payments - Get user payments\n   POST   /api/payments - Create payment\n   GET    /api/payments/[id] - Get specific payment\n   PUT    /api/payments/[id] - Update payment\n   DELETE /api/payments/[id] - Delete payment\n   GET    /api/payments/stats - Get payment statistics\n   GET    /api/payments/verify - Verify payment with Paystack\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n✅ Unauthorized stats access (expected)\n\n🎉 Payment API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 36\n✅ Passed: 35\n❌ Failed: 1\n📈 Success Rate: 97.2%\n\n🔗 Available Endpoints:\n   GET    /api/payments - Get user payments\n   POST   /api/payments - Create payment\n   GET    /api/payments/[id] - Get specific payment\n   PUT    /api/payments/[id] - Update payment\n   DELETE /api/payments/[id] - Delete payment\n   GET    /api/payments/stats - Get payment statistics\n   GET    /api/payments/verify - Verify payment with Paystack\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
-  },
-  "summary": {}
+  "details": {
+    "authentication": [
+      {
+        "name": "Super Admin Login",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:50.938Z",
+        "details": null
+      }
+    ],
+    "contentManagement": [
+      {
+        "name": "Get Content Overview",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.038Z",
+        "details": {
+          "totalCourses": 12,
+          "totalTopics": 6,
+          "totalAttempts": 5,
+          "totalProgress": 3,
+          "totalAssessments": 0
+        }
+      },
+      {
+        "name": "Bulk Content Operations",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.041Z",
+        "details": {
+          "success": true,
+          "data": {
+            "count": 0
+          },
+          "message": "Successfully performed activate_courses on 0 items"
+        }
+      }
+    ],
+    "systemConfig": [
+      {
+        "name": "Get System Config",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.057Z",
+        "details": {
+          "aiEnabled": true,
+          "paymentsEnabled": true,
+          "emailEnabled": true,
+          "analyticsEnabled": true
+        }
+      },
+      {
+        "name": "Update System Config",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.060Z",
+        "details": null
+      }
+    ],
+    "auditLogging": [
+      {
+        "name": "Get Audit Logs",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.095Z",
+        "details": {
+          "count": 2
+        }
+      }
+    ],
+    "dataExport": [
+      {
+        "name": "Export Data",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.119Z",
+        "details": {
+          "exportedAt": "2025-07-03T13:06:51.118Z",
+          "entities": [
+            "users",
+            "courses"
+          ],
+          "recordCount": 49
+        }
+      }
+    ],
+    "performanceMonitoring": [
+      {
+        "name": "Get Performance Metrics",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.140Z",
+        "details": {
+          "cpuUsage": 76.69549344134528,
+          "memoryUsage": 33.89334232587746,
+          "diskUsage": 75.50777587456432,
+          "uptime": 15858411139
+        }
+      }
+    ],
+    "notifications": [
+      {
+        "name": "Get System Notifications",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.162Z",
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "Create System Notification",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.166Z",
+        "details": {
+          "id": "1751548011165",
+          "type": "SYSTEM_MAINTENANCE",
+          "title": "Test Maintenance Notice",
+          "message": "This is a test notification for system maintenance",
+          "priority": "medium",
+          "status": "active",
+          "createdAt": "2025-07-03T13:06:51.165Z",
+          "expiresAt": "2025-07-10T13:06:51.165Z"
+        }
+      }
+    ],
+    "rateLimiting": [
+      {
+        "name": "Get Rate Limit Config",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.187Z",
+        "details": {
+          "requestsPerMinute": 100,
+          "requestsPerHour": 1000,
+          "burstLimit": 20
+        }
+      }
+    ],
+    "databaseMaintenance": [
+      {
+        "name": "Get Database Health",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.208Z",
+        "details": {
+          "status": "healthy",
+          "responseTime": 0,
+          "connection": "active",
+          "tables": {
+            "users": 37,
+            "courses": 12,
+            "topics": 6,
+            "payments": 5,
+            "attempts": 5,
+            "progress": 3
+          },
+          "lastChecked": "2025-07-03T13:06:51.208Z"
+        }
+      },
+      {
+        "name": "Run Database Maintenance",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.212Z",
+        "details": {
+          "success": true,
+          "data": {
+            "message": "Database analysis completed"
+          },
+          "message": "Database maintenance operation 'analyze' completed successfully"
+        }
+      }
+    ],
+    "backups": [
+      {
+        "name": "Get Backup History",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.236Z",
+        "details": {
+          "count": 2
+        }
+      },
+      {
+        "name": "Create System Backup",
+        "passed": true,
+        "timestamp": "2025-07-03T13:06:51.238Z",
+        "details": {
+          "id": "backup-1751548011238",
+          "timestamp": "2025-07-03T13:06:51.238Z",
+          "size": "2.5GB",
+          "includes": {
+            "data": true,
+            "config": true
+          },
+          "status": "completed",
+          "downloadUrl": "/api/super-admin/backups/1751548011238/download"
+        }
+      }
+    ]
+  }
 }
