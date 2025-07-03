@@ -1,6 +1,38 @@
 import { PrismaClient } from '@prisma/client'
+import axios from 'axios'
 
 const prisma = new PrismaClient()
+const BASE_URL = process.env.SEED_API_BASE_URL || 'http://localhost:3000/api'
+
+async function createSuperAdmin() {
+  const email = 'superadmin@example.com'
+  const password = 'TestPassword123!'
+  const fullName = 'Super Admin'
+
+  // Try to create via API
+  try {
+    await axios.post(`${BASE_URL}/auth/signup-new`, {
+      email,
+      password,
+      fullName
+    })
+    console.log('✅ Super admin created via API')
+  } catch (e) {
+    if (e.response?.data?.message?.includes('already exists')) {
+      console.log('ℹ️  Super admin already exists in Firebase')
+    } else {
+      console.error('❌ Failed to create super admin via API:', e.response?.data || e.message)
+    }
+  }
+
+  // Update role in DB
+  const superAdmin = await prisma.user.update({
+    where: { email },
+    data: { role: 'super_admin' }
+  })
+  console.log('✅ Super admin role set in DB')
+  return superAdmin
+}
 
 async function main() {
   // Create test users with different roles
@@ -40,16 +72,8 @@ async function main() {
     }
   })
 
-  // Add a super admin user
-  const superAdmin = await prisma.user.upsert({
-    where: { email: "superadmin@example.com" },
-    update: {},
-    create: {
-      email: "superadmin@example.com",
-      fullName: "Super Admin",
-      role: "super_admin"
-    }
-  })
+  // Create super admin via API and update role
+  const superAdmin = await createSuperAdmin()
 
   // Create a sample course
   const course = await prisma.course.upsert({
