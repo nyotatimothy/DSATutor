@@ -26,6 +26,8 @@ model User {
   attempts          Attempt[]
   skillAssessments  SkillAssessment[]
   courses           Course[] // for creators/admins
+  subscriptions     UserSubscription[]
+  courseAccess      CourseAccess[]
 }
 
 model Notification {
@@ -43,10 +45,13 @@ model Course {
   description String?
   createdBy   String
   isActive    Boolean  @default(true)
+  price       Int?     // Price in kobo (null = free)
+  isPremium   Boolean  @default(false) // Whether course requires subscription
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   topics      Topic[]
   creator     User     @relation(fields: [createdBy], references: [id])
+  courseAccess CourseAccess[]
 }
 
 model Topic {
@@ -108,7 +113,56 @@ model Payment {
   status      String   @default("pending") // pending | success | failed
   reference   String   @unique
   description String?
+  paymentType String   @default("subscription") // subscription | course_purchase | one_time
+  subscriptionId String? // Reference to subscription if applicable
+  courseId    String?  // Reference to course if applicable
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])
+}
+
+// New Pricing Models
+model SubscriptionPlan {
+  id          String   @id @default(uuid())
+  name        String   // e.g., "Basic", "Pro", "Enterprise"
+  description String
+  price       Int      // Monthly price in kobo
+  currency    String   @default("NGN")
+  duration    Int      // Duration in days (30 for monthly, 365 for yearly)
+  features    String   // JSON string of features array
+  maxCourses  Int?     // Maximum courses user can access (null = unlimited)
+  maxAssessments Int?  // Maximum AI assessments per month (null = unlimited)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  subscriptions UserSubscription[]
+}
+
+model UserSubscription {
+  id                String   @id @default(uuid())
+  userId            String
+  planId            String
+  status            String   @default("active") // active | expired | cancelled | pending
+  startDate         DateTime @default(now())
+  endDate           DateTime
+  autoRenew         Boolean  @default(true)
+  lastBillingDate   DateTime @default(now())
+  nextBillingDate   DateTime
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id])
+  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
+}
+
+model CourseAccess {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  accessType String  @default("subscription") // subscription | purchase | free
+  grantedAt DateTime @default(now())
+  expiresAt DateTime? // null = permanent access
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
 }
