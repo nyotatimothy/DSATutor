@@ -30,6 +30,7 @@ model User {
   notifications Notification[]
   skillAssessments SkillAssessment[]
   courseAccess CourseAccess[]
+  learningPaths LearningPath[]
 }
 
 model Notification {
@@ -205,4 +206,17 @@ model TestCase {
   problemId  String
   problem    Problem  @relation(fields: [problemId], references: [id])
   createdAt  DateTime @default(now())
+}
+
+model LearningPath {
+  id                      String   @id @default(uuid())
+  userId                  String
+  currentLevel            String   // beginner | intermediate | advanced
+  targetLevel             String   // beginner | intermediate | advanced | expert
+  roadmap                 String   // JSON string of roadmap array
+  immediateNextSteps      String   // JSON string of next steps array
+  longTermGoals           String   // JSON string of goals array
+  practiceRecommendations String   // JSON string of recommendations array
+  createdAt               DateTime @default(now())
+  user                    User     @relation(fields: [userId], references: [id])
 }

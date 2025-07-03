@@ -54,14 +54,13 @@ export class CourseController {
             select: {
               id: true,
               title: true,
-              position: true,
-              content: true,
+              order: true,
               courseId: true,
               createdAt: true,
               updatedAt: true
             },
             orderBy: {
-              position: 'asc'
+              order: 'asc'
             }
           },
           _count: {
@@ -110,14 +109,13 @@ export class CourseController {
               select: {
                 id: true,
                 title: true,
-                position: true,
-                content: true,
+                order: true,
                 courseId: true,
                 createdAt: true,
                 updatedAt: true
               },
               orderBy: {
-                position: 'asc'
+                order: 'asc'
               }
             },
             _count: {
@@ -187,14 +185,13 @@ export class CourseController {
             select: {
               id: true,
               title: true,
-              position: true,
-              content: true,
+              order: true,
               courseId: true,
               createdAt: true,
               updatedAt: true
             },
             orderBy: {
-              position: 'asc'
+              order: 'asc'
             }
           },
           _count: {
@@ -292,14 +289,13 @@ export class CourseController {
             select: {
               id: true,
               title: true,
-              position: true,
-              content: true,
+              order: true,
               courseId: true,
               createdAt: true,
               updatedAt: true
             },
             orderBy: {
-              position: 'asc'
+              order: 'asc'
             }
           },
           _count: {

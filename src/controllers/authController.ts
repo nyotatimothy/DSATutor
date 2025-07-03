@@ -27,14 +27,14 @@ export class AuthController {
    */
   async signup(req: NextApiRequest, res: NextApiResponse) {
     try {
-      const { email, password, fullName } = req.body
+      const { email, password, name } = req.body
 
       // Validate input
-      if (!email || !password || !fullName) {
+      if (!email || !password || !name) {
         return res.status(400).json({
           success: false,
           error: 'Missing required fields',
-          message: 'Email, password, and full name are required'
+          message: 'Email, password, and name are required'
         })
       }
 
@@ -86,7 +86,7 @@ export class AuthController {
       const user = await prisma.user.create({
         data: {
           email,
-          fullName,
+          name,
           firebaseUid: firebaseUser.user.uid,
           role: 'student' // Default role
         }
@@ -97,7 +97,7 @@ export class AuthController {
 
       // Send welcome email
       try {
-        await EmailService.sendWelcomeEmail(email, fullName)
+        await EmailService.sendWelcomeEmail(email, name)
       } catch (emailError) {
         console.error('Failed to send welcome email:', emailError)
         // Don't fail the signup if email fails
@@ -110,7 +110,7 @@ export class AuthController {
           user: {
             id: user.id,
             email: user.email,
-            fullName: user.fullName,
+            name: user.name,
             role: user.role
           },
           token
@@ -209,7 +209,7 @@ export class AuthController {
           user: {
             id: user.id,
             email: user.email,
-            fullName: user.fullName,
+            name: user.name,
             role: user.role
           },
           token
@@ -308,7 +308,7 @@ export class AuthController {
         select: {
           id: true,
           email: true,
-          fullName: true,
+          name: true,
           role: true,
           createdAt: true,
           updatedAt: true
@@ -351,24 +351,24 @@ export class AuthController {
         })
       }
 
-      const { fullName } = req.body
+      const { name } = req.body
 
       // Validate input
-      if (!fullName) {
+      if (!name) {
         return res.status(400).json({
           success: false,
           error: 'Missing required fields',
-          message: 'Full name is required'
+          message: 'Name is required'
         })
       }
 
       const user = await prisma.user.update({
         where: { id: req.user.id },
-        data: { fullName },
+        data: { name },
         select: {
           id: true,
           email: true,
-          fullName: true,
+          name: true,
           role: true,
           updatedAt: true
         }

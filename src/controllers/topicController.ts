@@ -27,14 +27,14 @@ export class TopicController {
         })
       }
 
-      const { courseId, title, position, content } = req.body
+      const { courseId, title, order, description } = req.body
 
       // Validate required fields
-      if (!courseId || !title || !position || !content) {
+      if (!courseId || !title || !order || !description) {
         return res.status(400).json({
           success: false,
           error: 'Missing required fields',
-          message: 'Course ID, title, position, and content are required'
+          message: 'Course ID, title, order, and description are required'
         })
       }
 
@@ -51,12 +51,12 @@ export class TopicController {
         })
       }
 
-      // Validate position
-      if (position < 1 || position > 1000) {
+      // Validate order
+      if (order < 1 || order > 1000) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid position',
-          message: 'Position must be between 1 and 1000'
+          error: 'Invalid order',
+          message: 'Order must be between 1 and 1000'
         })
       }
 
@@ -64,15 +64,15 @@ export class TopicController {
         data: {
           courseId,
           title,
-          position,
-          content
+          order,
+          description
         },
         select: {
           id: true,
           courseId: true,
           title: true,
-          position: true,
-          content: true,
+          order: true,
+          description: true,
           createdAt: true,
           updatedAt: true,
           course: {
@@ -138,8 +138,8 @@ export class TopicController {
             id: true,
             courseId: true,
             title: true,
-            position: true,
-            content: true,
+            order: true,
+            description: true,
             createdAt: true,
             updatedAt: true,
             course: {
@@ -150,7 +150,7 @@ export class TopicController {
             }
           },
           orderBy: {
-            position: 'asc'
+            order: 'asc'
           },
           skip,
           take
@@ -208,8 +208,8 @@ export class TopicController {
           id: true,
           courseId: true,
           title: true,
-          position: true,
-          content: true,
+          order: true,
+          description: true,
           createdAt: true,
           updatedAt: true,
           course: {
@@ -267,7 +267,7 @@ export class TopicController {
       }
 
       const { id } = req.query
-      const { title, position, content } = req.body
+      const { title, order, description } = req.body
 
       if (!id || typeof id !== 'string') {
         return res.status(400).json({
@@ -290,20 +290,20 @@ export class TopicController {
         })
       }
 
-      // Validate position if provided
-      if (position !== undefined && (position < 1 || position > 1000)) {
+      // Validate order if provided
+      if (order !== undefined && (order < 1 || order > 1000)) {
         return res.status(400).json({
           success: false,
-          error: 'Invalid position',
-          message: 'Position must be between 1 and 1000'
+          error: 'Invalid order',
+          message: 'Order must be between 1 and 1000'
         })
       }
 
       // Build update data
       const updateData: any = {}
       if (title !== undefined) updateData.title = title
-      if (position !== undefined) updateData.position = position
-      if (content !== undefined) updateData.content = content
+      if (order !== undefined) updateData.order = order
+      if (description !== undefined) updateData.description = description
 
       const topic = await prisma.topic.update({
         where: { id },
@@ -312,8 +312,8 @@ export class TopicController {
           id: true,
           courseId: true,
           title: true,
-          position: true,
-          content: true,
+          order: true,
+          description: true,
           createdAt: true,
           updatedAt: true,
           course: {
@@ -466,7 +466,7 @@ export class TopicController {
 
       // Validate topic positions
       for (const item of topicPositions) {
-        if (!item.id || !item.position || typeof item.position !== 'number' || item.position < 1) {
+        if (!item.id || !item.order || typeof item.order !== 'number' || item.order < 1) {
           return res.status(400).json({
             success: false,
             error: 'Invalid topic position',
@@ -477,10 +477,10 @@ export class TopicController {
 
       // Update topics in a transaction
       await prisma.$transaction(
-        topicPositions.map((item: { id: string; position: number }) =>
+        topicPositions.map((item: { id: string; order: number }) =>
           prisma.topic.update({
             where: { id: item.id },
-            data: { position: item.position }
+            data: { order: item.order }
           })
         )
       )

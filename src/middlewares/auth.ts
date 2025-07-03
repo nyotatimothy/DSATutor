@@ -6,7 +6,7 @@ export interface AuthenticatedRequest extends NextApiRequest {
   user?: {
     id: string
     email: string
-    fullName: string
+    name: string
     role: string
   }
 }
@@ -51,7 +51,7 @@ export const authenticateToken = async (
     req.user = {
       id: user.id,
       email: user.email,
-      fullName: user.fullName,
+      name: user.name ?? '',
       role: user.role
     }
 
@@ -147,6 +147,48 @@ export const authenticateSuperAdmin = async (req: NextApiRequest, res: NextApiRe
         success: false,
         error: 'Insufficient permissions',
         message: 'Super admin access required'
+      }
+    }
+
+    return { success: true, user }
+  } catch (error) {
+    return {
+      success: false,
+      error: 'Invalid token',
+      message: 'Token is invalid or expired'
+    }
+  }
+}
+
+/**
+ * Function to authenticate user and return result (for API routes)
+ */
+export const authMiddleware = async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const authHeader = req.headers.authorization
+    const token = authHeader && authHeader.split(' ')[1] // Bearer TOKEN
+
+    if (!token) {
+      return {
+        success: false,
+        error: 'Access token required',
+        message: 'Please provide a valid authentication token'
+      }
+    }
+
+    // Verify JWT token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any
+    
+    // Get user from database
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId }
+    })
+
+    if (!user) {
+      return {
+        success: false,
+        error: 'Invalid token',
+        message: 'User not found'
       }
     }
 

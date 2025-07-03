@@ -12,10 +12,10 @@ export default async function handler(
   }
 
   try {
-    const { email, password, fullName } = req.body
+    const { email, password, name } = req.body
 
-    if (!email || !password || !fullName) {
-      return res.status(400).json({ error: 'Email, password, and full name are required' })
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Email, password, and name are required' })
     }
 
     // Create user in Firebase
@@ -27,12 +27,12 @@ export default async function handler(
       data: {
         firebaseUid,
         email,
-        fullName
+        name
       }
     })
 
     // Send welcome email
-    await EmailService.sendWelcomeEmail(email, fullName)
+    await EmailService.sendWelcomeEmail(email, name)
 
     // Create notification
     await prisma.notification.create({
@@ -48,7 +48,7 @@ export default async function handler(
       user: {
         id: user.id,
         email: user.email,
-        fullName: user.fullName
+        name: user.name
       }
     })
   } catch (error: any) {

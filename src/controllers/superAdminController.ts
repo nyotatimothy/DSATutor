@@ -13,7 +13,7 @@ class SuperAdminController {
       if (search) {
         where.OR = [
           { email: { contains: String(search), mode: 'insensitive' } },
-          { fullName: { contains: String(search), mode: 'insensitive' } }
+          { name: { contains: String(search), mode: 'insensitive' } }
         ]
       }
 
@@ -26,7 +26,7 @@ class SuperAdminController {
           select: {
             id: true,
             email: true,
-            fullName: true,
+            name: true,
             role: true,
             createdAt: true,
             updatedAt: true,
@@ -80,7 +80,7 @@ class SuperAdminController {
         select: {
           id: true,
           email: true,
-          fullName: true,
+          name: true,
           role: true,
           createdAt: true,
           updatedAt: true,
@@ -157,7 +157,7 @@ class SuperAdminController {
         select: {
           id: true,
           email: true,
-          fullName: true,
+          name: true,
           role: true,
           updatedAt: true
         }
@@ -379,7 +379,7 @@ class SuperAdminController {
           select: {
             id: true,
             email: true,
-            fullName: true,
+            name: true,
             role: true,
             _count: {
               select: {
@@ -433,7 +433,7 @@ class SuperAdminController {
       if (search) {
         where.OR = [
           { email: { contains: String(search), mode: 'insensitive' } },
-          { fullName: { contains: String(search), mode: 'insensitive' } }
+          { name: { contains: String(search), mode: 'insensitive' } }
         ]
       }
 
@@ -446,7 +446,7 @@ class SuperAdminController {
           select: {
             id: true,
             email: true,
-            fullName: true,
+            name: true,
             role: true,
             createdAt: true,
             updatedAt: true,
@@ -518,7 +518,7 @@ class SuperAdminController {
         select: {
           id: true,
           email: true,
-          fullName: true,
+          name: true,
           role: true,
           updatedAt: true
         }
@@ -585,7 +585,7 @@ class SuperAdminController {
         select: {
           id: true,
           email: true,
-          fullName: true,
+          name: true,
           role: true,
           updatedAt: true
         }
@@ -639,7 +639,7 @@ class SuperAdminController {
               select: {
                 id: true,
                 email: true,
-                fullName: true,
+                name: true,
                 role: true
               }
             },
@@ -647,9 +647,9 @@ class SuperAdminController {
               select: {
                 id: true,
                 title: true,
-                position: true
+                order: true
               },
-              orderBy: { position: 'asc' }
+              orderBy: { order: 'asc' }
             },
             _count: {
               select: {
@@ -886,9 +886,9 @@ class SuperAdminController {
             select: {
               id: true,
               title: true,
-              position: true
+              order: true
             },
-            orderBy: { position: 'asc' }
+            orderBy: { order: 'asc' }
           }
         }
       })
@@ -967,7 +967,7 @@ class SuperAdminController {
           select: {
             id: true,
             email: true,
-            fullName: true,
+            name: true,
             role: true,
             createdAt: true
           }
@@ -984,7 +984,7 @@ class SuperAdminController {
             user: {
               select: {
                 email: true,
-                fullName: true
+                name: true
               }
             }
           }
@@ -1098,7 +1098,7 @@ class SuperAdminController {
         topPayingUsers.map(async (payment: any) => {
           const user = await prisma.user.findUnique({
             where: { id: payment.userId },
-            select: { email: true, fullName: true, role: true }
+            select: { email: true, name: true, role: true }
           })
           return {
             ...payment,
@@ -1401,7 +1401,7 @@ class SuperAdminController {
           const updatePromises = data.topicPositions.map((pos: any) =>
             prisma.topic.update({
               where: { id: pos.id },
-              data: { position: pos.position }
+              data: { order: pos.order }
             })
           )
           await Promise.all(updatePromises)
@@ -1561,7 +1561,7 @@ class SuperAdminController {
           select: {
             id: true,
             email: true,
-            fullName: true,
+            name: true,
             role: true,
             createdAt: true,
             updatedAt: true
@@ -1587,8 +1587,7 @@ class SuperAdminController {
           select: {
             id: true,
             title: true,
-            content: true,
-            position: true,
+            order: true,
             courseId: true,
             createdAt: true,
             updatedAt: true

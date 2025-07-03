@@ -32,7 +32,7 @@ export class ProgressController {
             select: {
               id: true,
               title: true,
-              position: true,
+              order: true,
               course: {
                 select: {
                   id: true,
@@ -86,8 +86,7 @@ export class ProgressController {
             select: {
               id: true,
               title: true,
-              position: true,
-              content: true,
+              order: true,
               course: {
                 select: {
                   id: true,
@@ -184,7 +183,7 @@ export class ProgressController {
               select: {
                 id: true,
                 title: true,
-                position: true,
+                order: true,
                 course: {
                   select: {
                     id: true,
@@ -209,7 +208,7 @@ export class ProgressController {
               select: {
                 id: true,
                 title: true,
-                position: true,
+                order: true,
                 course: {
                   select: {
                     id: true,
@@ -287,7 +286,7 @@ export class ProgressController {
             select: {
               id: true,
               title: true,
-              position: true,
+              order: true,
               course: {
                 select: {
                   id: true,

@@ -7,14 +7,14 @@ const BASE_URL = process.env.SEED_API_BASE_URL || 'http://localhost:3000/api'
 async function createSuperAdmin() {
   const email = 'superadmin@example.com'
   const password = 'TestPassword123!'
-  const fullName = 'Super Admin'
+  const name = 'Super Admin'
 
   // Try to create via API
   try {
     await axios.post(`${BASE_URL}/auth/signup-new`, {
       email,
       password,
-      fullName
+      name
     })
     console.log('✅ Super admin created via API')
   } catch (e: any) {
@@ -41,8 +41,8 @@ async function main() {
     update: {},
     create: {
       email: "student@example.com",
-      fullName: "Test Student",
-      role: "student",
+      name: "Test Student",
+      role: "user",
       notifications: {
         create: {
           message: "Welcome to DSATutor! Your account has been created successfully.",
@@ -57,8 +57,8 @@ async function main() {
     update: {},
     create: {
       email: "creator@example.com",
-      fullName: "Test Creator",
-      role: "creator"
+      name: "Test Creator",
+      role: "admin"
     }
   })
 
@@ -67,7 +67,7 @@ async function main() {
     update: {},
     create: {
       email: "admin@example.com",
-      fullName: "Test Admin",
+      name: "Test Admin",
       role: "admin"
     }
   })
@@ -94,8 +94,8 @@ async function main() {
     create: {
       id: "sample-topic-1",
       title: "Arrays and Lists",
-      position: 1,
-      content: "# Arrays and Lists\n\nArrays are the most basic data structure...",
+      description: "Learn about arrays and linked lists",
+      order: 1,
       courseId: course.id
     }
   })
@@ -106,8 +106,8 @@ async function main() {
     create: {
       id: "sample-topic-2",
       title: "Stacks and Queues",
-      position: 2,
-      content: "# Stacks and Queues\n\nStacks follow LIFO (Last In, First Out)...",
+      description: "Learn about stacks and queues",
+      order: 2,
       courseId: course.id
     }
   })
@@ -150,7 +150,7 @@ async function main() {
       userId: student.id,
       reference: "TEST-REF-001",
       amount: 1500,
-      currency: "NGN",
+      currency: "USD",
       status: "success"
     }
   })

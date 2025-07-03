@@ -42,7 +42,7 @@ export default async function handler(
       user: {
         id: user.id,
         email: user.email,
-        fullName: user.fullName
+        name: user.name
       },
       notifications: user.notifications
     })
