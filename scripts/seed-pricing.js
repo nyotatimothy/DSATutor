@@ -7,7 +7,7 @@ const DEFAULT_PLANS = [
     name: "Free",
     description: "Get started with basic DSA concepts",
     price: 0,
-    currency: "NGN",
+    currency: "USD",
     duration: 30,
     features: ["basic_courses", "limited_practice"],
     maxCourses: 2,
@@ -16,8 +16,8 @@ const DEFAULT_PLANS = [
   {
     name: "Basic",
     description: "Perfect for beginners starting their DSA journey",
-    price: 5000, // 50 NGN
-    currency: "NGN",
+    price: 999, // $9.99 USD
+    currency: "USD",
     duration: 30,
     features: ["basic_courses", "intermediate_courses", "limited_assessments", "progress_tracking"],
     maxCourses: 10,
@@ -26,8 +26,8 @@ const DEFAULT_PLANS = [
   {
     name: "Pro",
     description: "For serious learners and interview preparation",
-    price: 15000, // 150 NGN
-    currency: "NGN",
+    price: 2499, // $24.99 USD
+    currency: "USD",
     duration: 30,
     features: ["all_courses", "unlimited_assessments", "ai_analysis", "priority_support", "advanced_topics"],
     maxCourses: null, // unlimited
@@ -36,8 +36,8 @@ const DEFAULT_PLANS = [
   {
     name: "Enterprise",
     description: "For teams, organizations, and comprehensive learning",
-    price: 50000, // 500 NGN
-    currency: "NGN",
+    price: 9999, // $99.99 USD
+    currency: "USD",
     duration: 30,
     features: ["all_courses", "unlimited_assessments", "ai_analysis", "team_management", "priority_support", "custom_content", "white_label"],
     maxCourses: null,
@@ -87,10 +87,10 @@ async function updateCoursePricing() {
       let isPremium = false
       
       if (course.title.includes('Advanced') || course.title.includes('Problem Solving')) {
-        price = 10000 // 100 NGN for advanced courses
+        price = 1999 // $19.99 USD for advanced courses
         isPremium = true
       } else if (course.title.includes('Algorithms')) {
-        price = 7500 // 75 NGN for algorithm courses
+        price = 1499 // $14.99 USD for algorithm courses
         isPremium = true
       } else {
         // Basic courses remain free
@@ -103,7 +103,7 @@ async function updateCoursePricing() {
         data: { price, isPremium }
       })
       
-      console.log(`✅ Updated ${course.title}: ${price ? `${price} NGN` : 'Free'} ${isPremium ? '(Premium)' : ''}`)
+      console.log(`✅ Updated ${course.title}: ${price ? `${price} USD` : 'Free'} ${isPremium ? '(Premium)' : ''}`)
     }
   } catch (error) {
     console.error('❌ Failed to update course pricing:', error.message)

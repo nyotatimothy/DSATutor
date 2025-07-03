@@ -7,8 +7,8 @@ const TEST_PLANS = [
   {
     name: "Basic",
     description: "Perfect for beginners",
-    price: 5000, // 50 NGN
-    currency: "NGN",
+    price: 999, // $9.99 USD
+    currency: "USD",
     duration: 30, // 30 days
     features: ["basic_courses", "limited_assessments"],
     maxCourses: 5,
@@ -17,8 +17,8 @@ const TEST_PLANS = [
   {
     name: "Pro",
     description: "For serious learners",
-    price: 15000, // 150 NGN
-    currency: "NGN",
+    price: 2499, // $24.99 USD
+    currency: "USD",
     duration: 30,
     features: ["all_courses", "unlimited_assessments", "ai_analysis"],
     maxCourses: null, // unlimited
@@ -27,8 +27,8 @@ const TEST_PLANS = [
   {
     name: "Enterprise",
     description: "For teams and organizations",
-    price: 50000, // 500 NGN
-    currency: "NGN",
+    price: 9999, // $99.99 USD
+    currency: "USD",
     duration: 30,
     features: ["all_courses", "unlimited_assessments", "ai_analysis", "team_management", "priority_support"],
     maxCourses: null,

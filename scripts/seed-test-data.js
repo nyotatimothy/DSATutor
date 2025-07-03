@@ -524,8 +524,8 @@ async function createPayment(userId, status = "successful") {
     data: {
       userId: userId,
       reference: `PAY-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      amount: Math.floor(Math.random() * 5000) + 1000,
-      currency: "NGN",
+      amount: Math.floor(Math.random() * 5000) + 1000, // $10-$60 USD in cents
+      currency: "USD",
       status: status,
       description: "Course subscription payment"
     }

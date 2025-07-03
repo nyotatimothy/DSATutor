@@ -108,8 +108,8 @@ model SkillAssessment {
 model Payment {
   id          String   @id @default(uuid())
   userId      String
-  amount      Int      // amount in kobo (smallest currency unit)
-  currency    String   @default("NGN")
+  amount      Int      // amount in cents (smallest currency unit)
+  currency    String   @default("USD")
   status      String   @default("pending") // pending | success | failed
   reference   String   @unique
   description String?
@@ -126,8 +126,8 @@ model SubscriptionPlan {
   id          String   @id @default(uuid())
   name        String   // e.g., "Basic", "Pro", "Enterprise"
   description String
-  price       Int      // Monthly price in kobo
-  currency    String   @default("NGN")
+  price       Int      // Monthly price in cents
+  currency    String   @default("USD")
   duration    Int      // Duration in days (30 for monthly, 365 for yearly)
   features    String   // JSON string of features array
   maxCourses  Int?     // Maximum courses user can access (null = unlimited)
