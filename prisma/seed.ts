@@ -17,7 +17,7 @@ async function createSuperAdmin() {
       fullName
     })
     console.log('✅ Super admin created via API')
-  } catch (e) {
+  } catch (e: any) {
     if (e.response?.data?.message?.includes('already exists')) {
       console.log('ℹ️  Super admin already exists in Firebase')
     } else {

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../lib/prisma'
 import OpenAIService from '../services/openai'
 
@@ -6,7 +6,7 @@ class AIController {
   /**
    * Analyze code submission with AI
    */
-  async analyzeCode(req: Request, res: Response) {
+  async analyzeCode(req: NextApiRequest, res: NextApiResponse) {
     try {
       const { code, problemDescription, language = 'javascript', topicId } = req.body
       const userId = (req as any).user?.id
@@ -82,7 +82,7 @@ class AIController {
   /**
    * Assess user's skill level based on their attempts
    */
-  async assessSkillLevel(req: Request, res: Response) {
+  async assessSkillLevel(req: NextApiRequest, res: NextApiResponse) {
     try {
       const userId = (req as any).user?.id
 
@@ -113,10 +113,11 @@ class AIController {
       }
 
       // Prepare submissions for AI analysis
-      const submissions = attempts.map(attempt => ({
+      const attemptsFiltered = attempts.filter(a => a.result === 'pass' || a.result === 'fail')
+      const submissions = attemptsFiltered.map(attempt => ({
         code: attempt.code,
         problemDescription: attempt.topic?.title || 'Unknown problem',
-        result: attempt.result,
+        result: attempt.result as 'pass' | 'fail',
         score: attempt.score || undefined
       }))
 
@@ -156,7 +157,7 @@ class AIController {
   /**
    * Generate personalized hint for a problem
    */
-  async generateHint(req: Request, res: Response) {
+  async generateHint(req: NextApiRequest, res: NextApiResponse) {
     try {
       const { userCode, problemDescription, userStuck = true } = req.body
       const userId = (req as any).user?.id
@@ -201,7 +202,7 @@ class AIController {
   /**
    * Generate personalized practice problem
    */
-  async generatePracticeProblem(req: Request, res: Response) {
+  async generatePracticeProblem(req: NextApiRequest, res: NextApiResponse) {
     try {
       const { userWeaknesses, currentLevel, topic } = req.body
       const userId = (req as any).user?.id
@@ -246,7 +247,7 @@ class AIController {
   /**
    * Get user's AI assessment history
    */
-  async getAssessmentHistory(req: Request, res: Response) {
+  async getAssessmentHistory(req: NextApiRequest, res: NextApiResponse) {
     try {
       const userId = (req as any).user?.id
 
@@ -280,10 +281,21 @@ class AIController {
   /**
    * Get AI-enhanced attempt details
    */
-  async getAttemptWithAnalysis(req: Request, res: Response) {
+  async getAttemptWithAnalysis(req: NextApiRequest, res: NextApiResponse) {
     try {
-      const { id } = req.params
+      let { attemptId } = req.query
       const userId = (req as any).user?.id
+
+      if (Array.isArray(attemptId)) {
+        attemptId = attemptId[0]
+      }
+      if (!attemptId || typeof attemptId !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid attempt ID',
+          message: 'Attempt ID is required'
+        })
+      }
 
       if (!userId) {
         return res.status(401).json({
@@ -295,7 +307,7 @@ class AIController {
 
       const attempt = await prisma.attempt.findFirst({
         where: {
-          id,
+          id: attemptId,
           userId
         },
         include: {

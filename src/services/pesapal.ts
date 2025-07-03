@@ -83,10 +83,10 @@ export class PesapalService {
       const mockRedirectUrl = 'https://example.com/mock-payment'
       
       // Store transaction in database
-      await prisma.transaction.create({
+      await prisma.payment.create({
         data: {
-          userId,
-          pesapalTrackingId: mockTrackingId,
+          user: { connect: { id: userId } },
+          reference: mockTrackingId,
           amount,
           currency,
           status: 'pending'
@@ -143,10 +143,10 @@ export class PesapalService {
           const mockRedirectUrl = 'https://example.com/mock-payment'
           
           // Store transaction in database
-          await prisma.transaction.create({
+          await prisma.payment.create({
             data: {
-              userId,
-              pesapalTrackingId: mockTrackingId,
+              user: { connect: { id: userId } },
+              reference: mockTrackingId,
               amount,
               currency,
               status: 'pending'
@@ -162,10 +162,10 @@ export class PesapalService {
       const redirectUrl = response.data.redirect_url
 
       // Store transaction in database
-      await prisma.transaction.create({
+      await prisma.payment.create({
         data: {
-          userId,
-          pesapalTrackingId: trackingId,
+          user: { connect: { id: userId } },
+          reference: trackingId,
           amount,
           currency,
           status: 'pending'
@@ -187,8 +187,8 @@ export class PesapalService {
         console.log('Mock payment status requested for:', trackingId)
         
         // Update transaction status in database
-        await prisma.transaction.update({
-          where: { pesapalTrackingId: trackingId },
+        await prisma.payment.update({
+          where: { reference: trackingId },
           data: { status: 'COMPLETED' }
         })
 
@@ -216,8 +216,8 @@ export class PesapalService {
       const status = response.data.payment_status_description
       
       // Update transaction status in database
-      await prisma.transaction.update({
-        where: { pesapalTrackingId: trackingId },
+      await prisma.payment.update({
+        where: { reference: trackingId },
         data: { status }
       })
 
@@ -230,8 +230,8 @@ export class PesapalService {
         console.log('Pesapal not available, using mock status')
         
         // Update transaction status in database
-        await prisma.transaction.update({
-          where: { pesapalTrackingId: trackingId },
+        await prisma.payment.update({
+          where: { reference: trackingId },
           data: { status: 'PENDING' }
         })
 
@@ -252,8 +252,8 @@ export class PesapalService {
       const { order_tracking_id, payment_status_description } = ipnData
       
       // Update transaction status
-      await prisma.transaction.update({
-        where: { pesapalTrackingId: order_tracking_id },
+      await prisma.payment.update({
+        where: { reference: order_tracking_id },
         data: { status: payment_status_description }
       })
 

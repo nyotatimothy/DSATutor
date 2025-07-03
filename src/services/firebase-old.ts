@@ -49,8 +49,10 @@ export class FirebaseService {
             phoneNumber: null,
             photoURL: null,
             providerId: 'password'
-          }
-        } as UserCredential
+          },
+          providerId: 'password',
+          operationType: 'signUp'
+        } as unknown as UserCredential
       }
       throw error
     }
@@ -84,8 +86,10 @@ export class FirebaseService {
             phoneNumber: null,
             photoURL: null,
             providerId: 'password'
-          }
-        } as UserCredential
+          },
+          providerId: 'password',
+          operationType: 'signIn'
+        } as unknown as UserCredential
       }
       throw error
     }

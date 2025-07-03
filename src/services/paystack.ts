@@ -51,10 +51,10 @@ export class PaystackService {
       const mockRedirectUrl = 'https://example.com/mock-payment'
       
       // Store transaction in database
-      await prisma.transaction.create({
+      await prisma.payment.create({
         data: {
-          userId,
-          pesapalTrackingId: mockReference, // Reusing the field name for compatibility
+          user: { connect: { id: userId } },
+          reference: mockReference,
           amount,
           currency,
           status: 'pending'
@@ -96,10 +96,10 @@ export class PaystackService {
       const redirectUrl = data.data.authorization_url
 
       // Store transaction in database
-      await prisma.transaction.create({
+      await prisma.payment.create({
         data: {
-          userId,
-          pesapalTrackingId: reference, // Reusing the field name for compatibility
+          user: { connect: { id: userId } },
+          reference: reference,
           amount,
           currency,
           status: 'pending'
@@ -123,8 +123,8 @@ export class PaystackService {
         console.log('Mock payment status requested for:', reference)
         
         // Update transaction status in database
-        await prisma.transaction.update({
-          where: { pesapalTrackingId: reference },
+        await prisma.payment.update({
+          where: { reference: reference },
           data: { status: 'COMPLETED' }
         })
 
@@ -159,8 +159,8 @@ export class PaystackService {
       const paymentStatus = data.data.status === 'success' ? 'COMPLETED' : 'PENDING'
       
       // Update transaction status in database
-      await prisma.transaction.update({
-        where: { pesapalTrackingId: reference },
+      await prisma.payment.update({
+        where: { reference: reference },
         data: { status: paymentStatus }
       })
 
@@ -176,8 +176,8 @@ export class PaystackService {
         console.log('Paystack not available, using mock status')
         
         // Update transaction status in database
-        await prisma.transaction.update({
-          where: { pesapalTrackingId: reference },
+        await prisma.payment.update({
+          where: { reference: reference },
           data: { status: 'PENDING' }
         })
 
@@ -198,8 +198,8 @@ export class PaystackService {
       const { reference, status, amount } = webhookData.data
       
       // Update transaction status
-      await prisma.transaction.update({
-        where: { pesapalTrackingId: reference },
+      await prisma.payment.update({
+        where: { reference: reference },
         data: { status: status === 'success' ? 'COMPLETED' : 'FAILED' }
       })
 

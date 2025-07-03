@@ -1141,8 +1141,7 @@ class SuperAdminController {
         totalAttempts,
         successfulAttempts,
         totalPayments,
-        successfulPayments,
-        recentErrors
+        successfulPayments
       ] = await Promise.all([
         prisma.user.count(),
         prisma.user.count({

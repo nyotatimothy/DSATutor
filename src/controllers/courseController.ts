@@ -363,8 +363,7 @@ export class CourseController {
         include: {
           _count: {
             select: {
-              topics: true,
-              progress: true
+              topics: true
             }
           }
         }
@@ -378,7 +377,7 @@ export class CourseController {
         })
       }
 
-      // Check if course has topics or progress
+      // Check if course has topics
       if (existingCourse._count.topics > 0) {
         return res.status(400).json({
           success: false,
@@ -387,7 +386,15 @@ export class CourseController {
         })
       }
 
-      if (existingCourse._count.progress > 0) {
+      // Optionally, check for related progress records
+      const progressCount = await prisma.progress.count({
+        where: {
+          topic: {
+            courseId: id
+          }
+        }
+      })
+      if (progressCount > 0) {
         return res.status(400).json({
           success: false,
           error: 'Cannot delete course',

@@ -14,10 +14,10 @@ export class PesapalService {
       const mockRedirectUrl = 'https://example.com/mock-payment'
       
       // Store transaction in database
-      await prisma.transaction.create({
+      await prisma.payment.create({
         data: {
-          userId,
-          pesapalTrackingId: mockTrackingId,
+          user: { connect: { id: userId } },
+          reference: mockTrackingId,
           amount,
           currency,
           status: 'pending'
@@ -37,8 +37,8 @@ export class PesapalService {
       console.log('Getting payment status for:', trackingId)
       
       // Update transaction status in database
-      await prisma.transaction.update({
-        where: { pesapalTrackingId: trackingId },
+      await prisma.payment.update({
+        where: { reference: trackingId },
         data: { status: 'COMPLETED' }
       })
 
