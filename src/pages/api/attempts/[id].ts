@@ -4,7 +4,7 @@ import { authenticateToken } from '../../../middlewares/auth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Apply authentication middleware
-  authenticateToken(req as any, res, () => {
+  return authenticateToken(req as any, res, () => {
     // Continue with the request
     switch (req.method) {
       case 'GET':

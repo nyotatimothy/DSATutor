@@ -1,37 +1,24 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import SuperAdminController from '../../../controllers/superAdminController'
-import { authenticateToken } from '../../../middlewares/auth'
+import { authenticateToken, requireSuperAdmin } from '../../../middlewares/auth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Apply authentication middleware
-  await authenticateToken(req, res, () => {
-    // This will be called if authentication succeeds
-  })
-
-  // Check if user is attached to request
-  if (!(req as any).user) {
-    return // Response already sent by middleware
-  }
-
-  // Check if user is super admin
-  if ((req as any).user.role !== 'super_admin') {
-    return res.status(403).json({
-      success: false,
-      error: 'Access denied',
-      message: 'Super admin privileges required'
+  return authenticateToken(req as any, res, () => {
+    // Check if user is super admin
+    return requireSuperAdmin(req as any, res, () => {
+      switch (req.method) {
+        case 'GET':
+          return SuperAdminController.getDatabaseHealth(req, res)
+        case 'POST':
+          return SuperAdminController.runDatabaseMaintenance(req, res)
+        default:
+          return res.status(405).json({
+            success: false,
+            error: 'Method not allowed',
+            message: 'Only GET, POST methods are allowed'
+          })
+      }
     })
-  }
-
-  switch (req.method) {
-    case 'GET':
-      return SuperAdminController.getDatabaseHealth(req, res)
-    case 'POST':
-      return SuperAdminController.runDatabaseMaintenance(req, res)
-    default:
-      return res.status(405).json({
-        success: false,
-        error: 'Method not allowed',
-        message: 'Only GET, POST methods are allowed'
-      })
-  }
+  })
 } 
