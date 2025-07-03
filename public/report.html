@@ -189,15 +189,15 @@
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">5</div>
+                            <div class="text-2xl font-bold text-green-600">6</div>
                             <div class="text-gray-600">API Modules</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">101</div>
+                            <div class="text-2xl font-bold text-green-600">109</div>
                             <div class="text-gray-600">Total Tests</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">99</div>
+                            <div class="text-2xl font-bold text-green-600">107</div>
                             <div class="text-gray-600">Passed</div>
                         </div>
                         <div class="text-center">
@@ -205,7 +205,7 @@
                             <div class="text-gray-600">Failed</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">98.0%</div>
+                            <div class="text-2xl font-bold text-green-600">98.2%</div>
                             <div class="text-gray-600">Success Rate</div>
                         </div>
                     </div>
@@ -322,6 +322,107 @@
                             <p><strong>✅ Error Handling:</strong> Unauthorized access, proper error responses</p>
                             <p><strong>Architecture:</strong> ✅ Controller-based design with middleware, Paystack integration</p>
                             <p><strong>Endpoints:</strong> ✅ /api/payments, /api/payments/[id], /api/payments/stats, /api/payments/verify</p>
+                        </div>
+                    </div>
+
+                    <!-- AI Integration Tests -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">AI Integration Tests</h3>
+                                <p class="text-sm text-gray-500">OpenAI-powered code analysis, skill assessment, hint generation, and problem generation</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
+                                100% SUCCESS
+                            </span>
+                        </div>
+                        <div class="bg-gray-50 rounded p-3 text-sm">
+                            <p><strong>Test Summary:</strong> 8 tests total, 8 passed, 0 failed (100% success rate)</p>
+                            <p><strong>✅ Code Analysis:</strong> Code quality assessment, complexity analysis, suggestions</p>
+                            <p><strong>✅ Skill Assessment:</strong> Overall skill level, confidence score, strengths/weaknesses</p>
+                            <p><strong>✅ Hint Generation:</strong> Contextual hints with difficulty levels and next steps</p>
+                            <p><strong>✅ Problem Generation:</strong> Custom practice problems with hints and solutions</p>
+                            <p><strong>✅ Assessment History:</strong> User's assessment history retrieval</p>
+                            <p><strong>✅ Validation:</strong> Unauthorized access, missing fields, invalid methods</p>
+                            <p><strong>Architecture:</strong> ✅ OpenAI integration with authentication, comprehensive AI features</p>
+                            <p><strong>Endpoints:</strong> ✅ /api/ai/analyze, /api/ai/assess, /api/ai/hint, /api/ai/generate-problem, /api/ai/assessments</p>
+                        </div>
+                    </div>
+
+                    <!-- AI Integration Terminal Output -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="font-medium text-gray-900">AI Integration Terminal Output</h3>
+                                <p class="text-sm text-gray-500">Detailed results from AI integration tests</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium text-green-600 bg-green-100">
+                                SUCCESS
+                            </span>
+                        </div>
+                        <div class="bg-gray-900 text-green-400 rounded p-3 text-sm font-mono max-h-96 overflow-y-auto">
+                            <p>$ node scripts/test-ai.js</p>
+                            <p>🤖 Starting AI Integration Tests...</p>
+                            <p>📧 Test User Email: test-ai-1751526807730@example.com</p>
+                            <p>🔑 Test Password: TestPassword123!</p>
+                            <p>💻 Test Code: function fibonacci(n) { ... }</p>
+                            <p>📝 Test Problem: Write a function to calculate the nth Fibonacci number efficiently.</p>
+                            <br>
+                            <p>🔧 Setting up test data...</p>
+                            <p>✅ Test user created</p>
+                            <p>✅ Test user logged in</p>
+                            <br>
+                            <p>🧪 Testing AI Code Analysis...</p>
+                            <p>✅ AI Code Analysis successful</p>
+                            <p>   Score: 60/100</p>
+                            <p>   Code Quality: fair</p>
+                            <p>   Time Complexity: O(2^n)</p>
+                            <p>   Space Complexity: O(n)</p>
+                            <p>   Issues Found: 2</p>
+                            <p>   Suggestions: 2</p>
+                            <br>
+                            <p>🧪 Testing AI Skill Assessment...</p>
+                            <p>✅ AI Skill Assessment successful</p>
+                            <p>   Overall Level: beginner</p>
+                            <p>   Confidence Score: 85%</p>
+                            <p>   Strengths: 2</p>
+                            <p>   Weaknesses: 2</p>
+                            <p>   Recommendations: 2</p>
+                            <br>
+                            <p>🧪 Testing AI Hint Generation...</p>
+                            <p>✅ AI Hint Generation successful</p>
+                            <p>   Hint Level: moderate</p>
+                            <p>   Hint: The Fibonacci series is a sequence of numbers...</p>
+                            <p>   Next Step: Try to implement a solution using an array...</p>
+                            <br>
+                            <p>🧪 Testing AI Problem Generation...</p>
+                            <p>✅ AI Problem Generation successful</p>
+                            <p>   Difficulty: medium</p>
+                            <p>   Problem: You are given an array of integers...</p>
+                            <p>   Hints: 3</p>
+                            <p>   Solution Length: 397 chars</p>
+                            <br>
+                            <p>🧪 Testing AI Assessment History...</p>
+                            <p>✅ AI Assessment History successful</p>
+                            <p>   Assessments Found: 1</p>
+                            <br>
+                            <p>🧪 Testing Invalid Requests...</p>
+                            <p>✅ Unauthorized request properly rejected</p>
+                            <p>✅ Missing fields properly rejected</p>
+                            <p>✅ Invalid method properly rejected</p>
+                            <br>
+                            <p>📊 AI Integration Test Summary</p>
+                            <p>==============================</p>
+                            <p>Code Analysis: ✅</p>
+                            <p>Skill Assessment: ✅</p>
+                            <p>Hint Generation: ✅</p>
+                            <p>Problem Generation: ✅</p>
+                            <p>Assessment History: ✅</p>
+                            <p>Validation Tests: 3/3 passed</p>
+                            <br>
+                            <p>🎯 Overall Success Rate: 100.0% (8/8)</p>
+                            <br>
+                            <p>🎉 AI Integration Tests Completed Successfully!</p>
                         </div>
                     </div>
 
@@ -839,7 +940,7 @@
                     Controller-based architecture with JWT authentication and role-based access control
                 </p>
                 <p class="text-sm mt-2">
-                    <strong>Status:</strong> Auth, Course, Topic, Progress, Attempt, and Payment APIs fully working and passing all tests (100% success rate for all except Progress)
+                    <strong>Status:</strong> Auth, Course, Topic, Progress, Attempt, Payment, and AI APIs fully working and passing all tests (100% success rate for all except Progress)
                 </p>
                 <p class="text-sm mt-2">
                     <strong>Next Steps:</strong> Frontend integration, UI/UX improvements, and deployment

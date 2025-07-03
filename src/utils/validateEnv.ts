@@ -10,7 +10,8 @@ export function validateEnv() {
     'PESAPAL_CONSUMER_SECRET',
     'PESAPAL_BASE_URL',
     'PESAPAL_CALLBACK_URL',
-    'DATABASE_URL'
+    'DATABASE_URL',
+    'OPENAI_API_KEY'
   ]
 
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName])
@@ -18,4 +19,5 @@ export function validateEnv() {
   if (missingVars.length > 0) {
     throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`)
   }
+} 
 } 
