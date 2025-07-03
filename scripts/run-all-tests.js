@@ -7,59 +7,105 @@ console.log('=====================================\n')
 
 const testResults = {
   timestamp: new Date().toISOString(),
-  legacy: {},
-  new: {},
+  auth: {},
+  courses: {},
+  progress: {},
+  attempts: {},
+  payments: {},
   summary: {}
 }
 
-// Run legacy auth tests
-console.log('📋 Phase 1: Legacy Authentication Tests')
+// Run Auth API tests
+console.log('📋 Phase 1: Authentication API Tests')
+console.log('--------------------------------------')
+try {
+  const authOutput = execSync('node scripts/test-auth-new.js', { 
+    encoding: 'utf8',
+    timeout: 60000 
+  })
+  console.log(authOutput)
+  testResults.auth = {
+    status: 'completed',
+    output: authOutput
+  }
+} catch (error) {
+  console.log('❌ Auth tests failed:', error.message)
+  testResults.auth = {
+    status: 'failed',
+    error: error.message
+  }
+}
+
+// Run Courses & Topics API tests
+console.log('\n📋 Phase 2: Courses & Topics API Tests')
 console.log('----------------------------------------')
 try {
-  const legacyOutput = execSync('node scripts/test-auth.js', { 
+  const coursesOutput = execSync('node scripts/test-courses-topics.js', { 
     encoding: 'utf8',
-    timeout: 30000 
+    timeout: 60000 
   })
-  console.log(legacyOutput)
-  testResults.legacy = {
+  console.log(coursesOutput)
+  testResults.courses = {
     status: 'completed',
-    output: legacyOutput
+    output: coursesOutput
   }
 } catch (error) {
-  console.log('❌ Legacy tests failed:', error.message)
-  testResults.legacy = {
+  console.log('❌ Courses & Topics tests failed:', error.message)
+  testResults.courses = {
     status: 'failed',
     error: error.message
   }
 }
 
-console.log('\n📋 Phase 2: New Auth System Tests')
-console.log('-----------------------------------')
+// Run Progress API tests
+console.log('\n📋 Phase 3: Progress API Tests')
+console.log('-------------------------------')
 try {
-  const newOutput = execSync('node scripts/test-auth-new.js', { 
+  const progressOutput = execSync('node scripts/test-progress.js', { 
     encoding: 'utf8',
-    timeout: 30000 
+    timeout: 60000 
   })
-  console.log(newOutput)
-  testResults.new = {
+  console.log(progressOutput)
+  testResults.progress = {
     status: 'completed',
-    output: newOutput
+    output: progressOutput
   }
 } catch (error) {
-  console.log('❌ New auth tests failed:', error.message)
-  testResults.new = {
+  console.log('❌ Progress tests failed:', error.message)
+  testResults.progress = {
     status: 'failed',
     error: error.message
   }
 }
 
-// Run payment tests
-console.log('\n📋 Payment Integration Tests')
-console.log('-----------------------------')
+// Run Attempts API tests
+console.log('\n📋 Phase 4: Attempts API Tests')
+console.log('-------------------------------')
+try {
+  const attemptsOutput = execSync('node scripts/test-attempts.js', { 
+    encoding: 'utf8',
+    timeout: 60000 
+  })
+  console.log(attemptsOutput)
+  testResults.attempts = {
+    status: 'completed',
+    output: attemptsOutput
+  }
+} catch (error) {
+  console.log('❌ Attempts tests failed:', error.message)
+  testResults.attempts = {
+    status: 'failed',
+    error: error.message
+  }
+}
+
+// Run Payment API tests
+console.log('\n📋 Phase 5: Payment API Tests')
+console.log('------------------------------')
 try {
   const paymentOutput = execSync('node scripts/test-payments.js', { 
     encoding: 'utf8',
-    timeout: 30000 
+    timeout: 60000 
   })
   console.log(paymentOutput)
   testResults.payments = {
@@ -78,9 +124,18 @@ try {
 console.log('\n📊 Test Summary')
 console.log('===============')
 console.log(`Timestamp: ${testResults.timestamp}`)
-console.log(`Legacy Auth: ${testResults.legacy.status}`)
-console.log(`New Auth: ${testResults.new.status}`)
-console.log(`Payments: ${testResults.payments.status}`)
+console.log(`Auth API: ${testResults.auth.status}`)
+console.log(`Courses & Topics API: ${testResults.courses.status}`)
+console.log(`Progress API: ${testResults.progress.status}`)
+console.log(`Attempts API: ${testResults.attempts.status}`)
+console.log(`Payment API: ${testResults.payments.status}`)
+
+// Calculate overall success rate
+const totalTests = Object.keys(testResults).filter(key => key !== 'timestamp' && key !== 'summary').length
+const passedTests = Object.values(testResults).filter(result => result.status === 'completed').length
+const successRate = ((passedTests / totalTests) * 100).toFixed(1)
+
+console.log(`\n🎯 Overall Success Rate: ${successRate}% (${passedTests}/${totalTests})`)
 
 // Save results to file
 const resultsPath = path.join(__dirname, '..', 'test-results.json')

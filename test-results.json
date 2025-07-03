@@ -1,151 +1,24 @@
 {
-  "timestamp": "2025-07-02T20:27:08.798Z",
-  "summary": {
-    "totalTests": 18,
-    "passed": 18,
-    "failed": 0,
-    "successRate": 100
+  "timestamp": "2025-07-03T05:37:29.679Z",
+  "auth": {
+    "status": "completed",
+    "output": "[dotenv@17.0.1] injecting env (12) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting New Auth System Tests...\n📧 Test Email: test-1751521049745@example.com\n🔑 Test Password: TestPassword123!\n👤 Test Name: Test User\n\n🧪 Testing User Signup...\n✅ User Signup\n\n🧪 Testing Duplicate Signup...\n✅ Duplicate Signup\n\n🧪 Testing User Login...\n✅ User Login\n\n🧪 Testing Invalid Login...\n✅ Invalid Login\n\n🧪 Testing Get Profile...\n✅ Get Profile\n\n🧪 Testing Get Profile (Unauthorized)...\n✅ Get Profile Unauthorized\n\n🧪 Testing Update Profile...\n✅ Update Profile\n\n🧪 Testing Password Reset...\n✅ Password Reset\n\n🧪 Testing Password Reset (Invalid Email)...\n✅ Password Reset Invalid Email\n\n🧪 Testing Logout...\n✅ Logout\n\n🧪 Testing Invalid HTTP Methods...\n✅ Invalid Method - GET Signup\n✅ Invalid Method - PUT Login\n\n📊 Test Summary:\nTotal Tests: 12\n✅ Passed: 12\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🎉 Auth System Tests Completed!\n"
   },
-  "details": {
-    "authentication": [
-      {
-        "name": "Create Test User",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.210Z",
-        "details": null
-      },
-      {
-        "name": "Login Test User",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.786Z",
-        "details": null
-      }
-    ],
-    "payments": [
-      {
-        "name": "Get Payments (Empty)",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.789Z",
-        "details": {
-          "count": 0
-        }
-      },
-      {
-        "name": "Create Payment",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.792Z",
-        "details": {
-          "paymentId": "384b5f53-1d0d-44a3-a332-7fbd8e2a0799"
-        }
-      },
-      {
-        "name": "Get Payments (With Data)",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.796Z",
-        "details": {
-          "count": 1
-        }
-      },
-      {
-        "name": "Get Specific Payment",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.799Z",
-        "details": {
-          "status": "pending",
-          "amount": 1500
-        }
-      },
-      {
-        "name": "Update Payment",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.802Z",
-        "details": {
-          "status": "success"
-        }
-      },
-      {
-        "name": "Create Second Payment",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.805Z",
-        "details": {
-          "paymentId": "826b8111-0df4-4aff-8849-13f9b0952eae"
-        }
-      }
-    ],
-    "stats": [
-      {
-        "name": "Get Payment Stats",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.809Z",
-        "details": {
-          "totalPayments": 2,
-          "successfulPayments": 1,
-          "failedPayments": 0,
-          "pendingPayments": 1,
-          "totalAmount": 1500,
-          "successRate": 50
-        }
-      },
-      {
-        "name": "Filter Payments by Status",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.811Z",
-        "details": {
-          "count": 0
-        }
-      }
-    ],
-    "validation": [
-      {
-        "name": "Payment Verification (Invalid Reference)",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.814Z",
-        "details": null
-      },
-      {
-        "name": "Missing Amount",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.815Z",
-        "details": null
-      },
-      {
-        "name": "Negative Amount",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.817Z",
-        "details": null
-      },
-      {
-        "name": "Invalid Currency",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.818Z",
-        "details": null
-      },
-      {
-        "name": "Non-existent Payment",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.820Z",
-        "details": null
-      },
-      {
-        "name": "Invalid Status",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.823Z",
-        "details": null
-      }
-    ],
-    "errorHandling": [
-      {
-        "name": "Unauthorized Payments Access",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.824Z",
-        "details": null
-      },
-      {
-        "name": "Unauthorized Stats Access",
-        "passed": true,
-        "timestamp": "2025-07-02T20:27:11.825Z",
-        "details": null
-      }
-    ]
-  }
+  "courses": {
+    "status": "completed",
+    "output": "[dotenv@17.0.1] injecting env (12) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Course & Topic API Tests...\n📧 Test User Email: test-1751521054459@example.com\n👤 Test Admin Email: admin-1751521054459@example.com\n📚 Test Course: Test Course\n📖 Test Topic: Test Topic\n\n🔐 Testing Authentication...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n3. Creating admin user...\n✅ Admin user created\n4. Logging in admin user...\n✅ Admin user logged in\n\n📚 Testing Course APIs...\n1. Getting courses (empty)...\n✅ Get courses successful\n   Found 4 courses\n2. Creating course (unauthorized)...\n✅ Create course unauthorized (expected)\n3. Creating course (admin)...\n✅ Course created successfully\n   Course ID: 4d96e2b2-74af-421a-8249-93100d43cb5c\n4. Getting courses (with data)...\n✅ Get courses successful\n   Found 5 courses\n5. Getting single course...\n✅ Get single course successful\n   Course: Test Course\n6. Updating course (unauthorized)...\n✅ Update course unauthorized (expected)\n7. Updating course (admin)...\n✅ Course updated successfully\n   New title: Updated Course Title\n8. Getting courses...\n✅ Get courses successful\n   Found 5 courses\n\n📖 Testing Topic APIs...\n1. Getting topics (empty)...\n✅ Get topics successful\n   Found 0 topics\n2. Creating topic (unauthorized)...\n✅ Create topic unauthorized (expected)\n3. Creating topic (admin)...\n✅ Topic created successfully\n   Topic ID: e5eee279-3e55-4459-86db-b209a82befc5\n4. Getting topics (with data)...\n✅ Get topics successful\n   Found 1 topics\n5. Getting single topic...\n✅ Get single topic successful\n   Topic: Test Topic\n6. Updating topic (unauthorized)...\n✅ Update topic unauthorized (expected)\n7. Updating topic (admin)...\n✅ Topic updated successfully\n   New title: Updated Topic Title\n8. Creating second topic...\n✅ Second topic created successfully\n9. Reordering topics...\n✅ Topics reordered successfully\n10. Getting topics...\n✅ Get topics successful\n   Found 2 topics\n\n🔍 Testing Validation...\n1. Creating course with missing title...\n✅ Missing title validation (expected)\n2. Creating course with missing description...\n✅ Missing description validation (expected)\n3. Creating topic with invalid position...\n✅ Invalid position validation (expected)\n4. Getting non-existent course...\n✅ Non-existent course validation (expected)\n5. Getting non-existent topic...\n✅ Non-existent topic validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing invalid HTTP methods...\n✅ Invalid method course (expected)\n✅ Invalid method topic (expected)\n2. Testing missing required fields...\n✅ Missing fields course (expected)\n✅ Missing fields topic (expected)\n\n🎉 Course & Topic API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 31\n✅ Passed: 31\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🔗 Available Endpoints:\n   GET    /api/courses - List courses\n   POST   /api/courses - Create course (admin only)\n   GET    /api/courses/[id] - Get single course\n   PUT    /api/courses/[id] - Update course (admin only)\n   DELETE /api/courses/[id] - Delete course (admin only)\n   GET    /api/topics - List topics for course\n   POST   /api/topics - Create topic (admin only)\n   GET    /api/topics/[id] - Get single topic\n   PUT    /api/topics/[id] - Update topic (admin only)\n   DELETE /api/topics/[id] - Delete topic (admin only)\n   POST   /api/topics/reorder - Reorder topics (admin only)\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
+  },
+  "progress": {
+    "status": "completed",
+    "output": "[dotenv@17.0.1] injecting env (12) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Progress API Tests...\n📧 Test User Email: test-1751521059221@example.com\n📊 Test Progress Status: in_progress\n\n🔧 Setting up test data...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n3. Getting existing course...\n✅ Using existing course\n   Course ID: 4d96e2b2-74af-421a-8249-93100d43cb5c\n4. Getting existing topic...\n✅ Using existing topic\n   Topic ID: 57025a83-ff99-4e7a-9fe2-6413d4af3b2b\n\n📊 Testing Progress CRUD Operations...\n1. Getting progress (empty)...\n✅ Get progress successful\n   Found 0 progress entries\n2. Creating progress...\n✅ Progress created successfully\n   Progress ID: ae7a48d7-097b-44aa-9aae-9aaefff05667\n3. Getting progress (with data)...\n✅ Get progress successful\n   Found 1 progress entries\n4. Getting specific progress...\n✅ Get specific progress successful\n   Status: in_progress\n5. Updating progress...\n✅ Progress updated successfully\n   New status: complete\n6. Creating progress for same topic (should update)...\n✅ Progress updated via create (upsert)\n   Status: in_progress\n\n📈 Testing Progress Statistics...\n1. Getting progress stats...\n✅ Get progress stats successful\n   Total Topics: 1\n   Completed: 0\n   In Progress: 1\n   Not Started: 0\n   Completion Rate: 0.0%\n2. Getting progress stats for specific course...\n✅ Get course progress stats successful\n   Total Topics: 1\n   Completion Rate: 0.0%\n\n🔍 Testing Validation...\n1. Creating progress with missing topicId...\n✅ Missing topicId validation (expected)\n2. Creating progress with invalid status...\n✅ Invalid status validation (expected)\n3. Creating progress with non-existent topic...\n✅ Non-existent topic validation (expected)\n4. Getting non-existent progress...\n✅ Non-existent progress validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing invalid HTTP methods...\n❌ Invalid method progress failed: {\n  success: false,\n  error: {\n    success: false,\n    error: 'Access token required',\n    message: 'Please provide a valid authentication token'\n  },\n  status: 401\n}\n❌ Invalid method stats failed: {\n  success: false,\n  error: {\n    success: false,\n    error: 'Access token required',\n    message: 'Please provide a valid authentication token'\n  },\n  status: 401\n}\n2. Testing unauthorized access...\n✅ Unauthorized progress access (expected)\n✅ Unauthorized stats access (expected)\n\n🎉 Progress API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 20\n✅ Passed: 18\n❌ Failed: 2\n📈 Success Rate: 90.0%\n\n🔗 Available Endpoints:\n   GET    /api/progress - Get user progress\n   POST   /api/progress - Create/update progress\n   GET    /api/progress/[id] - Get specific progress\n   PUT    /api/progress/[id] - Update progress\n   DELETE /api/progress/[id] - Delete progress\n   GET    /api/progress/stats - Get progress statistics\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
+  },
+  "attempts": {
+    "status": "completed",
+    "output": "[dotenv@17.0.1] injecting env (12) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Attempt API Tests...\n📧 Test User Email: test-1751521061328@example.com\n💻 Test Code: function fibonacci(n) { return n <= 1 ? n : fibona...\n✅ Test Result: pass\n⏱️ Test Time: 120 seconds\n\n🔧 Setting up test data...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n3. Getting existing topic...\n✅ Using existing topic\n   Topic ID: 57025a83-ff99-4e7a-9fe2-6413d4af3b2b\n\n💻 Testing Attempt CRUD Operations...\n1. Getting attempts (empty)...\n✅ Get attempts successful\n   Found 0 attempts\n2. Creating attempt...\n✅ Attempt created successfully\n   Attempt ID: 9d94c99d-7964-4619-a3fb-0aefc55d4122\n3. Getting attempts (with data)...\n✅ Get attempts successful\n   Found 1 attempts\n4. Getting specific attempt...\n✅ Get specific attempt successful\n   Result: pass\n   Time: 120s\n5. Updating attempt...\n✅ Attempt updated successfully\n   New result: fail\n   New time: 180s\n6. Creating second attempt...\n✅ Second attempt created successfully\n   Attempt ID: b5d59ef8-0e21-4b75-a3ad-a882b8af1e65\n\n📊 Testing Attempt Statistics...\n1. Getting attempt stats...\n✅ Get attempt stats successful\n   Total Attempts: 2\n   Passed: 1\n   Failed: 1\n   Success Rate: 50%\n   Average Time: 135s\n2. Getting attempt stats for specific topic...\n✅ Get topic attempt stats successful\n   Total Attempts: 2\n   Success Rate: 50%\n3. Filtering attempts by result...\n✅ Get passed attempts successful\n   Found 1 passed attempts\n\n🔍 Testing Validation...\n1. Creating attempt with missing topicId...\n✅ Missing topicId validation (expected)\n2. Creating attempt with missing code...\n✅ Missing code validation (expected)\n3. Creating attempt with invalid result...\n✅ Invalid result validation (expected)\n4. Creating attempt with negative time...\n✅ Negative time validation (expected)\n5. Creating attempt with non-existent topic...\n✅ Non-existent topic validation (expected)\n6. Getting non-existent attempt...\n✅ Non-existent attempt validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing unauthorized access...\n✅ Unauthorized attempts access (expected)\n✅ Unauthorized stats access (expected)\n\n🎉 Attempt API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 20\n✅ Passed: 20\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🔗 Available Endpoints:\n   GET    /api/attempts - Get user attempts\n   POST   /api/attempts - Create attempt\n   GET    /api/attempts/[id] - Get specific attempt\n   PUT    /api/attempts/[id] - Update attempt\n   DELETE /api/attempts/[id] - Delete attempt\n   GET    /api/attempts/stats - Get attempt statistics\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
+  },
+  "payments": {
+    "status": "completed",
+    "output": "[dotenv@17.0.1] injecting env (12) from .env – [tip] encrypt with dotenvx: https://dotenvx.com\n🚀 Starting Payment API Tests...\n📧 Test User Email: test-1751521063482@example.com\n💰 Test Amount: 1500 NGN\n\n🔧 Setting up test data...\n1. Creating test user...\n✅ Test user created\n2. Logging in test user...\n✅ Test user logged in\n\n💰 Testing Payment CRUD Operations...\n1. Getting payments (empty)...\n✅ Get payments successful\n   Found 0 payments\n2. Creating payment...\n✅ Payment created successfully\n   Payment ID: 55ea5398-6931-4c61-a1a9-982a969d40e7\n   External Reference: undefined\n   Authorization URL: https://example.com/mock-payment\n3. Getting payments (with data)...\n✅ Get payments successful\n   Found 1 payments\n4. Getting specific payment...\n✅ Get specific payment successful\n   Status: pending\n   Amount: 1500 NGN\n5. Updating payment...\n✅ Payment updated successfully\n   New status: success\n   Transaction ID: undefined\n6. Creating second payment...\n✅ Second payment created successfully\n   Payment ID: 8c3da6c7-efe2-46be-9692-b5091de12146\n\n📊 Testing Payment Statistics...\n1. Getting payment stats...\n✅ Get payment stats successful\n   Total Payments: 2\n   Successful: 1\n   Failed: 0\n   Pending: 1\n   Total Amount: 1500\n   Success Rate: 50%\n2. Filtering payments by status...\n✅ Get successful payments successful\n   Found 0 successful payments\n\n🔍 Testing Payment Verification...\n1. Verifying payment with reference...\n✅ Payment verification failed as expected (invalid reference)\n\n🔍 Testing Validation...\n1. Creating payment with missing amount...\n✅ Missing amount validation (expected)\n2. Creating payment with negative amount...\n✅ Negative amount validation (expected)\n3. Creating payment with invalid currency...\n✅ Invalid currency validation (expected)\n4. Getting non-existent payment...\n✅ Non-existent payment validation (expected)\n5. Updating payment with invalid status...\n✅ Invalid status validation (expected)\n\n⚠️  Testing Error Handling...\n1. Testing unauthorized access...\n✅ Unauthorized payments access (expected)\n✅ Unauthorized stats access (expected)\n\n🎉 Payment API Tests Completed!\n\n📊 Test Summary:\nTotal Tests: 18\n✅ Passed: 18\n❌ Failed: 0\n📈 Success Rate: 100.0%\n\n🔗 Available Endpoints:\n   GET    /api/payments - Get user payments\n   POST   /api/payments - Create payment\n   GET    /api/payments/[id] - Get specific payment\n   PUT    /api/payments/[id] - Update payment\n   DELETE /api/payments/[id] - Delete payment\n   GET    /api/payments/stats - Get payment statistics\n   GET    /api/payments/verify - Verify payment with Paystack\n📊 Test results saved to: /Users/timothynyota/Repos/DSA AI Tutor/test-results.json\n"
+  },
+  "summary": {}
 }
