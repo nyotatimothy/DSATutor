@@ -40,6 +40,17 @@ async function main() {
     }
   })
 
+  // Add a super admin user
+  const superAdmin = await prisma.user.upsert({
+    where: { email: "superadmin@example.com" },
+    update: {},
+    create: {
+      email: "superadmin@example.com",
+      fullName: "Super Admin",
+      role: "super_admin"
+    }
+  })
+
   // Create a sample course
   const course = await prisma.course.upsert({
     where: { id: "sample-course-1" },
@@ -109,11 +120,11 @@ async function main() {
 
   // Create sample payment
   await prisma.payment.upsert({
-    where: { paystackRef: "TEST-REF-001" },
+    where: { reference: "TEST-REF-001" },
     update: {},
     create: {
       userId: student.id,
-      paystackRef: "TEST-REF-001",
+      reference: "TEST-REF-001",
       amount: 1500,
       currency: "NGN",
       status: "success"
@@ -121,7 +132,7 @@ async function main() {
   })
 
   console.log('Database seeded successfully!')
-  console.log('Created users:', { student: student.email, creator: creator.email, admin: admin.email })
+  console.log('Created users:', { student: student.email, creator: creator.email, admin: admin.email, superAdmin: superAdmin.email })
   console.log('Created course:', course.title)
   console.log('Created topics:', topic1.title, topic2.title)
 }
