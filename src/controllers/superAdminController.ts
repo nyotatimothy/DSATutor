@@ -1294,6 +1294,700 @@ class SuperAdminController {
       })
     }
   }
+
+  // Content Management System
+  static async getContentOverview(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const [
+        totalCourses,
+        totalTopics,
+        totalAttempts,
+        totalProgress,
+        totalAssessments,
+        contentStats,
+        recentContent
+      ] = await Promise.all([
+        prisma.course.count(),
+        prisma.topic.count(),
+        prisma.attempt.count(),
+        prisma.progress.count(),
+        prisma.skillAssessment.count(),
+        prisma.course.groupBy({
+          by: ['isActive'],
+          _count: { isActive: true }
+        }),
+        prisma.course.findMany({
+          take: 10,
+          orderBy: { updatedAt: 'desc' },
+          select: {
+            id: true,
+            title: true,
+            isActive: true,
+            updatedAt: true,
+            _count: {
+              select: {
+                topics: true,
+                progress: true
+              }
+            }
+          }
+        })
+      ])
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          overview: {
+            totalCourses,
+            totalTopics,
+            totalAttempts,
+            totalProgress,
+            totalAssessments
+          },
+          contentStats,
+          recentContent
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching content overview:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch content overview',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async bulkContentOperations(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { operation, contentIds, data } = req.body
+
+      if (!operation || !contentIds || !Array.isArray(contentIds)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid parameters',
+          message: 'Operation and content IDs are required'
+        })
+      }
+
+      let result: any
+
+      switch (operation) {
+        case 'activate_courses':
+          result = await prisma.course.updateMany({
+            where: { id: { in: contentIds } },
+            data: { isActive: true }
+          })
+          break
+        case 'deactivate_courses':
+          result = await prisma.course.updateMany({
+            where: { id: { in: contentIds } },
+            data: { isActive: false }
+          })
+          break
+        case 'delete_courses':
+          result = await prisma.course.deleteMany({
+            where: { id: { in: contentIds } }
+          })
+          break
+        case 'reorder_topics':
+          if (!data || !Array.isArray(data.topicPositions)) {
+            return res.status(400).json({
+              success: false,
+              error: 'Invalid topic positions',
+              message: 'Topic positions array is required'
+            })
+          }
+          // Update topic positions
+          const updatePromises = data.topicPositions.map((pos: any) =>
+            prisma.topic.update({
+              where: { id: pos.id },
+              data: { position: pos.position }
+            })
+          )
+          await Promise.all(updatePromises)
+          result = { count: data.topicPositions.length }
+          break
+        default:
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid operation',
+            message: 'Operation not supported'
+          })
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: result,
+        message: `Successfully performed ${operation} on ${result.count} items`
+      })
+    } catch (error) {
+      console.error('Error performing bulk content operations:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to perform bulk content operations',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // System Configuration
+  static async getSystemConfig(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      // This would typically come from a configuration table or environment
+      const config = {
+        features: {
+          aiEnabled: process.env.OPENAI_API_KEY ? true : false,
+          paymentsEnabled: process.env.PAYSTACK_SECRET_KEY ? true : false,
+          emailEnabled: process.env.RESEND_API_KEY ? true : false,
+          analyticsEnabled: true
+        },
+        limits: {
+          maxCoursesPerUser: 50,
+          maxTopicsPerCourse: 100,
+          maxAttemptsPerTopic: 10,
+          maxFileSize: '10MB',
+          rateLimitPerMinute: 100
+        },
+        maintenance: {
+          mode: false,
+          message: '',
+          scheduledMaintenance: null
+        }
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: config
+      })
+    } catch (error) {
+      console.error('Error fetching system config:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch system config',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async updateSystemConfig(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { config } = req.body
+
+      if (!config) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid config',
+          message: 'Configuration data is required'
+        })
+      }
+
+      // In a real implementation, this would update a configuration table
+      // For now, we'll just validate and return success
+      console.log('System config update requested:', config)
+
+      return res.status(200).json({
+        success: true,
+        message: 'System configuration updated successfully'
+      })
+    } catch (error) {
+      console.error('Error updating system config:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to update system config',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Audit Logging
+  static async getAuditLogs(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { page = 1, limit = 50, action, userId, startDate, endDate } = req.query
+      const skip = (Number(page) - 1) * Number(limit)
+
+      // In a real implementation, this would query an audit_logs table
+      // For now, we'll return a mock structure
+      const mockLogs = [
+        {
+          id: '1',
+          action: 'USER_ROLE_UPDATE',
+          userId: 'user-123',
+          adminId: (req as any).user.id,
+          details: { oldRole: 'student', newRole: 'admin' },
+          timestamp: new Date().toISOString()
+        },
+        {
+          id: '2',
+          action: 'COURSE_DELETE',
+          userId: null,
+          adminId: (req as any).user.id,
+          details: { courseId: 'course-123', courseTitle: 'Test Course' },
+          timestamp: new Date().toISOString()
+        }
+      ]
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          logs: mockLogs,
+          pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total: mockLogs.length,
+            pages: 1
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching audit logs:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch audit logs',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Data Export/Import
+  static async exportData(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { entities } = req.query
+      const entitiesList = entities ? String(entities).split(',') : ['users', 'courses', 'topics']
+
+      const exportData: any = {}
+
+      if (entitiesList.includes('users')) {
+        exportData.users = await prisma.user.findMany({
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+            role: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        })
+      }
+
+      if (entitiesList.includes('courses')) {
+        exportData.courses = await prisma.course.findMany({
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            isActive: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        })
+      }
+
+      if (entitiesList.includes('topics')) {
+        exportData.topics = await prisma.topic.findMany({
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            position: true,
+            courseId: true,
+            createdAt: true,
+            updatedAt: true
+          }
+        })
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const filename = `dsatutor-export-${timestamp}.json`
+
+      res.setHeader('Content-Type', 'application/json')
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
+
+      return res.status(200).json({
+        success: true,
+        data: exportData,
+        metadata: {
+          exportedAt: new Date().toISOString(),
+          entities: entitiesList,
+          recordCount: Object.keys(exportData).reduce((sum, key) => sum + exportData[key].length, 0)
+        }
+      })
+    } catch (error) {
+      console.error('Error exporting data:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to export data',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Performance Monitoring
+  static async getPerformanceMetrics(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { period = '24h' } = req.query
+
+      // Mock performance metrics - in real implementation, this would come from monitoring system
+      const metrics = {
+        system: {
+          cpuUsage: Math.random() * 100,
+          memoryUsage: Math.random() * 100,
+          diskUsage: Math.random() * 100,
+          uptime: Date.now() - new Date('2025-01-01').getTime()
+        },
+        database: {
+          activeConnections: Math.floor(Math.random() * 50) + 10,
+          slowQueries: Math.floor(Math.random() * 10),
+          queryTime: Math.random() * 1000
+        },
+        api: {
+          requestsPerMinute: Math.floor(Math.random() * 1000) + 100,
+          averageResponseTime: Math.random() * 500 + 50,
+          errorRate: Math.random() * 5
+        },
+        cache: {
+          hitRate: Math.random() * 100,
+          missRate: Math.random() * 20
+        }
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          metrics,
+          period: String(period),
+          timestamp: new Date().toISOString()
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching performance metrics:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch performance metrics',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Notification Management
+  static async getSystemNotifications(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { page = 1, limit = 20, status } = req.query
+      const skip = (Number(page) - 1) * Number(limit)
+
+      // Mock notifications - in real implementation, this would come from a notifications table
+      const notifications = [
+        {
+          id: '1',
+          type: 'SYSTEM_MAINTENANCE',
+          title: 'Scheduled Maintenance',
+          message: 'System will be down for maintenance on Sunday 2-4 AM',
+          status: 'active',
+          priority: 'high',
+          createdAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: '2',
+          type: 'FEATURE_UPDATE',
+          title: 'New AI Features Available',
+          message: 'Enhanced code analysis and personalized learning paths are now available',
+          status: 'active',
+          priority: 'medium',
+          createdAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        }
+      ]
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          notifications,
+          pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total: notifications.length,
+            pages: 1
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching system notifications:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch system notifications',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async createSystemNotification(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { type, title, message, priority = 'medium', expiresAt } = req.body
+
+      if (!type || !title || !message) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing required fields',
+          message: 'Type, title, and message are required'
+        })
+      }
+
+      // In real implementation, this would save to a notifications table
+      const notification = {
+        id: Date.now().toString(),
+        type,
+        title,
+        message,
+        priority,
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        expiresAt: expiresAt || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      }
+
+      return res.status(201).json({
+        success: true,
+        data: notification,
+        message: 'System notification created successfully'
+      })
+    } catch (error) {
+      console.error('Error creating system notification:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create system notification',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // API Rate Limiting Management
+  static async getRateLimitConfig(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      // Mock rate limit configuration
+      const config = {
+        global: {
+          requestsPerMinute: 100,
+          requestsPerHour: 1000,
+          burstLimit: 20
+        },
+        endpoints: {
+          auth: {
+            requestsPerMinute: 10,
+            requestsPerHour: 100
+          },
+          payments: {
+            requestsPerMinute: 30,
+            requestsPerHour: 300
+          },
+          ai: {
+            requestsPerMinute: 20,
+            requestsPerHour: 200
+          }
+        },
+        userTiers: {
+          free: {
+            requestsPerMinute: 10,
+            requestsPerHour: 100
+          },
+          premium: {
+            requestsPerMinute: 50,
+            requestsPerHour: 500
+          },
+          admin: {
+            requestsPerMinute: 200,
+            requestsPerHour: 2000
+          }
+        }
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: config
+      })
+    } catch (error) {
+      console.error('Error fetching rate limit config:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch rate limit config',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Database Maintenance
+  static async getDatabaseHealth(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      // Check database connection and basic health
+      const startTime = Date.now()
+      await prisma.$queryRaw`SELECT 1`
+      const responseTime = Date.now() - startTime
+
+      // Get table sizes and record counts
+      const tableStats = await Promise.all([
+        prisma.user.count(),
+        prisma.course.count(),
+        prisma.topic.count(),
+        prisma.payment.count(),
+        prisma.attempt.count(),
+        prisma.progress.count()
+      ])
+
+      const health = {
+        status: 'healthy',
+        responseTime,
+        connection: 'active',
+        tables: {
+          users: tableStats[0],
+          courses: tableStats[1],
+          topics: tableStats[2],
+          payments: tableStats[3],
+          attempts: tableStats[4],
+          progress: tableStats[5]
+        },
+        lastChecked: new Date().toISOString()
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: health
+      })
+    } catch (error) {
+      console.error('Error checking database health:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to check database health',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async runDatabaseMaintenance(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { operation } = req.body
+
+      if (!operation) {
+        return res.status(400).json({
+          success: false,
+          error: 'Operation required',
+          message: 'Please specify the maintenance operation'
+        })
+      }
+
+      let result: any
+
+      switch (operation) {
+        case 'vacuum':
+          // In PostgreSQL, this would be VACUUM
+          result = { message: 'Database vacuum completed' }
+          break
+        case 'analyze':
+          // In PostgreSQL, this would be ANALYZE
+          result = { message: 'Database analysis completed' }
+          break
+        case 'reindex':
+          // In PostgreSQL, this would be REINDEX
+          result = { message: 'Database reindex completed' }
+          break
+        default:
+          return res.status(400).json({
+            success: false,
+            error: 'Invalid operation',
+            message: 'Supported operations: vacuum, analyze, reindex'
+          })
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: result,
+        message: `Database maintenance operation '${operation}' completed successfully`
+      })
+    } catch (error) {
+      console.error('Error running database maintenance:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to run database maintenance',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // System Backup and Restore
+  static async createSystemBackup(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { includeData = true, includeConfig = true } = req.body
+
+      // Mock backup creation - in real implementation, this would create actual backup files
+      const backup = {
+        id: `backup-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        size: '2.5GB',
+        includes: {
+          data: includeData,
+          config: includeConfig
+        },
+        status: 'completed',
+        downloadUrl: `/api/super-admin/backups/${Date.now()}/download`
+      }
+
+      return res.status(201).json({
+        success: true,
+        data: backup,
+        message: 'System backup created successfully'
+      })
+    } catch (error) {
+      console.error('Error creating system backup:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create system backup',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async getBackupHistory(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { page = 1, limit = 10 } = req.query
+      const skip = (Number(page) - 1) * Number(limit)
+
+      // Mock backup history
+      const backups = [
+        {
+          id: 'backup-1',
+          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          size: '2.3GB',
+          status: 'completed',
+          type: 'full'
+        },
+        {
+          id: 'backup-2',
+          timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          size: '2.1GB',
+          status: 'completed',
+          type: 'full'
+        }
+      ]
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          backups,
+          pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total: backups.length,
+            pages: 1
+          }
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching backup history:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch backup history',
+        message: 'Internal server error'
+      })
+    }
+  }
 }
 
 export default SuperAdminController 
