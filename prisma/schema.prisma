@@ -11,23 +11,25 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  fullName  String
-  role      String   @default("student") // student | creator | admin | super_admin
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  firebaseUid String? @unique
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  role        String   @default("user") // user | admin | super_admin
+  firebaseUid String?   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean  @default(true)
   
   // Relations
-  notifications     Notification[]
-  payments          Payment[]
-  progress          Progress[]
-  attempts          Attempt[]
-  skillAssessments  SkillAssessment[]
-  courses           Course[] // for creators/admins
-  subscriptions     UserSubscription[]
-  courseAccess      CourseAccess[]
+  courses     Course[]
+  progress    Progress[]
+  attempts    Attempt[]
+  payments    Payment[]
+  subscriptions UserSubscription[]
+  submissions Submission[]
+  notifications Notification[]
+  skillAssessments SkillAssessment[]
+  courseAccess CourseAccess[]
 }
 
 model Notification {
@@ -55,16 +57,17 @@ model Course {
 }
 
 model Topic {
-  id        String   @id @default(uuid())
-  title     String
-  position  Int
-  content   String   // markdown or HTML
-  courseId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  course    Course   @relation(fields: [courseId], references: [id])
-  progress  Progress[]
-  attempts  Attempt[]
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  order       Int      @default(0)
+  courseId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  course      Course   @relation(fields: [courseId], references: [id])
+  progress    Progress[]
+  attempts    Attempt[]
+  problems    Problem[]
 }
 
 model Progress {
@@ -165,4 +168,41 @@ model CourseAccess {
   course    Course   @relation(fields: [courseId], references: [id])
 
   @@unique([userId, courseId])
+}
+
+model Submission {
+  id          String   @id @default(uuid())
+  userId      String
+  problemId   String
+  code        String
+  language    String
+  result      String   // "pass" | "fail"
+  error       String?
+  durationMs  Int
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  problem     Problem  @relation(fields: [problemId], references: [id])
+}
+
+model Problem {
+  id          String   @id @default(uuid())
+  title       String
+  prompt      String
+  difficulty  String   // "easy" | "medium" | "hard"
+  topicId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  testCases   TestCase[]
+  submissions Submission[]
+  topic       Topic    @relation(fields: [topicId], references: [id])
+}
+
+model TestCase {
+  id         String   @id @default(uuid())
+  input      String
+  expected   String
+  hidden     Boolean  @default(false)
+  problemId  String
+  problem    Problem  @relation(fields: [problemId], references: [id])
+  createdAt  DateTime @default(now())
 }
