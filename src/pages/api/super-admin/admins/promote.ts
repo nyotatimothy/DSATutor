@@ -1,35 +1,30 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import SuperAdminController from '../../../../controllers/superAdminController'
-import { authenticateToken } from '../../../../middlewares/auth'
+import { authenticateSuperAdmin } from '../../../../middlewares/auth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Apply authentication middleware
-  await authenticateToken(req, res, () => {
-    // This will be called if authentication succeeds
-  })
-
-  // Check if user is attached to request
-  if (!(req as any).user) {
-    return // Response already sent by middleware
-  }
-
-  // Check if user is super admin
-  if ((req as any).user.role !== 'super_admin') {
-    return res.status(403).json({
+  if (req.method !== 'PUT') {
+    return res.status(405).json({
       success: false,
-      error: 'Access denied',
-      message: 'Super admin privileges required'
+      error: 'Method not allowed',
+      message: 'Only PUT method is allowed'
     })
   }
 
-  switch (req.method) {
-    case 'POST':
-      return SuperAdminController.promoteToAdmin(req, res)
-    default:
-      return res.status(405).json({
-        success: false,
-        error: 'Method not allowed',
-        message: 'Only POST method is allowed'
-      })
+  try {
+    // Authenticate super admin
+    const authResult = await authenticateSuperAdmin(req, res)
+    if (!authResult.success) {
+      return res.status(401).json(authResult)
+    }
+
+    return await SuperAdminController.promoteToAdmin(req, res)
+  } catch (error) {
+    console.error('Error in promote to admin:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: 'Failed to promote user to admin'
+    })
   }
 } 

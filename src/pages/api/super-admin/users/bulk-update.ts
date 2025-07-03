@@ -18,13 +18,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json(authResult)
     }
 
-    return await SuperAdminController.demoteFromAdmin(req, res)
+    return await SuperAdminController.bulkUpdateUserRoles(req, res)
   } catch (error) {
-    console.error('Error in demote from admin:', error)
+    console.error('Error in bulk update user roles:', error)
     return res.status(500).json({
       success: false,
       error: 'Internal server error',
-      message: 'Failed to demote user from admin'
+      message: 'Failed to process bulk update request'
     })
   }
 } 

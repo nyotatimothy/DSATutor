@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../lib/prisma'
 
 class SuperAdminController {
   // User Management
@@ -79,42 +77,13 @@ class SuperAdminController {
 
       const user = await prisma.user.findUnique({
         where: { id },
-        include: {
-          payments: {
-            orderBy: { createdAt: 'desc' },
-            take: 10
-          },
-          progress: {
-            include: {
-              topic: {
-                include: {
-                  course: true
-                }
-              }
-            },
-            orderBy: { updatedAt: 'desc' },
-            take: 10
-          },
-          attempts: {
-            include: {
-              topic: {
-                include: {
-                  course: true
-                }
-              }
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 10
-          },
-          skillAssessments: {
-            orderBy: { assessmentDate: 'desc' },
-            take: 5
-          },
-          courses: {
-            include: {
-              topics: true
-            }
-          },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
           _count: {
             select: {
               payments: true,
@@ -255,6 +224,197 @@ class SuperAdminController {
       return res.status(500).json({
         success: false,
         error: 'Failed to delete user',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Bulk Operations
+  static async bulkUpdateUserRoles(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { userIds, role } = req.body
+
+      if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid user IDs',
+          message: 'User IDs array is required'
+        })
+      }
+
+      if (!role || !['student', 'creator', 'admin'].includes(role)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid role',
+          message: 'Role must be one of: student, creator, admin'
+        })
+      }
+
+      // Check if any users are super admin
+      const superAdmins = await prisma.user.findMany({
+        where: {
+          id: { in: userIds },
+          role: 'super_admin'
+        }
+      })
+
+      if (superAdmins.length > 0) {
+        return res.status(403).json({
+          success: false,
+          error: 'Cannot update super admin roles',
+          message: 'Super admin users cannot be updated via bulk operation'
+        })
+      }
+
+      const result = await prisma.user.updateMany({
+        where: {
+          id: { in: userIds }
+        },
+        data: { role }
+      })
+
+      return res.status(200).json({
+        success: true,
+        data: { updatedCount: result.count },
+        message: `Successfully updated ${result.count} users to ${role} role`
+      })
+    } catch (error) {
+      console.error('Error bulk updating user roles:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to bulk update user roles',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async bulkDeleteUsers(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { userIds } = req.body
+
+      if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid user IDs',
+          message: 'User IDs array is required'
+        })
+      }
+
+      // Check if any users are super admin
+      const superAdmins = await prisma.user.findMany({
+        where: {
+          id: { in: userIds },
+          role: 'super_admin'
+        }
+      })
+
+      if (superAdmins.length > 0) {
+        return res.status(403).json({
+          success: false,
+          error: 'Cannot delete super admin users',
+          message: 'Super admin users cannot be deleted'
+        })
+      }
+
+      const result = await prisma.user.deleteMany({
+        where: {
+          id: { in: userIds }
+        }
+      })
+
+      return res.status(200).json({
+        success: true,
+        data: { deletedCount: result.count },
+        message: `Successfully deleted ${result.count} users`
+      })
+    } catch (error) {
+      console.error('Error bulk deleting users:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to bulk delete users',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // User Statistics
+  static async getUserStatistics(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { period = '30' } = req.query // days
+      const daysAgo = new Date()
+      daysAgo.setDate(daysAgo.getDate() - Number(period))
+
+      const [
+        totalUsers,
+        newUsers,
+        activeUsers,
+        userRoleStats,
+        userActivityStats,
+        topActiveUsers
+      ] = await Promise.all([
+        prisma.user.count(),
+        prisma.user.count({
+          where: { createdAt: { gte: daysAgo } }
+        }),
+        prisma.user.count({
+          where: {
+            OR: [
+              { updatedAt: { gte: daysAgo } },
+              { attempts: { some: { createdAt: { gte: daysAgo } } } },
+              { progress: { some: { updatedAt: { gte: daysAgo } } } }
+            ]
+          }
+        }),
+        prisma.user.groupBy({
+          by: ['role'],
+          _count: { role: true }
+        }),
+        prisma.user.groupBy({
+          by: ['createdAt'],
+          _count: { id: true },
+          where: { createdAt: { gte: daysAgo } },
+          orderBy: { createdAt: 'asc' }
+        }),
+        prisma.user.findMany({
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+            role: true,
+            _count: {
+              select: {
+                attempts: true,
+                progress: true,
+                payments: true
+              }
+            }
+          },
+          orderBy: {
+            attempts: { _count: 'desc' }
+          },
+          take: 10
+        })
+      ])
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          overview: {
+            totalUsers,
+            newUsers,
+            activeUsers,
+            activeRate: totalUsers > 0 ? (activeUsers / totalUsers) * 100 : 0
+          },
+          roleDistribution: userRoleStats,
+          activityTrend: userActivityStats,
+          topActiveUsers
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching user statistics:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch user statistics',
         message: 'Internal server error'
       })
     }
@@ -446,6 +606,137 @@ class SuperAdminController {
     }
   }
 
+  // Course Management
+  static async getAllCourses(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { page = 1, limit = 10, search } = req.query
+      const skip = (Number(page) - 1) * Number(limit)
+
+      const where: any = {}
+      if (search) {
+        where.OR = [
+          { title: { contains: String(search), mode: 'insensitive' } },
+          { description: { contains: String(search), mode: 'insensitive' } }
+        ]
+      }
+
+      const [courses, total] = await Promise.all([
+        prisma.course.findMany({
+          where,
+          skip,
+          take: Number(limit),
+          orderBy: { createdAt: 'desc' },
+          include: {
+            creator: {
+              select: {
+                id: true,
+                email: true,
+                fullName: true,
+                role: true
+              }
+            },
+            topics: {
+              select: {
+                id: true,
+                title: true,
+                position: true
+              },
+              orderBy: { position: 'asc' }
+            },
+            _count: {
+              select: {
+                topics: true
+              }
+            }
+          }
+        }),
+        prisma.course.count({ where })
+      ])
+
+      return res.status(200).json({
+        success: true,
+        data: courses,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit))
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching courses:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch courses',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  static async deleteCourse(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { id } = req.query
+
+      if (!id || typeof id !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid course ID',
+          message: 'Course ID is required'
+        })
+      }
+
+      const course = await prisma.course.findUnique({
+        where: { id },
+        include: {
+          topics: {
+            include: {
+              progress: true,
+              attempts: true
+            }
+          }
+        }
+      })
+
+      if (!course) {
+        return res.status(404).json({
+          success: false,
+          error: 'Course not found',
+          message: 'Course with the specified ID does not exist'
+        })
+      }
+
+      // Check if course has any activity
+      const hasActivity = course.topics.some((topic: any) => 
+        topic.progress.length > 0 || topic.attempts.length > 0
+      )
+
+      if (hasActivity) {
+        return res.status(400).json({
+          success: false,
+          error: 'Cannot delete course with activity',
+          message: 'Course has user progress or attempts and cannot be deleted'
+        })
+      }
+
+      // Delete course and all related topics
+      await prisma.course.delete({
+        where: { id }
+      })
+
+      return res.status(200).json({
+        success: true,
+        message: 'Course deleted successfully'
+      })
+    } catch (error) {
+      console.error('Error deleting course:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to delete course',
+        message: 'Internal server error'
+      })
+    }
+  }
+
   // System Analytics
   static async getSystemAnalytics(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -516,12 +807,12 @@ class SuperAdminController {
 
       // Calculate revenue
       const totalRevenue = paymentStats
-        .filter(p => p.status === 'success')
-        .reduce((sum, p) => sum + (p._sum.amount || 0), 0)
+        .filter((p: any) => p.status === 'success')
+        .reduce((sum: number, p: any) => sum + (p._sum.amount || 0), 0)
 
       // Calculate success rate
-      const successfulPayments = paymentStats.find(p => p.status === 'success')?._count.status || 0
-      const totalPaymentCount = paymentStats.reduce((sum, p) => sum + p._count.status, 0)
+      const successfulPayments = paymentStats.find((p: any) => p.status === 'success')?._count.status || 0
+      const totalPaymentCount = paymentStats.reduce((sum: number, p: any) => sum + p._count.status, 0)
       const paymentSuccessRate = totalPaymentCount > 0 ? (successfulPayments / totalPaymentCount) * 100 : 0
 
       return res.status(200).json({
@@ -603,7 +894,7 @@ class SuperAdminController {
 
       // Get user details for top paying users
       const topPayingUsersWithDetails = await Promise.all(
-        topPayingUsers.map(async (payment) => {
+        topPayingUsers.map(async (payment: any) => {
           const user = await prisma.user.findUnique({
             where: { id: payment.userId },
             select: { email: true, fullName: true, role: true }
@@ -721,6 +1012,84 @@ class SuperAdminController {
       return res.status(500).json({
         success: false,
         error: 'Failed to fetch system health report',
+        message: 'Internal server error'
+      })
+    }
+  }
+
+  // Advanced Analytics
+  static async getAdvancedAnalytics(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const { period = '30' } = req.query
+      const daysAgo = new Date()
+      daysAgo.setDate(daysAgo.getDate() - Number(period))
+
+      const [
+        userGrowth,
+        courseEngagement,
+        learningProgress,
+        aiUsageStats,
+        performanceMetrics
+      ] = await Promise.all([
+        // User growth over time
+        prisma.user.groupBy({
+          by: ['createdAt'],
+          _count: { id: true },
+          where: { createdAt: { gte: daysAgo } },
+          orderBy: { createdAt: 'asc' }
+        }),
+        // Course engagement
+        prisma.course.findMany({
+          select: {
+            id: true,
+            title: true,
+            topics: {
+              select: {
+                id: true,
+                _count: {
+                  select: {
+                    progress: true,
+                    attempts: true
+                  }
+                }
+              }
+            }
+          },
+          take: 10
+        }),
+        // Learning progress distribution
+        prisma.progress.groupBy({
+          by: ['status'],
+          _count: { status: true }
+        }),
+        // AI usage statistics
+        prisma.skillAssessment.groupBy({
+          by: ['overallLevel'],
+          _count: { overallLevel: true }
+        }),
+        // Performance metrics
+        prisma.attempt.groupBy({
+          by: ['result'],
+          _count: { result: true },
+          _avg: { timeTaken: true }
+        })
+      ])
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          userGrowth,
+          courseEngagement,
+          learningProgress,
+          aiUsageStats,
+          performanceMetrics
+        }
+      })
+    } catch (error) {
+      console.error('Error fetching advanced analytics:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to fetch advanced analytics',
         message: 'Internal server error'
       })
     }
