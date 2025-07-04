@@ -1,0 +1,316 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "search": "Search",
+    "filter": "Filter",
+    "close": "Close",
+    "open": "Open",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK"
+  },
+  "navigation": {
+    "home": "Home",
+    "courses": "Courses",
+    "problems": "Problems",
+    "progress": "Progress",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Log out",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "getStarted": "Get Started"
+  },
+  "home": {
+    "hero": {
+      "title": "Master DSA with AI",
+      "subtitle": "Your AI-powered platform for mastering Data Structures and Algorithms. Get personalized learning paths, instant feedback, and expert guidance.",
+      "getStartedButton": "Get Started Free",
+      "browseCoursesButton": "Browse Courses"
+    },
+    "features": {
+      "title": "Why Choose DSATutor?",
+      "aiLearning": {
+        "title": "AI-Powered Learning",
+        "description": "Get personalized learning paths and instant feedback on your solutions with our advanced AI."
+      },
+      "comprehensiveCourses": {
+        "title": "Comprehensive Courses",
+        "description": "From basic arrays to advanced graph algorithms, we cover everything you need for technical interviews."
+      },
+      "interviewFocused": {
+        "title": "Interview Focused",
+        "description": "Practice with real interview questions and get detailed explanations for optimal solutions."
+      },
+      "trackProgress": {
+        "title": "Track Progress",
+        "description": "Monitor your learning journey with detailed analytics and progress tracking."
+      },
+      "communitySupport": {
+        "title": "Community Support",
+        "description": "Join a community of learners and get help from peers and experts."
+      },
+      "practiceCoding": {
+        "title": "Practice Coding",
+        "description": "Write, test, and debug code in our integrated development environment."
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Your DSA Journey?",
+      "subtitle": "Join thousands of developers who have improved their problem-solving skills with DSATutor.",
+      "button": "Start Learning Today"
+    },
+    "loggedIn": {
+      "welcome": "Welcome back, {name}!",
+      "subtitle": "Continue your DSA learning journey where you left off",
+      "stats": {
+        "coursesStarted": "Courses Started",
+        "problemsSolved": "Problems Solved",
+        "currentStreak": "Current Streak",
+        "studyTime": "Study Time"
+      },
+      "quickActions": {
+        "continueLearning": "Continue Learning",
+        "continueLearningDesc": "Pick up where you left off",
+        "practiceProblems": "Practice Problems",
+        "practiceProblemsDesc": "Solve coding challenges",
+        "viewProgress": "View Progress",
+        "viewProgressDesc": "Track your achievements",
+        "yourProfile": "Your Profile",
+        "yourProfileDesc": "Manage your account"
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "subtitle": "Your latest learning milestones",
+        "learningJourney": "Your Learning Journey",
+        "recentMilestones": "Recent milestones and achievements"
+      }
+    }
+  },
+  "courses": {
+    "title": "Explore Our Courses",
+    "subtitle": "Master Data Structures and Algorithms with our comprehensive course collection",
+    "searchPlaceholder": "Search courses...",
+    "filterButton": "Filter",
+    "noCoursesFound": "No courses found",
+    "noCoursesMessage": "No courses available at the moment.",
+    "searchNoResults": "Try adjusting your search terms.",
+    "courseCard": {
+      "lessons": "{count} Lessons",
+      "selfPaced": "Self-paced",
+      "allLevels": "All levels",
+      "rating": "4.8/5",
+      "startLearning": "Start Learning"
+    },
+    "cta": {
+      "title": "Ready to Start Your Journey?",
+      "subtitle": "Choose a course and begin your path to mastering Data Structures and Algorithms.",
+      "button": "Get Started Free"
+    },
+    "detail": {
+      "backToCourses": "Back to Courses",
+      "courseOverview": "Course Overview",
+      "topics": "Topics",
+      "getStarted": "Get Started",
+      "addToFavorites": "Add to Favorites",
+      "created": "Created",
+      "lastUpdated": "Last updated",
+      "comingSoon": "Coming Soon"
+    }
+  },
+  "problems": {
+    "title": "Practice Problems",
+    "subtitle": "Sharpen your DSA skills with our curated problem set",
+    "searchPlaceholder": "Search problems...",
+    "filterButton": "Filter Problems",
+    "problemCard": {
+      "category": "Category",
+      "estimatedTime": "Estimated Time",
+      "solved": "Solved",
+      "startProblem": "Start Problem"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    }
+  },
+  "problemSolve": {
+    "backToProblems": "Back to Problems",
+    "problemDescription": "Problem Description",
+    "examples": "Examples",
+    "constraints": "Constraints",
+    "codeEditor": "Code Editor",
+    "codeEditorDesc": "Write your solution in TypeScript/JavaScript",
+    "placeholder": "Write your code here...",
+    "runCode": "Run Code",
+    "running": "Running...",
+    "submit": "Submit",
+    "reset": "Reset",
+    "executionResults": "Execution Results",
+    "submissionResults": "Submission Results",
+    "status": "Status",
+    "executionTime": "Execution Time",
+    "memoryUsed": "Memory Used",
+    "testCases": "Test Cases",
+    "success": "Success",
+    "error": "Error",
+    "allTestCasesPassed": "All test cases passed!"
+  },
+  "dashboard": {
+    "welcome": "Welcome back!",
+    "welcomeMessage": "Hello, {name}!",
+    "stats": {
+      "coursesStarted": "Courses Started",
+      "problemsSolved": "Problems Solved",
+      "currentStreak": "Current Streak",
+      "studyTime": "Study Time",
+      "fromLastWeek": "+{count} from last week",
+      "thisWeek": "+{count} this week",
+      "best": "Best: {count} days",
+      "thisMonth": "This month"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "subtitle": "Continue your learning journey or start something new",
+      "browseCourses": "Browse Courses",
+      "browseCoursesDesc": "Explore new topics",
+      "practiceProblems": "Practice Problems",
+      "practiceProblemsDesc": "Solve coding challenges",
+      "viewProgress": "View Progress",
+      "viewProgressDesc": "Track your learning",
+      "viewProfile": "View Profile",
+      "viewProfileDesc": "Manage your account"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "subtitle": "Your latest learning milestones"
+    },
+    "gettingStarted": {
+      "title": "Getting Started Guide",
+      "subtitle": "New to DSATutor? Follow these steps to begin your learning journey",
+      "step1": {
+        "title": "Browse Courses",
+        "description": "Explore our curated collection of DSA courses designed for interview preparation."
+      },
+      "step2": {
+        "title": "Practice Problems",
+        "description": "Solve problems with AI-powered hints and detailed explanations."
+      },
+      "step3": {
+        "title": "Track Progress",
+        "description": "Monitor your learning progress and identify areas for improvement."
+      }
+    }
+  },
+  "progress": {
+    "title": "Your Progress",
+    "stats": {
+      "coursesCompleted": "Courses Completed",
+      "problemsSolved": "Problems Solved",
+      "currentStreak": "Current Streak",
+      "studyTime": "Study Time",
+      "complete": "complete",
+      "longest": "Longest: {count} days",
+      "thisMonth": "This month"
+    },
+    "weeklyActivity": {
+      "title": "Weekly Activity",
+      "subtitle": "Problems solved this week"
+    },
+    "achievements": {
+      "title": "Recent Achievements",
+      "firstProblem": {
+        "title": "First Problem Solved",
+        "description": "Completed your first coding problem"
+      },
+      "streak": {
+        "title": "7-Day Streak",
+        "description": "Maintained a 7-day study streak"
+      },
+      "courseCompletion": {
+        "title": "Course Completion",
+        "description": "Completed your first course"
+      }
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "cancel": "Cancel",
+    "personalInformation": "Personal Information",
+    "fullName": "Full Name",
+    "email": "Email",
+    "location": "Location",
+    "website": "Website",
+    "bio": "Bio",
+    "accountInformation": "Account Information",
+    "memberSince": "Member Since",
+    "lastLogin": "Last Login",
+    "accountStatus": "Account Status",
+    "emailVerified": "Email Verified",
+    "active": "Active",
+    "verified": "Verified",
+    "security": "Security",
+    "changePassword": "Change Password",
+    "twoFactorAuth": "Two-Factor Authentication",
+    "loginHistory": "Login History",
+    "preferences": "Preferences",
+    "notificationSettings": "Notification Settings",
+    "privacySettings": "Privacy Settings",
+    "dataExport": "Data Export",
+    "quickStats": "Quick Stats",
+    "coursesStarted": "Courses Started",
+    "problemsSolved": "Problems Solved",
+    "currentStreak": "Current Streak",
+    "studyTime": "Study Time"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back! Please sign in to your account.",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "signInButton": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign up"
+    },
+    "signup": {
+      "title": "Create Account",
+      "subtitle": "Join DSATutor and start your DSA learning journey.",
+      "fullName": "Full Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "agreeToTerms": "I agree to the terms and conditions",
+      "createAccountButton": "Create Account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign in"
+    }
+  },
+  "errors": {
+    "notFound": "Not Found",
+    "courseNotFound": "Course Not Found",
+    "courseNotFoundMessage": "The course you are looking for does not exist.",
+    "problemNotFound": "Problem Not Found",
+    "errorLoadingCourses": "Error Loading Courses",
+    "tryAgain": "Try Again",
+    "anErrorOccurred": "An error occurred",
+    "failedToFetch": "Failed to fetch",
+    "invalidCredentials": "Invalid credentials"
+  }
+} 
