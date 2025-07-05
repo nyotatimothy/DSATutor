@@ -37,6 +37,9 @@ export default function CourseDetailPage() {
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isStarting, setIsStarting] = useState(false);
+  const [isAddingToFavorites, setIsAddingToFavorites] = useState(false);
+  const [isInFavorites, setIsInFavorites] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -60,6 +63,53 @@ export default function CourseDetailPage() {
       setError('An error occurred while fetching course');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleStartLearning = async () => {
+    if (!course) return;
+    
+    setIsStarting(true);
+    try {
+      // Navigate to the first topic or course overview
+      if (course.topics && course.topics.length > 0) {
+        window.location.href = `/courses/${course.id}/topics/${course.topics[0].id}`;
+      } else {
+        // If no topics, go to problems page
+        window.location.href = '/problems';
+      }
+    } catch (error) {
+      console.error('Error starting course:', error);
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
+  const handleAddToFavorites = async () => {
+    if (!course) return;
+    
+    setIsAddingToFavorites(true);
+    try {
+      const response = await fetch('/api/courses/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          courseId: course.id,
+          action: isInFavorites ? 'remove' : 'add'
+        }),
+      });
+
+      if (response.ok) {
+        setIsInFavorites(!isInFavorites);
+      } else {
+        console.error('Failed to update favorites');
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error);
+    } finally {
+      setIsAddingToFavorites(false);
     }
   };
 
@@ -168,11 +218,21 @@ export default function CourseDetailPage() {
               <CardTitle>Get Started</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button className="w-full" size="lg">
-                Start Learning
+              <Button 
+                className="w-full" 
+                size="lg" 
+                onClick={handleStartLearning}
+                disabled={isStarting}
+              >
+                {isStarting ? 'Starting...' : 'Start Learning'}
               </Button>
-              <Button variant="outline" className="w-full">
-                Add to Favorites
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                onClick={handleAddToFavorites}
+                disabled={isAddingToFavorites}
+              >
+                {isAddingToFavorites ? 'Updating...' : (isInFavorites ? 'Remove from Favorites' : 'Add to Favorites')}
               </Button>
               <div className="text-sm text-muted-foreground">
                 <p>Created: {new Date(course.createdAt).toLocaleDateString()}</p>

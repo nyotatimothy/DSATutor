@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { useTheme } from 'next-themes';
-import { BookOpen, Code, TrendingUp, User, LogOut, Settings, Home, Menu, X, Sun, Moon, Crown } from 'lucide-react';
+import { BookOpen, Code, TrendingUp, User, LogOut, Settings, Home, Menu, X, Sun, Moon, Crown, Brain } from 'lucide-react';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -34,8 +34,8 @@ export function Navbar() {
 
   const navigationItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/courses', label: 'Courses', icon: BookOpen },
     { href: '/problems', label: 'Problems', icon: Code },
+    { href: '/evaluation', label: 'Assessment', icon: Brain },
     { href: '/progress', label: 'Progress', icon: TrendingUp },
     { href: '/pricing', label: 'Pricing', icon: Crown },
   ];

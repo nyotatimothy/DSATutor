@@ -8,6 +8,7 @@ import { Badge } from '../../src/components/ui/badge';
 import { Skeleton } from '../../src/components/ui/skeleton';
 import { Input } from '../../src/components/ui/input';
 import { BookOpen, Clock, Users, Star, Search, Filter } from 'lucide-react';
+import { useAuth } from '../../src/hooks/useAuth';
 
 interface Topic {
   id: string;
@@ -45,6 +46,7 @@ interface ApiResponse {
 }
 
 export default function CoursesPage() {
+  const { user } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -215,7 +217,7 @@ export default function CoursesPage() {
       )}
 
       {/* Call to Action */}
-      {filteredCourses.length > 0 && (
+      {filteredCourses.length > 0 && !user && (
         <div className="mt-12 text-center">
           <div className="gradient-bg rounded-lg p-8">
             <h2 className="text-2xl font-bold mb-4">Ready to Start Your Journey?</h2>

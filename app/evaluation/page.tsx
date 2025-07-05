@@ -1,0 +1,799 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../src/components/ui/card';
+import { Button } from '../../src/components/ui/button';
+import { Badge } from '../../src/components/ui/badge';
+import { Progress } from '../../src/components/ui/progress';
+import { RadioGroup, RadioGroupItem } from '../../src/components/ui/radio-group';
+import { Label } from '../../src/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../src/components/ui/select';
+import { Alert, AlertDescription } from '../../src/components/ui/alert';
+import { Skeleton } from '../../src/components/ui/skeleton';
+import { 
+  Brain, 
+  Target, 
+  Clock, 
+  CheckCircle, 
+  AlertCircle, 
+  Trophy, 
+  Star, 
+  Zap, 
+  Crown,
+  ArrowRight,
+  Loader2,
+  BookOpen,
+  TrendingUp,
+  XCircle,
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Lightbulb,
+  Rocket,
+  GraduationCap,
+  Layers,
+  Code,
+  Puzzle
+} from 'lucide-react';
+import { useAuth } from '../../src/hooks/useAuth';
+import { Textarea } from '@/components/ui/textarea';
+
+interface Question {
+  id: string;
+  question: string;
+  options: string[];
+}
+
+interface AssessmentResult {
+  level: string;
+  score: number;
+  correctAnswers: number;
+  totalQuestions: number;
+  timeSpent: number;
+  categoryPerformance: any;
+  strengths: string[];
+  weaknesses: string[];
+  confidence: number;
+  estimatedExperience: string;
+  recommendedStartingPoint: string;
+  questionResults: any[];
+}
+
+interface Curriculum {
+  level: string;
+  topics: any[];
+  estimatedDuration: string;
+  milestones: string[];
+  message: string;
+  approach: string;
+}
+
+const assessmentQuestions: Question[] = [
+  {
+    id: '1',
+    question: 'What is the time complexity of accessing an element in an array?',
+    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)']
+  },
+  {
+    id: '2',
+    question: 'Which data structure follows LIFO (Last In, First Out) principle?',
+    options: ['Queue', 'Stack', 'Linked List', 'Tree']
+  },
+  {
+    id: '3',
+    question: 'What is the time complexity of binary search?',
+    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)']
+  },
+  {
+    id: '4',
+    question: 'Which sorting algorithm has the best average-case time complexity?',
+    options: ['Bubble Sort', 'Quick Sort', 'Selection Sort', 'Insertion Sort']
+  },
+  {
+    id: '5',
+    question: 'What is the space complexity of a recursive function that calls itself n times?',
+    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)']
+  },
+  {
+    id: '6',
+    question: 'Which algorithm is used to find the shortest path in a weighted graph?',
+    options: ['BFS', 'DFS', 'Dijkstra\'s', 'Binary Search']
+  },
+  {
+    id: '7',
+    question: 'What is the time complexity of the optimal solution for the Fibonacci sequence using dynamic programming?',
+    options: ['O(1)', 'O(n)', 'O(2^n)', 'O(log n)']
+  },
+  {
+    id: '8',
+    question: 'Which data structure is best for implementing a priority queue?',
+    options: ['Array', 'Linked List', 'Heap', 'Stack']
+  }
+];
+
+export default function EvaluationPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [answers, setAnswers] = useState<{ [key: string]: number }>({});
+  const [timeSpent, setTimeSpent] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [problemAttempts, setProblemAttempts] = useState('');
+  const [previousExperience, setPreviousExperience] = useState('');
+  const [preferredLanguage, setPreferredLanguage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [results, setResults] = useState<AssessmentResult | null>(null);
+  const [curriculum, setCurriculum] = useState<Curriculum | null>(null);
+  const [recommendations, setRecommendations] = useState<string[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [showFullCurriculum, setShowFullCurriculum] = useState(false);
+
+  useEffect(() => {
+    if (currentStep === 1 && !startTime) {
+      setStartTime(Date.now());
+    }
+  }, [currentStep, startTime]);
+
+  useEffect(() => {
+    if (startTime) {
+      const interval = setInterval(() => {
+        setTimeSpent(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [startTime]);
+
+  const handleAnswerChange = (questionId: string, value: string) => {
+    setAnswers(prev => ({
+      ...prev,
+      [questionId]: parseInt(value)
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (Object.keys(answers).length < assessmentQuestions.length) {
+      alert('Please answer all questions before submitting.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setIsProcessing(true);
+
+    try {
+      const answersArray = Object.entries(answers).map(([questionId, selectedAnswer]) => ({
+        questionId,
+        selectedAnswer
+      }));
+
+      const response = await fetch('/api/ai/evaluate-level', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: user?.email,
+          answers: answersArray,
+          timeSpent,
+          problemAttempts: parseInt(problemAttempts) || 0,
+          previousExperience,
+          preferredLanguage
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Assessment failed');
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Simulate processing time
+        await new Promise(resolve => setTimeout(resolve, 7000));
+        
+        setResults(data.data.evaluation);
+        setCurriculum(data.data.curriculum);
+        setRecommendations(data.data.recommendations);
+        setShowResults(true);
+      } else {
+        throw new Error(data.message || 'Assessment failed');
+      }
+    } catch (error) {
+      console.error('Assessment error:', error);
+      alert('Assessment failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+      setIsProcessing(false);
+    }
+  };
+
+  const getLevelIcon = (level: string) => {
+    switch (level) {
+      case 'expert':
+        return '🏆';
+      case 'advanced':
+        return '⭐';
+      case 'intermediate':
+        return '📚';
+      case 'beginner':
+        return '🌱';
+      default:
+        return '📊';
+    }
+  };
+
+  const getLevelColor = (level: string) => {
+    switch (level) {
+      case 'expert':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'advanced':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getCurriculumIcon = (index: number) => {
+    const icons = [Layers, Code, Puzzle, Rocket, GraduationCap, Sparkles, Lightbulb, Target];
+    return icons[index % icons.length];
+  };
+
+  if (isProcessing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="relative">
+            <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+              <Brain className="w-12 h-12 text-blue-600 animate-pulse" />
+            </div>
+            <div className="absolute inset-0 w-24 h-24 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900">Analyzing Your Skills</h2>
+            <p className="text-gray-600">Our AI is carefully evaluating your responses and crafting your personalized learning journey...</p>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Processing answers...</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Analyzing patterns...</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Building curriculum...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showResults && results && curriculum) {
+    const visibleTopics = showFullCurriculum ? curriculum.topics : curriculum.topics.slice(0, 4);
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="max-w-6xl mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold text-gray-900">Your Learning Journey</h1>
+            <p className="text-lg text-gray-600">Personalized curriculum crafted just for you</p>
+          </div>
+
+          {/* Score Overview - Now First */}
+          <Card className="bg-white shadow-lg">
+            <CardHeader className="text-center">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <span className="text-4xl">{getLevelIcon(results.level)}</span>
+                <div>
+                  <CardTitle className="text-2xl">{results.level.charAt(0).toUpperCase() + results.level.slice(1)} Level</CardTitle>
+                  <Badge className={`mt-2 ${getLevelColor(results.level)}`}>
+                    {results.score}% Score
+                  </Badge>
+                </div>
+              </div>
+              <CardDescription>
+                {results.correctAnswers} out of {results.totalQuestions} questions correct
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className="space-y-2">
+                  <Clock className="w-8 h-8 mx-auto text-blue-500" />
+                  <p className="text-sm text-gray-600">Time Spent</p>
+                  <p className="font-semibold">{Math.round(results.timeSpent / 60)} minutes</p>
+                </div>
+                <div className="space-y-2">
+                  <Target className="w-8 h-8 mx-auto text-green-500" />
+                  <p className="text-sm text-gray-600">Confidence</p>
+                  <p className="font-semibold">{results.confidence}%</p>
+                </div>
+                <div className="space-y-2">
+                  <BookOpen className="w-8 h-8 mx-auto text-purple-500" />
+                  <p className="text-sm text-gray-600">Experience</p>
+                  <p className="font-semibold">{results.estimatedExperience}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Curriculum - Now Second */}
+          <Card className="bg-white shadow-lg border-2 border-blue-100">
+            <CardHeader className="text-center bg-gradient-to-r from-blue-50 to-indigo-50">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <GraduationCap className="w-8 h-8 text-blue-600" />
+                <CardTitle className="text-2xl">Your Personalized Curriculum</CardTitle>
+                <Badge className={`${getLevelColor(results.level)}`}>
+                  {results.level.charAt(0).toUpperCase() + results.level.slice(1)} Level
+                </Badge>
+              </div>
+              <CardDescription className="text-lg max-w-3xl mx-auto">
+                {curriculum.message}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {/* Approach Description */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                <div className="flex items-start space-x-3">
+                  <Lightbulb className="w-6 h-6 text-green-600 mt-1 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-green-800 mb-2">Our Approach</h4>
+                    <p className="text-green-700">{curriculum.approach}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Topics with Visual Flow */}
+              <div className="space-y-4">
+                {visibleTopics.map((topic, index) => {
+                  const IconComponent = getCurriculumIcon(index);
+                  const isLast = index === visibleTopics.length - 1;
+                  
+                  return (
+                    <div key={topic.id} className="relative">
+                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-white to-blue-50 rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
+                        <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                          <IconComponent className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-lg">{topic.title}</h4>
+                            <Badge variant="outline" className="ml-2">{topic.difficulty}</Badge>
+                          </div>
+                          <p className="text-gray-600 mt-1">{topic.estimatedTime} minutes</p>
+                          {topic.prerequisites.length > 0 && (
+                            <p className="text-sm text-blue-600 mt-1">
+                              Builds on: {topic.prerequisites.map(p => `Topic ${p}`).join(', ')}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex-shrink-0">
+                          <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                            {index + 1}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Connection Line */}
+                      {!isLast && (
+                        <div className="absolute left-6 top-16 w-0.5 h-8 bg-blue-300"></div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Show More/Less Button */}
+              {curriculum.topics.length > 4 && (
+                <div className="text-center mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowFullCurriculum(!showFullCurriculum)}
+                    className="flex items-center space-x-2"
+                  >
+                    {showFullCurriculum ? (
+                      <>
+                        <ChevronUp className="w-4 h-4" />
+                        <span>Show Less</span>
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4" />
+                        <span>Show Full Curriculum ({curriculum.topics.length} topics)</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* Milestones */}
+              <div className="mt-8 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                <h4 className="font-semibold text-purple-800 mb-3 flex items-center">
+                  <Trophy className="w-5 h-5 mr-2" />
+                  Your Learning Milestones
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {curriculum.milestones.map((milestone, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-sm text-purple-700">{milestone}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <p className="text-gray-600">
+                  <strong>Estimated Duration:</strong> {curriculum.estimatedDuration}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Analysis */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Strengths */}
+            <Card className="bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="w-5 h-5 text-green-500" />
+                  <span>Your Strengths</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {results.strengths.length > 0 ? (
+                  <ul className="space-y-2">
+                    {results.strengths.map((strength, index) => (
+                      <li key={index} className="flex items-center space-x-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span className="text-sm">{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 text-sm">Keep practicing to build your strengths!</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Areas for Improvement */}
+            <Card className="bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <AlertTriangle className="w-5 h-5 text-orange-500" />
+                  <span>Areas for Improvement</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {results.weaknesses.length > 0 ? (
+                  <ul className="space-y-2">
+                    {results.weaknesses.map((weakness, index) => (
+                      <li key={index} className="flex items-center space-x-2">
+                        <XCircle className="w-4 h-4 text-orange-500" />
+                        <span className="text-sm">{weakness}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-500 text-sm">Great job! You're well-rounded.</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Category Performance */}
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle>Performance by Category</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {Object.entries(results.categoryPerformance).map(([category, data]: [string, any]) => (
+                  <div key={category} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium">{category}</span>
+                      <span className="text-sm text-gray-600">{data.correct}/{data.total} correct ({data.percentage}%)</span>
+                    </div>
+                    <Progress value={data.percentage} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Detailed Question Results */}
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle>Question-by-Question Analysis</CardTitle>
+              <CardDescription>Review your answers and learn from mistakes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {results.questionResults.map((result, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <h4 className="font-semibold">Question {index + 1}</h4>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={result.isCorrect ? "default" : "destructive"}>
+                          {result.isCorrect ? "Correct" : "Incorrect"}
+                        </Badge>
+                        <Badge variant="outline">{result.category}</Badge>
+                        <Badge variant="outline">{result.difficulty}</Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-gray-700 text-sm">{result.question}</p>
+                    
+                    <div className="space-y-2">
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-gray-600">Your Answer:</p>
+                        <div className={`p-2 rounded border text-sm ${result.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                          {result.userAnswerText}
+                        </div>
+                      </div>
+                      
+                      {!result.isCorrect && (
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-gray-600">Correct Answer:</p>
+                          <div className="p-2 rounded border bg-green-50 border-green-200 text-sm">
+                            {result.correctAnswerText}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                      <p className="text-xs text-blue-800">
+                        <strong>Explanation:</strong> {result.explanation}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recommendations */}
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle>Recommendations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {recommendations.map((recommendation, index) => (
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                    <p className="text-sm">{recommendation}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              onClick={() => router.push(`/curriculum?level=${results.level}&score=${results.score}`)}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Start Learning
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => setShowResults(false)}
+            >
+              Retake Assessment
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => router.push('/dashboard')}
+            >
+              Go to Dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold text-gray-900">Skill Assessment</h1>
+          <p className="text-lg text-gray-600">
+            Let's evaluate your current DSA knowledge to create a personalized learning path
+          </p>
+        </div>
+
+        {/* Progress */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm text-gray-600">
+            <span>Step {currentStep} of 3</span>
+            <span>{Math.round((currentStep / 3) * 100)}% Complete</span>
+          </div>
+          <Progress value={(currentStep / 3) * 100} className="h-2" />
+        </div>
+
+        {/* Step 1: Quiz */}
+        {currentStep === 1 && (
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle>DSA Knowledge Quiz</CardTitle>
+              <CardDescription>
+                Answer these questions to assess your current understanding. Be honest - this helps us create the best learning path for you.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {assessmentQuestions.map((question, index) => (
+                  <div key={question.id} className="space-y-3 p-4 border rounded-lg bg-gray-50">
+                    <h3 className="font-semibold text-lg">
+                      Question {index + 1}: {question.question}
+                    </h3>
+                    <RadioGroup
+                      value={answers[question.id]?.toString() || ''}
+                      onValueChange={(value) => handleAnswerChange(question.id, value)}
+                    >
+                      {question.options.map((option, optionIndex) => (
+                        <div key={optionIndex} className="flex items-center space-x-2">
+                          <RadioGroupItem value={optionIndex.toString()} id={`${question.id}-${optionIndex}`} />
+                          <Label htmlFor={`${question.id}-${optionIndex}`} className="text-sm">
+                            {option}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="flex justify-between pt-4">
+                <Button variant="outline" disabled>
+                  Previous
+                </Button>
+                <Button 
+                  onClick={() => setCurrentStep(2)}
+                  disabled={Object.keys(answers).length < assessmentQuestions.length}
+                >
+                  Next
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 2: Experience */}
+        {currentStep === 2 && (
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle>Your Experience</CardTitle>
+              <CardDescription>
+                Tell us about your programming background to better personalize your learning experience
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="experience">Previous DSA Experience</Label>
+                <Select value={previousExperience} onValueChange={setPreviousExperience}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your experience level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No experience</SelectItem>
+                    <SelectItem value="beginner">Beginner (0-6 months)</SelectItem>
+                    <SelectItem value="intermediate">Intermediate (6 months - 2 years)</SelectItem>
+                    <SelectItem value="advanced">Advanced (2+ years)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="attempts">How many DSA problems have you attempted?</Label>
+                <Textarea
+                  id="attempts"
+                  placeholder="e.g., 50 problems, mostly easy level"
+                  value={problemAttempts}
+                  onChange={(e) => setProblemAttempts(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="language">Preferred Programming Language</Label>
+                <Select value={preferredLanguage} onValueChange={setPreferredLanguage}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose your language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="javascript">JavaScript</SelectItem>
+                    <SelectItem value="python">Python</SelectItem>
+                    <SelectItem value="java">Java</SelectItem>
+                    <SelectItem value="cpp">C++</SelectItem>
+                    <SelectItem value="csharp">C#</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex justify-between pt-4">
+                <Button variant="outline" onClick={() => setCurrentStep(1)}>
+                  Previous
+                </Button>
+                <Button 
+                  onClick={() => setCurrentStep(3)}
+                  disabled={!previousExperience || !preferredLanguage}
+                >
+                  Next
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Step 3: Review & Submit */}
+        {currentStep === 3 && (
+          <Card className="bg-white shadow-lg">
+            <CardHeader>
+              <CardTitle>Review & Submit</CardTitle>
+              <CardDescription>
+                Review your answers and submit your assessment
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold">Quiz Answers:</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {assessmentQuestions.map((question, index) => (
+                    <div key={question.id} className="p-3 border rounded-lg">
+                      <p className="text-sm font-medium">Q{index + 1}: {question.question}</p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Your answer: {answers[question.id] !== undefined ? question.options[answers[question.id]] : 'Not answered'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold">Experience Details:</h3>
+                <div className="space-y-2">
+                  <p><strong>Experience Level:</strong> {previousExperience}</p>
+                  <p><strong>Problem Attempts:</strong> {problemAttempts || 'Not specified'}</p>
+                  <p><strong>Preferred Language:</strong> {preferredLanguage}</p>
+                </div>
+              </div>
+
+              <Alert>
+                <AlertDescription>
+                  This assessment will take about 7 seconds to process. Please don't close this page.
+                </AlertDescription>
+              </Alert>
+
+              <div className="flex justify-between pt-4">
+                <Button variant="outline" onClick={() => setCurrentStep(2)}>
+                  Previous
+                </Button>
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isSubmitting ? 'Processing...' : 'Submit Assessment'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+} 

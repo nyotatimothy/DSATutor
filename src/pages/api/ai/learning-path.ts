@@ -68,7 +68,7 @@ async function getNextProblemRecommendation(
   }
 
   // Get current problem info
-  const currentProblem = problemProgression[currentId as keyof typeof problemProgression]
+  const currentProblem = problemProgression[currentId.toString() as keyof typeof problemProgression]
   
   if (!currentProblem) {
     // Fallback to next sequential problem
