@@ -29,17 +29,29 @@ import { useEffect, useState } from 'react';
 export default function HomePage() {
   const { user } = useAuth();
   const [progress, setProgress] = useState({ completed: 0, total: 0, percent: 0, currentTopic: '' });
+  const [latestAssessment, setLatestAssessment] = useState<any>(null);
+  const [hasAssessment, setHasAssessment] = useState(false);
 
   useEffect(() => {
     if (user) {
       // Try to get latest curriculum and progress from localStorage
       const curriculumRaw = typeof window !== 'undefined' ? localStorage.getItem('dsatutor_latest_curriculum') : null;
+      const assessmentRaw = typeof window !== 'undefined' ? localStorage.getItem('dsatutor_latest_assessment') : null;
+      
       if (curriculumRaw) {
         try {
           const curriculum = JSON.parse(curriculumRaw);
           const total = curriculum.topics?.length || 0;
           // For demo, mark 0 as completed
           setProgress({ completed: 0, total, percent: 0, currentTopic: total > 0 ? curriculum.topics[0].title : '' });
+        } catch {}
+      }
+
+      if (assessmentRaw) {
+        try {
+          const assessment = JSON.parse(assessmentRaw);
+          setLatestAssessment(assessment);
+          setHasAssessment(true);
         } catch {}
       }
     }
@@ -144,7 +156,7 @@ export default function HomePage() {
   }
 
   // For logged-in users, check if they have completed assessment
-  const hasCompletedAssessment = (user as any).assessmentCompleted || false; // This would come from user data
+  const hasCompletedAssessment = hasAssessment || (user as any).assessmentCompleted || false;
 
   // If user hasn't completed assessment, redirect to evaluation
   if (!hasCompletedAssessment) {
@@ -259,7 +271,7 @@ export default function HomePage() {
 
                 <div className="flex space-x-3">
                   <Button asChild className="flex-1">
-                    <Link href="/problems/3/solve">
+                    <Link href="/curriculum">
                       <Play className="h-4 w-4 mr-2" />
                       Continue Learning
                     </Link>
@@ -275,8 +287,52 @@ export default function HomePage() {
             </Card>
           </div>
 
-          {/* Quick Actions */}
+          {/* Assessment History & Quick Actions */}
           <div className="space-y-6">
+            {/* Latest Assessment Results */}
+            {latestAssessment && (
+              <Card className="border-2 border-blue-100">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Trophy className="h-5 w-5 text-yellow-500" />
+                    <span>Latest Assessment</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Completed on {latestAssessment.date ? new Date(latestAssessment.date).toLocaleDateString() : 'Unknown'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                      {latestAssessment.level.charAt(0).toUpperCase() + latestAssessment.level.slice(1)} Level
+                    </Badge>
+                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                      {latestAssessment.score}% Score
+                    </Badge>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <Badge className="bg-purple-100 text-purple-800 border-purple-200">
+                      {latestAssessment.correctAnswers}/{latestAssessment.totalQuestions} Correct
+                    </Badge>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" asChild className="flex-1">
+                      <Link href="/assessment">
+                        <TrendingUp className="h-4 w-4 mr-2" />
+                        View History
+                      </Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild className="flex-1">
+                      <Link href="/evaluation">
+                        <Play className="h-4 w-4 mr-2" />
+                        Retake
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <Card>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>

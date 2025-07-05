@@ -586,6 +586,89 @@ class AIController {
   }
 
   /**
+   * Store personalized assessment result
+   */
+  async storeAssessmentResult(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const userId = (req as any).user?.id
+      const {
+        level,
+        score,
+        correctAnswers,
+        totalQuestions,
+        timeSpent,
+        categoryPerformance,
+        strengths,
+        weaknesses,
+        confidence,
+        estimatedExperience,
+        recommendedStartingPoint,
+        questionResults,
+        personalizedCurriculum
+      } = req.body
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          error: 'Access token required',
+          message: 'Please provide a valid authentication token'
+        })
+      }
+
+      if (!level || score === undefined || !totalQuestions) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing required fields',
+          message: 'Level, score, and total questions are required'
+        })
+      }
+
+      // Store the assessment result
+      const assessment = await prisma.skillAssessment.create({
+        data: {
+          userId,
+          level,
+          score,
+          correctAnswers: correctAnswers || 0,
+          totalQuestions,
+          timeSpent: timeSpent || 0,
+          categoryPerformance: categoryPerformance ? JSON.stringify(categoryPerformance) : null,
+          strengths: strengths ? JSON.stringify(strengths) : null,
+          weaknesses: weaknesses ? JSON.stringify(weaknesses) : null,
+          confidence: confidence || 0,
+          estimatedExperience: estimatedExperience || '',
+          recommendedStartingPoint: recommendedStartingPoint || '',
+          questionResults: questionResults ? JSON.stringify(questionResults) : null,
+          personalizedCurriculum: personalizedCurriculum ? JSON.stringify(personalizedCurriculum) : null,
+          assessmentDate: new Date()
+        }
+      })
+
+      // Update user's current level and assessment status
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          currentLevel: level,
+          assessmentCompleted: true,
+          lastAssessmentDate: new Date()
+        }
+      })
+
+      return res.status(200).json({
+        success: true,
+        data: assessment
+      })
+    } catch (error) {
+      console.error('Store assessment result error:', error)
+      return res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        message: 'Failed to store assessment result'
+      })
+    }
+  }
+
+  /**
    * Get AI-enhanced attempt details
    */
   async getAttemptWithAnalysis(req: NextApiRequest, res: NextApiResponse) {

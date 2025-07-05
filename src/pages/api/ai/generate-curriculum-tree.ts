@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { level, score, userId } = req.body
+    const { level, score, userId, strengths, weaknesses, categoryPerformance } = req.body
 
     if (!userId) {
       return res.status(400).json({
@@ -28,15 +28,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     }
 
-    // Generate curriculum tree based on level and score
-    const tree = generateCurriculumTree(level, score)
+    // Generate personalized curriculum tree based on user's assessment results
+    const tree = generatePersonalizedCurriculumTree(level, score, strengths, weaknesses, categoryPerformance)
 
     res.status(200).json({
       success: true,
       data: {
         tree,
         level,
-        score
+        score,
+        personalizationFactors: {
+          strengths,
+          weaknesses,
+          categoryPerformance
+        }
       }
     })
 
@@ -49,16 +54,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-function generateCurriculumTree(level: string, score: number): TreeNode[] {
+function generatePersonalizedCurriculumTree(
+  level: string, 
+  score: number, 
+  strengths: string[] = [], 
+  weaknesses: string[] = [], 
+  categoryPerformance: any = {}
+): TreeNode[] {
   const baseTopics = [
     {
-      id: 'sliding-window',
-      title: 'Sliding Window',
-      description: 'Master the sliding window technique for efficient array and string processing',
+      id: 'arrays-hashing',
+      title: 'Arrays & Hashing',
+      description: 'Arrays & Hashing combines basic array operations with hash table lookups to solve problems efficiently, often achieving O(1) time complexity for element access and manipulation.',
       difficulty: 'Medium' as const,
       estimatedTime: 90,
       prerequisites: [],
-      children: ['two-pointers', 'fast-slow-pointers'],
+      children: ['two-pointers', 'stack'],
       parents: [],
       category: 'Array Techniques',
       status: 'available' as const
@@ -66,149 +77,264 @@ function generateCurriculumTree(level: string, score: number): TreeNode[] {
     {
       id: 'two-pointers',
       title: 'Two Pointers',
-      description: 'Learn to use two pointers for efficient array traversal and manipulation',
+      description: 'Two Pointers technique uses two indices to traverse arrays or linked lists simultaneously, enabling efficient solutions for problems involving pairs, subarrays, or linked list manipulation.',
       difficulty: 'Medium' as const,
       estimatedTime: 75,
-      prerequisites: ['sliding-window'],
-      children: ['merge-intervals', 'cyclic-sort'],
-      parents: ['sliding-window'],
+      prerequisites: ['arrays-hashing'],
+      children: ['binary-search', 'sliding-window', 'linked-list'],
+      parents: ['arrays-hashing'],
       category: 'Array Techniques',
       status: 'locked' as const
     },
     {
-      id: 'fast-slow-pointers',
-      title: 'Fast and Slow Pointers',
-      description: 'Use two pointers moving at different speeds to detect cycles and find middle elements',
+      id: 'stack',
+      title: 'Stack',
+      description: 'Stack is a LIFO data structure that excels at tracking state and managing nested operations, commonly used for parentheses matching, function calls, and depth-first traversal.',
       difficulty: 'Medium' as const,
       estimatedTime: 60,
-      prerequisites: ['sliding-window'],
-      children: ['linked-list-reversal'],
-      parents: ['sliding-window'],
-      category: 'Linked List',
+      prerequisites: ['arrays-hashing'],
+      children: ['linked-list'],
+      parents: ['arrays-hashing'],
+      category: 'Data Structures',
       status: 'locked' as const
     },
     {
-      id: 'merge-intervals',
-      title: 'Merge Intervals',
-      description: 'Learn to merge overlapping intervals efficiently',
+      id: 'binary-search',
+      title: 'Binary Search',
+      description: 'Binary Search efficiently finds elements in sorted arrays by repeatedly dividing the search space in half, achieving O(log n) time complexity for search operations.',
       difficulty: 'Medium' as const,
-      estimatedTime: 45,
-      prerequisites: ['two-pointers'],
-      children: ['tree-bfs'],
-      parents: ['two-pointers'],
-      category: 'Intervals',
-      status: 'locked' as const
-    },
-    {
-      id: 'cyclic-sort',
-      title: 'Cyclic Sort',
-      description: 'Master the cyclic sort pattern for arrays with numbers in a given range',
-      difficulty: 'Hard' as const,
       estimatedTime: 60,
       prerequisites: ['two-pointers'],
-      children: ['tree-dfs'],
+      children: ['trees'],
       parents: ['two-pointers'],
-      category: 'Sorting',
+      category: 'Search Algorithms',
       status: 'locked' as const
     },
     {
-      id: 'linked-list-reversal',
-      title: 'In-place Reversal of Linked List',
-      description: 'Learn to reverse linked lists and detect cycles efficiently',
+      id: 'sliding-window',
+      title: 'Sliding Window',
+      description: 'Sliding window is a technique that efficiently processes subarrays or substrings by maintaining a moving range over the data, avoiding redundant calculations.',
+      difficulty: 'Medium' as const,
+      estimatedTime: 90,
+      prerequisites: ['two-pointers'],
+      children: ['trees'],
+      parents: ['two-pointers'],
+      category: 'Array Techniques',
+      status: 'locked' as const
+    },
+    {
+      id: 'linked-list',
+      title: 'Linked List',
+      description: 'Linked Lists are linear data structures where elements are connected via pointers, enabling efficient insertions/deletions and supporting various traversal patterns.',
       difficulty: 'Medium' as const,
       estimatedTime: 75,
-      prerequisites: ['fast-slow-pointers'],
-      children: ['tree-bfs'],
-      parents: ['fast-slow-pointers'],
-      category: 'Linked List',
+      prerequisites: ['two-pointers', 'stack'],
+      children: ['trees'],
+      parents: ['two-pointers', 'stack'],
+      category: 'Data Structures',
       status: 'locked' as const
     },
     {
-      id: 'tree-bfs',
-      title: 'Tree Breadth First Search',
-      description: 'Master level-order traversal and BFS for tree problems',
+      id: 'trees',
+      title: 'Trees',
+      description: 'Trees are hierarchical data structures that model parent-child relationships, supporting efficient search, insertion, and traversal operations with various algorithms.',
       difficulty: 'Medium' as const,
       estimatedTime: 90,
-      prerequisites: ['merge-intervals', 'linked-list-reversal'],
-      children: ['tree-dfs'],
-      parents: ['merge-intervals', 'linked-list-reversal'],
-      category: 'Trees',
+      prerequisites: ['binary-search', 'sliding-window', 'linked-list'],
+      children: ['tries', 'heap', 'backtracking'],
+      parents: ['binary-search', 'sliding-window', 'linked-list'],
+      category: 'Data Structures',
       status: 'locked' as const
     },
     {
-      id: 'tree-dfs',
-      title: 'Tree Depth First Search',
-      description: 'Learn preorder, inorder, and postorder traversals for tree problems',
-      difficulty: 'Medium' as const,
-      estimatedTime: 90,
-      prerequisites: ['cyclic-sort', 'tree-bfs'],
+      id: 'tries',
+      title: 'Tries',
+      description: 'Tries (prefix trees) are specialized tree structures for storing strings, enabling efficient prefix searches, autocomplete, and string-based operations.',
+      difficulty: 'Hard' as const,
+      estimatedTime: 60,
+      prerequisites: ['trees'],
       children: [],
-      parents: ['cyclic-sort', 'tree-bfs'],
-      category: 'Trees',
+      parents: ['trees'],
+      category: 'Advanced Data Structures',
+      status: 'locked' as const
+    },
+    {
+      id: 'heap',
+      title: 'Heap / P.Queue',
+      description: 'Heap / Priority Queue maintains elements in a specific order, allowing efficient access to the maximum or minimum element, commonly used for scheduling and optimization problems.',
+      difficulty: 'Medium' as const,
+      estimatedTime: 75,
+      prerequisites: ['trees'],
+      children: [],
+      parents: ['trees'],
+      category: 'Data Structures',
+      status: 'locked' as const
+    },
+    {
+      id: 'backtracking',
+      title: 'Backtracking',
+      description: 'Backtracking systematically explores all possible solutions by building candidates incrementally and abandoning partial solutions that cannot lead to valid results.',
+      difficulty: 'Hard' as const,
+      estimatedTime: 90,
+      prerequisites: ['trees'],
+      children: ['graphs', 'dp'],
+      parents: ['trees'],
+      category: 'Algorithms',
+      status: 'locked' as const
+    },
+    {
+      id: 'graphs',
+      title: 'Graphs',
+      description: 'Graphs model relationships between entities using nodes and edges, supporting algorithms for pathfinding, connectivity analysis, and network optimization.',
+      difficulty: 'Hard' as const,
+      estimatedTime: 120,
+      prerequisites: ['backtracking'],
+      children: [],
+      parents: ['backtracking'],
+      category: 'Advanced Algorithms',
+      status: 'locked' as const
+    },
+    {
+      id: 'dp',
+      title: '1-D DP',
+      description: '1-D Dynamic Programming solves complex problems by breaking them into simpler subproblems and storing results to avoid redundant calculations.',
+      difficulty: 'Hard' as const,
+      estimatedTime: 120,
+      prerequisites: ['backtracking'],
+      children: [],
+      parents: ['backtracking'],
+      category: 'Advanced Algorithms',
       status: 'locked' as const
     }
   ]
 
-  // Customize tree based on level and score
-  const customizedTree = customizeTreeForLevel(baseTopics, level, score)
+  // Personalize tree based on user's assessment results
+  const personalizedTree = personalizeTreeForUser(baseTopics, level, score, strengths, weaknesses, categoryPerformance)
 
-  return customizedTree
+  return personalizedTree
 }
 
-function customizeTreeForLevel(tree: TreeNode[], level: string, score: number): TreeNode[] {
-  const customizedTree = [...tree]
+function personalizeTreeForUser(
+  tree: TreeNode[], 
+  level: string, 
+  score: number, 
+  strengths: string[], 
+  weaknesses: string[], 
+  categoryPerformance: any
+): TreeNode[] {
+  const personalizedTree = [...tree]
 
-  // Adjust based on level
+  // Map topic categories to assessment categories
+  const categoryMapping: { [key: string]: string[] } = {
+    'arrays': ['arrays-hashing', 'two-pointers', 'sliding-window'],
+    'data-structures': ['stack', 'linked-list', 'trees', 'tries', 'heap'],
+    'algorithms': ['binary-search', 'backtracking', 'graphs', 'dp'],
+    'search': ['binary-search'],
+    'optimization': ['sliding-window', 'heap', 'dp']
+  }
+
+  // Adjust based on user's strengths and weaknesses
+  strengths.forEach(strength => {
+    const relatedTopics = categoryMapping[strength.toLowerCase()] || []
+    relatedTopics.forEach(topicId => {
+      const topic = personalizedTree.find(t => t.id === topicId)
+      if (topic) {
+        // Make strong topics available earlier and reduce time
+        topic.status = 'available'
+        topic.estimatedTime = Math.round(topic.estimatedTime * 0.8)
+        topic.difficulty = topic.difficulty === 'Hard' ? 'Medium' : topic.difficulty
+      }
+    })
+  })
+
+  weaknesses.forEach(weakness => {
+    const relatedTopics = categoryMapping[weakness.toLowerCase()] || []
+    relatedTopics.forEach(topicId => {
+      const topic = personalizedTree.find(t => t.id === topicId)
+      if (topic) {
+        // Increase time for weak topics and add prerequisites
+        topic.estimatedTime = Math.round(topic.estimatedTime * 1.3)
+        if (topic.difficulty === 'Medium') {
+          topic.difficulty = 'Hard'
+        }
+      }
+    })
+  })
+
+  // Adjust based on category performance
+  Object.entries(categoryPerformance).forEach(([category, performance]: [string, any]) => {
+    const relatedTopics = categoryMapping[category.toLowerCase()] || []
+    const performanceScore = typeof performance === 'number' ? performance : 0
+    
+    relatedTopics.forEach(topicId => {
+      const topic = personalizedTree.find(t => t.id === topicId)
+      if (topic) {
+        if (performanceScore >= 80) {
+          // High performance - make available and reduce time
+          topic.status = 'available'
+          topic.estimatedTime = Math.round(topic.estimatedTime * 0.9)
+        } else if (performanceScore < 50) {
+          // Low performance - increase time and difficulty
+          topic.estimatedTime = Math.round(topic.estimatedTime * 1.4)
+          if (topic.difficulty === 'Medium') {
+            topic.difficulty = 'Hard'
+          }
+        }
+      }
+    })
+  })
+
+  // Adjust based on overall level and score
   if (level === 'beginner') {
     // Add more basic topics for beginners
-    customizedTree.unshift({
+    personalizedTree.unshift({
       id: 'arrays-basics',
       title: 'Arrays Basics',
       description: 'Learn fundamental array operations and manipulation',
       difficulty: 'Easy',
       estimatedTime: 60,
       prerequisites: [],
-      children: ['sliding-window'],
+      children: ['arrays-hashing'],
       parents: [],
       category: 'Fundamentals',
       status: 'available'
     })
 
-    // Update sliding window to depend on arrays basics
-    const slidingWindow = customizedTree.find(node => node.id === 'sliding-window')
-    if (slidingWindow) {
-      slidingWindow.prerequisites = ['arrays-basics']
-      slidingWindow.parents = ['arrays-basics']
+    // Update arrays-hashing to depend on arrays basics
+    const arraysHashing = personalizedTree.find(node => node.id === 'arrays-hashing')
+    if (arraysHashing) {
+      arraysHashing.prerequisites = ['arrays-basics']
+      arraysHashing.parents = ['arrays-basics']
     }
 
     // Make some topics easier for beginners
-    customizedTree.forEach(node => {
+    personalizedTree.forEach(node => {
       if (node.difficulty === 'Hard') {
         node.difficulty = 'Medium'
-        node.estimatedTime = Math.round(node.estimatedTime * 1.2) // More time for beginners
+        node.estimatedTime = Math.round(node.estimatedTime * 1.2)
       }
     })
 
   } else if (level === 'expert') {
     // Add advanced topics for experts
-    customizedTree.push({
-      id: 'dynamic-programming',
-      title: 'Dynamic Programming',
-      description: 'Master advanced DP patterns and optimization techniques',
+    personalizedTree.push({
+      id: 'advanced-dp',
+      title: 'Advanced Dynamic Programming',
+      description: 'Master complex DP patterns and optimization techniques',
       difficulty: 'Hard',
-      estimatedTime: 120,
-      prerequisites: ['tree-dfs'],
+      estimatedTime: 150,
+      prerequisites: ['dp'],
       children: [],
-      parents: ['tree-dfs'],
+      parents: ['dp'],
       category: 'Advanced Algorithms',
       status: 'locked'
     })
 
     // Make topics more challenging
-    customizedTree.forEach(node => {
+    personalizedTree.forEach(node => {
       if (node.difficulty === 'Medium') {
         node.difficulty = 'Hard'
-        node.estimatedTime = Math.round(node.estimatedTime * 0.8) // Less time for experts
+        node.estimatedTime = Math.round(node.estimatedTime * 0.8)
       }
     })
   }
@@ -216,19 +342,20 @@ function customizeTreeForLevel(tree: TreeNode[], level: string, score: number): 
   // Adjust based on score
   if (score >= 80) {
     // High performers get more topics unlocked initially
-    customizedTree.forEach(node => {
+    personalizedTree.forEach(node => {
       if (node.status === 'locked' && node.prerequisites.length === 1) {
         node.status = 'available'
       }
     })
   } else if (score < 50) {
-    // Lower performers get more basic topics
-    customizedTree.forEach(node => {
+    // Lower performers get more basic topics and longer time
+    personalizedTree.forEach(node => {
       if (node.difficulty === 'Hard') {
         node.status = 'locked'
+        node.estimatedTime = Math.round(node.estimatedTime * 1.5)
       }
     })
   }
 
-  return customizedTree
+  return personalizedTree
 } 

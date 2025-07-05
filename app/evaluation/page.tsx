@@ -35,7 +35,8 @@ import {
   GraduationCap,
   Layers,
   Code,
-  Puzzle
+  Puzzle,
+  Play
 } from 'lucide-react';
 import { useAuth } from '../../src/hooks/useAuth';
 import { Textarea } from '@/components/ui/textarea';
@@ -59,6 +60,7 @@ interface AssessmentResult {
   estimatedExperience: string;
   recommendedStartingPoint: string;
   questionResults: any[];
+  date?: string;
 }
 
 interface Curriculum {
@@ -73,7 +75,7 @@ interface Curriculum {
 export default function EvaluationPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // Start at 0 for reassessment prompt
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<{ [key: string]: number }>({});
   const [timeSpent, setTimeSpent] = useState(0);
@@ -88,6 +90,24 @@ export default function EvaluationPage() {
   const [recommendations, setRecommendations] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [showFullCurriculum, setShowFullCurriculum] = useState(false);
+  const [hasPreviousAssessment, setHasPreviousAssessment] = useState(false);
+  const [previousAssessment, setPreviousAssessment] = useState<AssessmentResult | null>(null);
+
+  useEffect(() => {
+    // Check for previous assessment
+    if (typeof window !== 'undefined') {
+      const latest = localStorage.getItem('dsatutor_latest_assessment');
+      if (latest) {
+        try {
+          const assessment = JSON.parse(latest);
+          setPreviousAssessment(assessment);
+          setHasPreviousAssessment(true);
+        } catch (e) {
+          console.error('Error parsing previous assessment:', e);
+        }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (currentStep === 1 && !startTime) {
@@ -114,6 +134,17 @@ export default function EvaluationPage() {
         });
     }
   }, [currentStep]);
+
+  const handleStartNewAssessment = () => {
+    setCurrentStep(1);
+  };
+
+  const handleViewPreviousResults = () => {
+    if (previousAssessment) {
+      setResults(previousAssessment);
+      setShowResults(true);
+    }
+  };
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers(prev => ({
@@ -162,15 +193,56 @@ export default function EvaluationPage() {
         // Simulate processing time
         await new Promise(resolve => setTimeout(resolve, 7000));
         
-        setResults(data.data.evaluation);
-        setCurriculum(data.data.curriculum);
-        setRecommendations(data.data.recommendations);
+        const evaluation = data.data.evaluation;
+        const curriculumData = data.data.curriculum;
+        const recommendationsData = data.data.recommendations;
+        
+        setResults(evaluation);
+        setCurriculum(curriculumData);
+        setRecommendations(recommendationsData);
         setShowResults(true);
+
+        // Store assessment result using the new API
+        try {
+          const storeResponse = await fetch('/api/ai/assessments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('dsatutor_token')}`
+            },
+            body: JSON.stringify({
+              level: evaluation.level,
+              score: evaluation.score,
+              correctAnswers: evaluation.correctAnswers,
+              totalQuestions: evaluation.totalQuestions,
+              timeSpent: evaluation.timeSpent,
+              categoryPerformance: evaluation.categoryPerformance,
+              strengths: evaluation.strengths,
+              weaknesses: evaluation.weaknesses,
+              confidence: evaluation.confidence,
+              estimatedExperience: evaluation.estimatedExperience,
+              recommendedStartingPoint: evaluation.recommendedStartingPoint,
+              questionResults: evaluation.questionResults,
+              personalizedCurriculum: curriculumData
+            })
+          });
+
+          if (storeResponse.ok) {
+            console.log('Assessment result stored successfully');
+          } else {
+            console.error('Failed to store assessment result');
+          }
+        } catch (storeError) {
+          console.error('Error storing assessment result:', storeError);
+        }
 
         // Store assessment and curriculum in localStorage for dashboard
         if (typeof window !== 'undefined') {
-          localStorage.setItem('dsatutor_latest_assessment', JSON.stringify(data.data.evaluation));
-          localStorage.setItem('dsatutor_latest_curriculum', JSON.stringify(data.data.curriculum));
+          localStorage.setItem('dsatutor_latest_assessment', JSON.stringify({
+            ...evaluation,
+            date: new Date().toISOString()
+          }));
+          localStorage.setItem('dsatutor_latest_curriculum', JSON.stringify(curriculumData));
         }
       } else {
         throw new Error(data.message || 'Assessment failed');
@@ -218,6 +290,81 @@ export default function EvaluationPage() {
     const icons = [Layers, Code, Puzzle, Rocket, GraduationCap, Sparkles, Lightbulb, Target];
     return icons[index % icons.length];
   };
+
+  // Reassessment prompt
+  if (currentStep === 0 && hasPreviousAssessment) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
+            <CardHeader className="text-center">
+              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Brain className="h-10 w-10 text-blue-600" />
+              </div>
+              <CardTitle className="text-2xl mb-2">Assessment History Found</CardTitle>
+              <CardDescription>
+                We found a previous assessment from your account. Would you like to take a new assessment?
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Previous Assessment Summary */}
+              {previousAssessment && (
+                <div className="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+                  <h4 className="font-semibold mb-3">Your Previous Results:</h4>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Level:</span>
+                      <Badge className={`ml-2 ${getLevelColor(previousAssessment.level)}`}>
+                        {previousAssessment.level.charAt(0).toUpperCase() + previousAssessment.level.slice(1)}
+                      </Badge>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Score:</span>
+                      <span className="ml-2 font-semibold">{previousAssessment.score}%</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Completed:</span>
+                      <span className="ml-2">{previousAssessment.date ? new Date(previousAssessment.date).toLocaleDateString() : 'Unknown'}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Questions:</span>
+                      <span className="ml-2">{previousAssessment.correctAnswers}/{previousAssessment.totalQuestions}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  onClick={handleStartNewAssessment} 
+                  className="flex-1"
+                  size="lg"
+                >
+                  <Play className="h-5 w-5 mr-2" />
+                  Take New Assessment
+                </Button>
+                <Button 
+                  onClick={handleViewPreviousResults} 
+                  variant="outline" 
+                  className="flex-1"
+                  size="lg"
+                >
+                  <Trophy className="h-5 w-5 mr-2" />
+                  View Previous Results
+                </Button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  Taking a new assessment will update your personalized curriculum based on your current skills.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   if (isProcessing) {
     return (

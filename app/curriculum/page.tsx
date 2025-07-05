@@ -172,12 +172,47 @@ export default function CurriculumPage() {
   // Add learning order numbers to nodes
   const numberedNodes = nodes.map((node, idx) => ({ ...node, order: idx + 1 }));
 
+  // Specific descriptions for each topic
+  const topicDescriptions: { [id: string]: string } = {
+    'arrays-hashing': 'Arrays & Hashing combines basic array operations with hash table lookups to solve problems efficiently, often achieving O(1) time complexity for element access and manipulation.',
+    'two-pointers': 'Two Pointers technique uses two indices to traverse arrays or linked lists simultaneously, enabling efficient solutions for problems involving pairs, subarrays, or linked list manipulation.',
+    'stack': 'Stack is a LIFO data structure that excels at tracking state and managing nested operations, commonly used for parentheses matching, function calls, and depth-first traversal.',
+    'binary-search': 'Binary Search efficiently finds elements in sorted arrays by repeatedly dividing the search space in half, achieving O(log n) time complexity for search operations.',
+    'sliding-window': 'Sliding window is a technique that efficiently processes subarrays or substrings by maintaining a moving range over the data, avoiding redundant calculations.',
+    'linked-list': 'Linked Lists are linear data structures where elements are connected via pointers, enabling efficient insertions/deletions and supporting various traversal patterns.',
+    'trees': 'Trees are hierarchical data structures that model parent-child relationships, supporting efficient search, insertion, and traversal operations with various algorithms.',
+    'tries': 'Tries (prefix trees) are specialized tree structures for storing strings, enabling efficient prefix searches, autocomplete, and string-based operations.',
+    'heap': 'Heap / Priority Queue maintains elements in a specific order, allowing efficient access to the maximum or minimum element, commonly used for scheduling and optimization problems.',
+    'backtracking': 'Backtracking systematically explores all possible solutions by building candidates incrementally and abandoning partial solutions that cannot lead to valid results.',
+    'graphs': 'Graphs model relationships between entities using nodes and edges, supporting algorithms for pathfinding, connectivity analysis, and network optimization.',
+    'dp': '1-D Dynamic Programming solves complex problems by breaking them into simpler subproblems and storing results to avoid redundant calculations.'
+  };
+
   useEffect(() => {
     generateCurriculumTree()
   }, [level, score])
 
   const generateCurriculumTree = async () => {
     try {
+      // Get user's latest assessment data for personalization
+      let userStrengths: string[] = [];
+      let userWeaknesses: string[] = [];
+      let userCategoryPerformance: any = {};
+      
+      if (typeof window !== 'undefined') {
+        const latestAssessment = localStorage.getItem('dsatutor_latest_assessment');
+        if (latestAssessment) {
+          try {
+            const assessment = JSON.parse(latestAssessment);
+            userStrengths = assessment.strengths || [];
+            userWeaknesses = assessment.weaknesses || [];
+            userCategoryPerformance = assessment.categoryPerformance || {};
+          } catch (e) {
+            console.error('Error parsing assessment data:', e);
+          }
+        }
+      }
+
       const response = await fetch('/api/ai/generate-curriculum-tree', {
         method: 'POST',
         headers: {
@@ -186,15 +221,18 @@ export default function CurriculumPage() {
         body: JSON.stringify({
           level,
           score,
-          userId: 'demo-user'
+          userId: 'demo-user',
+          strengths: userStrengths,
+          weaknesses: userWeaknesses,
+          categoryPerformance: userCategoryPerformance
         })
       })
 
       if (response.ok) {
         const data = await response.json()
-        setCurriculumTree(data.tree)
+        setCurriculumTree(data.data.tree)
         // Expand first few nodes by default
-        const initialExpanded = new Set(data.tree.slice(0, 3).map((node: TreeNode) => node.id))
+        const initialExpanded = new Set(data.data.tree.slice(0, 3).map((node: TreeNode) => node.id))
         setExpandedNodes(initialExpanded)
       } else {
         // Fallback to mock data
@@ -490,8 +528,8 @@ export default function CurriculumPage() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* SVG Graph */}
         <div className="col-span-2 relative">
-          <div className="overflow-x-auto overflow-y-visible" style={{ minHeight: 650 }}>
-            <svg ref={svgRef} width={800} height={650} className="w-full h-[650px]">
+          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 800, minHeight: 650 }}>
+            <svg ref={svgRef} width={800} height={900} className="w-full h-[900px]">
               {/* Edges */}
               {edges.map((edge, i) => {
                 const from = nodePositions[edge.from]
@@ -564,16 +602,34 @@ export default function CurriculumPage() {
             <div className="bg-white dark:bg-[#23243a] rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-700">
               <h2 className="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-200">{selectedNode.label}</h2>
               <p className="text-gray-700 dark:text-gray-200 mb-4">
-                {/* Example description, can be made dynamic */}
-                {selectedNode.label} is a key topic in DSA. Mastering this will help you solve many interview problems.
+                {topicDescriptions[selectedNode.id] || `${selectedNode.label} is a key topic in DSA. Mastering this will help you solve many interview problems.`}
               </p>
+              {/* Example Problems - now above Prerequisites */}
+              <div className="mb-4">
+                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Example Problems</h3>
+                <ul className="space-y-1">
+                  {(exampleProblems[selectedNode.id] || []).slice(0, 5).map((prob, i) => (
+                    <li key={i} className="flex items-center text-gray-700 dark:text-gray-200">
+                      <span className="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mr-3 flex-shrink-0"></span>
+                      <span className="text-sm">{prob}</span>
+                    </li>
+                  ))}
+                  {(exampleProblems[selectedNode.id]?.length || 0) > 5 && (
+                    <li className="text-gray-400 dark:text-gray-500 text-sm">...</li>
+                  )}
+                  {(exampleProblems[selectedNode.id]?.length || 0) === 0 && (
+                    <li className="text-gray-400 dark:text-gray-500 text-sm">No example problems</li>
+                  )}
+                </ul>
+              </div>
+              {/* Subtopics */}
               <div className="mb-4">
                 <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Subtopics</h3>
                 <ul className="space-y-2">
                   {getChildren(selectedNode.id).map(child => (
                     <li key={child.id}>
                       <button
-                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition"
+                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
                         onClick={() => handleNodeClick(child)}
                       >
                         {child.label}
@@ -585,28 +641,22 @@ export default function CurriculumPage() {
                   )}
                 </ul>
               </div>
+              {/* Prerequisites - now after Example Problems, styled and clickable like Subtopics */}
               <div>
                 <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Prerequisites</h3>
                 <ul className="space-y-2">
                   {getParents(selectedNode.id).map(parent => (
-                    <li key={parent.id} className="text-blue-700 dark:text-blue-200">{parent.label}</li>
+                    <li key={parent.id}>
+                      <button
+                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
+                        onClick={() => handleNodeClick(parent)}
+                      >
+                        {parent.label}
+                      </button>
+                    </li>
                   ))}
                   {getParents(selectedNode.id).length === 0 && (
                     <li className="text-gray-400 dark:text-gray-500">None</li>
-                  )}
-                </ul>
-              </div>
-              <div className="mt-6">
-                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Example Problems</h3>
-                <ul className="space-y-1">
-                  {(exampleProblems[selectedNode.id] || []).slice(0, 5).map((prob, i) => (
-                    <li key={i} className="text-sm text-gray-700 dark:text-gray-200">{prob}</li>
-                  ))}
-                  {(exampleProblems[selectedNode.id]?.length || 0) > 5 && (
-                    <li className="text-gray-400 dark:text-gray-500">...</li>
-                  )}
-                  {(exampleProblems[selectedNode.id]?.length || 0) === 0 && (
-                    <li className="text-gray-400 dark:text-gray-500">No example problems</li>
                   )}
                 </ul>
               </div>

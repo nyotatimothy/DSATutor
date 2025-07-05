@@ -16,11 +16,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   switch (req.method) {
     case 'GET':
       return AIController.getAssessmentHistory(req, res)
+    case 'POST':
+      return AIController.storeAssessmentResult(req, res)
     default:
       return res.status(405).json({
         success: false,
         error: 'Method not allowed',
-        message: 'Only GET method is allowed'
+        message: 'Only GET and POST methods are allowed'
       })
   }
 } 
