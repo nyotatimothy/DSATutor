@@ -354,6 +354,29 @@ export default function CurriculumPage() {
     setSelectedTopic(topicId)
     setIsGeneratingContent(true)
 
+    // Update progress to mark this topic as in-progress
+    try {
+      const response = await fetch('/api/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('dsatutor_token')}`
+        },
+        body: JSON.stringify({
+          topicId: topicId,
+          status: 'in_progress'
+        })
+      });
+
+      if (response.ok) {
+        console.log('Progress updated successfully for topic:', topicId);
+      } else {
+        console.error('Failed to update progress for topic:', topicId);
+      }
+    } catch (error) {
+      console.error('Error updating progress:', error);
+    }
+
     try {
       const response = await fetch('/api/ai/generate-topic-content', {
         method: 'POST',
@@ -525,140 +548,169 @@ export default function CurriculumPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none p-4">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* SVG Graph */}
-        <div className="col-span-2 relative">
-          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 800, minHeight: 650 }}>
-            <svg ref={svgRef} width={800} height={900} className="w-full h-[900px]">
-              {/* Edges */}
-              {edges.map((edge, i) => {
-                const from = nodePositions[edge.from]
-                const to = nodePositions[edge.to]
-                if (!from || !to) return null
-                // Arrow offset
-                const dx = to.x - from.x
-                const dy = to.y - from.y
-                const angle = Math.atan2(dy, dx)
-                const r = 60
-                const startX = from.x + r * Math.cos(angle)
-                const startY = from.y + r * Math.sin(angle)
-                const endX = to.x - r * Math.cos(angle)
-                const endY = to.y - r * Math.sin(angle)
-                return (
-                  <g key={i}>
-                    <line
-                      x1={startX}
-                      y1={startY}
-                      x2={endX}
-                      y2={endY}
-                      stroke="#4f8cff"
-                      strokeWidth={3}
-                      markerEnd="url(#arrowhead)"
-                      opacity={0.7}
-                    />
-                  </g>
-                )
-              })}
-              {/* Arrowhead marker */}
-              <defs>
-                <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto" markerUnits="strokeWidth">
-                  <polygon points="0 0, 6 2, 0 4" fill="#4f8cff" />
-                </marker>
-              </defs>
-              {/* Nodes */}
-              {numberedNodes.map(node => {
-                const pos = nodePositions[node.id]
-                if (!pos) return null
-                const isSelected = selectedNode?.id === node.id
-                return (
-                  <g key={node.id} style={{ cursor: 'pointer' }} onClick={() => handleNodeClick(node)}>
-                    <rect
-                      x={pos.x - 80}
-                      y={pos.y - 30}
-                      rx={16}
-                      ry={16}
-                      width={160}
-                      height={60}
-                      className={
-                        `${nodeColor} ${nodeBorder} ${isSelected ? 'ring-4 ring-yellow-400 dark:ring-yellow-300' : ''}`
-                      }
-                      style={{ filter: isSelected ? 'drop-shadow(0 0 8px #facc15)' : 'drop-shadow(0 2px 8px #0002)' }}
-                    />
-                    <foreignObject x={pos.x - 75} y={pos.y - 25} width={150} height={50}>
-                      <div style={{ display: 'flex', alignItems: 'center', height: '100%', padding: '0 8px', maxWidth: 140, wordBreak: 'break-word', fontWeight: 600, fontSize: 16, color: isSelected ? '#fffbe6' : '#fff' }}>
-                        <span style={{ marginRight: 8, fontWeight: 700, fontSize: 18 }}>{node.order}.</span>
-                        <span style={{ flex: 1 }}>{node.label}</span>
-                      </div>
-                    </foreignObject>
-                  </g>
-                )
-              })}
-            </svg>
+      <div className="max-w-7xl mx-auto">
+        {/* Header with Start Learning Button */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Learning Path</h1>
+            <p className="text-gray-600 dark:text-gray-300">Explore your personalized curriculum and track your progress</p>
           </div>
+          <Button 
+            onClick={() => {
+              // Find the first available topic
+              const firstAvailableTopic = curriculumTree.find(topic => topic.status === 'available');
+              if (firstAvailableTopic) {
+                handleTopicClick(firstAvailableTopic.id);
+              } else {
+                // Fallback to first topic
+                const firstTopic = curriculumTree[0];
+                if (firstTopic) {
+                  handleTopicClick(firstTopic.id);
+                }
+              }
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Start Learning
+          </Button>
         </div>
-        {/* Sidebar */}
-        <div className="col-span-1">
-          <div className="sticky top-8">
-            <div className="bg-white dark:bg-[#23243a] rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-700">
-              <h2 className="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-200">{selectedNode.label}</h2>
-              <p className="text-gray-700 dark:text-gray-200 mb-4">
-                {topicDescriptions[selectedNode.id] || `${selectedNode.label} is a key topic in DSA. Mastering this will help you solve many interview problems.`}
-              </p>
-              {/* Example Problems - now above Prerequisites */}
-              <div className="mb-4">
-                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Example Problems</h3>
-                <ul className="space-y-1">
-                  {(exampleProblems[selectedNode.id] || []).slice(0, 5).map((prob, i) => (
-                    <li key={i} className="flex items-center text-gray-700 dark:text-gray-200">
-                      <span className="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mr-3 flex-shrink-0"></span>
-                      <span className="text-sm">{prob}</span>
-                    </li>
-                  ))}
-                  {(exampleProblems[selectedNode.id]?.length || 0) > 5 && (
-                    <li className="text-gray-400 dark:text-gray-500 text-sm">...</li>
-                  )}
-                  {(exampleProblems[selectedNode.id]?.length || 0) === 0 && (
-                    <li className="text-gray-400 dark:text-gray-500 text-sm">No example problems</li>
-                  )}
-                </ul>
-              </div>
-              {/* Subtopics */}
-              <div className="mb-4">
-                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Subtopics</h3>
-                <ul className="space-y-2">
-                  {getChildren(selectedNode.id).map(child => (
-                    <li key={child.id}>
-                      <button
-                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
-                        onClick={() => handleNodeClick(child)}
-                      >
-                        {child.label}
-                      </button>
-                    </li>
-                  ))}
-                  {getChildren(selectedNode.id).length === 0 && (
-                    <li className="text-gray-400 dark:text-gray-500">No subtopics</li>
-                  )}
-                </ul>
-              </div>
-              {/* Prerequisites - now after Example Problems, styled and clickable like Subtopics */}
-              <div>
-                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Prerequisites</h3>
-                <ul className="space-y-2">
-                  {getParents(selectedNode.id).map(parent => (
-                    <li key={parent.id}>
-                      <button
-                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
-                        onClick={() => handleNodeClick(parent)}
-                      >
-                        {parent.label}
-                      </button>
-                    </li>
-                  ))}
-                  {getParents(selectedNode.id).length === 0 && (
-                    <li className="text-gray-400 dark:text-gray-500">None</li>
-                  )}
-                </ul>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* SVG Graph */}
+          <div className="col-span-2 relative">
+            <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: 800, minHeight: 650 }}>
+              <svg ref={svgRef} width={800} height={900} className="w-full h-[900px]">
+                {/* Edges */}
+                {edges.map((edge, i) => {
+                  const from = nodePositions[edge.from]
+                  const to = nodePositions[edge.to]
+                  if (!from || !to) return null
+                  // Arrow offset
+                  const dx = to.x - from.x
+                  const dy = to.y - from.y
+                  const angle = Math.atan2(dy, dx)
+                  const r = 60
+                  const startX = from.x + r * Math.cos(angle)
+                  const startY = from.y + r * Math.sin(angle)
+                  const endX = to.x - r * Math.cos(angle)
+                  const endY = to.y - r * Math.sin(angle)
+                  return (
+                    <g key={i}>
+                      <line
+                        x1={startX}
+                        y1={startY}
+                        x2={endX}
+                        y2={endY}
+                        stroke="#4f8cff"
+                        strokeWidth={3}
+                        markerEnd="url(#arrowhead)"
+                        opacity={0.7}
+                      />
+                    </g>
+                  )
+                })}
+                {/* Arrowhead marker */}
+                <defs>
+                  <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 6 2, 0 4" fill="#4f8cff" />
+                  </marker>
+                </defs>
+                {/* Nodes */}
+                {numberedNodes.map(node => {
+                  const pos = nodePositions[node.id]
+                  if (!pos) return null
+                  const isSelected = selectedNode?.id === node.id
+                  return (
+                    <g key={node.id} style={{ cursor: 'pointer' }} onClick={() => handleNodeClick(node)}>
+                      <rect
+                        x={pos.x - 80}
+                        y={pos.y - 30}
+                        rx={16}
+                        ry={16}
+                        width={160}
+                        height={60}
+                        className={
+                          `${nodeColor} ${nodeBorder} ${isSelected ? 'ring-4 ring-yellow-400 dark:ring-yellow-300' : ''}`
+                        }
+                        style={{ filter: isSelected ? 'drop-shadow(0 0 8px #facc15)' : 'drop-shadow(0 2px 8px #0002)' }}
+                      />
+                      <foreignObject x={pos.x - 75} y={pos.y - 25} width={150} height={50}>
+                        <div style={{ display: 'flex', alignItems: 'center', height: '100%', padding: '0 8px', maxWidth: 140, wordBreak: 'break-word', fontWeight: 600, fontSize: 16, color: isSelected ? '#fffbe6' : '#fff' }}>
+                          <span style={{ marginRight: 8, fontWeight: 700, fontSize: 18 }}>{node.order}.</span>
+                          <span style={{ flex: 1 }}>{node.label}</span>
+                        </div>
+                      </foreignObject>
+                    </g>
+                  )
+                })}
+              </svg>
+            </div>
+          </div>
+          {/* Sidebar */}
+          <div className="col-span-1">
+            <div className="sticky top-8">
+              <div className="bg-white dark:bg-[#23243a] rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-700">
+                <h2 className="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-200">{selectedNode.label}</h2>
+                <p className="text-gray-700 dark:text-gray-200 mb-4">
+                  {topicDescriptions[selectedNode.id] || `${selectedNode.label} is a key topic in DSA. Mastering this will help you solve many interview problems.`}
+                </p>
+                {/* Example Problems - now above Prerequisites */}
+                <div className="mb-4">
+                  <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Example Problems</h3>
+                  <ul className="space-y-1">
+                    {(exampleProblems[selectedNode.id] || []).slice(0, 5).map((prob, i) => (
+                      <li key={i} className="flex items-center text-gray-700 dark:text-gray-200">
+                        <span className="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mr-3 flex-shrink-0"></span>
+                        <span className="text-sm">{prob}</span>
+                      </li>
+                    ))}
+                    {(exampleProblems[selectedNode.id]?.length || 0) > 5 && (
+                      <li className="text-gray-400 dark:text-gray-500 text-sm">...</li>
+                    )}
+                    {(exampleProblems[selectedNode.id]?.length || 0) === 0 && (
+                      <li className="text-gray-400 dark:text-gray-500 text-sm">No example problems</li>
+                    )}
+                  </ul>
+                </div>
+                {/* Subtopics */}
+                <div className="mb-4">
+                  <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Subtopics</h3>
+                  <ul className="space-y-2">
+                    {getChildren(selectedNode.id).map(child => (
+                      <li key={child.id}>
+                        <button
+                          className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
+                          onClick={() => handleNodeClick(child)}
+                        >
+                          {child.label}
+                        </button>
+                      </li>
+                    ))}
+                    {getChildren(selectedNode.id).length === 0 && (
+                      <li className="text-gray-400 dark:text-gray-500">No subtopics</li>
+                    )}
+                  </ul>
+                </div>
+                {/* Prerequisites - now after Example Problems, styled and clickable like Subtopics */}
+                <div>
+                  <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Prerequisites</h3>
+                  <ul className="space-y-2">
+                    {getParents(selectedNode.id).map(parent => (
+                      <li key={parent.id}>
+                        <button
+                          className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
+                          onClick={() => handleNodeClick(parent)}
+                        >
+                          {parent.label}
+                        </button>
+                      </li>
+                    ))}
+                    {getParents(selectedNode.id).length === 0 && (
+                      <li className="text-gray-400 dark:text-gray-500">None</li>
+                    )}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

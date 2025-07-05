@@ -21,7 +21,8 @@ import {
   Calendar,
   Users,
   Rocket,
-  Circle
+  Circle,
+  Loader2
 } from 'lucide-react'
 import { Badge } from '../src/components/ui/badge'
 import { useEffect, useState } from 'react';
@@ -31,6 +32,8 @@ export default function HomePage() {
   const [progress, setProgress] = useState({ completed: 0, total: 0, percent: 0, currentTopic: '' });
   const [latestAssessment, setLatestAssessment] = useState<any>(null);
   const [hasAssessment, setHasAssessment] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState<any>(null);
+  const [isLoadingPosition, setIsLoadingPosition] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -54,8 +57,50 @@ export default function HomePage() {
           setHasAssessment(true);
         } catch {}
       }
+
+      // Fetch current learning position
+      fetchCurrentPosition();
     }
   }, [user]);
+
+  const fetchCurrentPosition = async () => {
+    try {
+      setIsLoadingPosition(true);
+      const response = await fetch('/api/progress/current-position', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('dsatutor_token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentPosition(data.data);
+        
+        // Update progress with current position data
+        if (data.data.currentTopic) {
+          setProgress(prev => ({
+            ...prev,
+            currentTopic: data.data.currentTopic.topic.title
+          }));
+        }
+      } else {
+        console.error('Failed to fetch current position');
+      }
+    } catch (error) {
+      console.error('Error fetching current position:', error);
+    } finally {
+      setIsLoadingPosition(false);
+    }
+  };
+
+  const handleContinueLearning = () => {
+    if (currentPosition?.redirectTo) {
+      window.location.href = currentPosition.redirectTo;
+    } else {
+      // Fallback to curriculum page
+      window.location.href = '/curriculum';
+    }
+  };
 
   // If user is not logged in, show marketing page
   if (!user) {
@@ -270,11 +315,22 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex space-x-3">
-                  <Button asChild className="flex-1">
-                    <Link href="/curriculum">
-                      <Play className="h-4 w-4 mr-2" />
-                      Continue Learning
-                    </Link>
+                  <Button 
+                    onClick={handleContinueLearning}
+                    disabled={isLoadingPosition}
+                    className="flex-1"
+                  >
+                    {isLoadingPosition ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4 mr-2" />
+                        Continue Learning
+                      </>
+                    )}
                   </Button>
                   <Button variant="outline" asChild>
                     <Link href="/progress">
