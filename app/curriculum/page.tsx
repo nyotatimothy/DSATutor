@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../src/components/ui/card'
 import { Button } from '../../src/components/ui/button'
@@ -70,6 +70,64 @@ export default function CurriculumPage() {
   const [topicContent, setTopicContent] = useState<TopicContent | null>(null)
   const [isGeneratingContent, setIsGeneratingContent] = useState(false)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
+  const svgRef = useRef<SVGSVGElement>(null)
+
+  // Layout positions for nodes (static for now, can be made dynamic later)
+  const nodePositions: { [id: string]: { x: number; y: number } } = {
+    'arrays-hashing': { x: 400, y: 40 },
+    'two-pointers': { x: 250, y: 140 },
+    'stack': { x: 550, y: 140 },
+    'binary-search': { x: 150, y: 240 },
+    'sliding-window': { x: 350, y: 240 },
+    'linked-list': { x: 550, y: 240 },
+    'trees': { x: 350, y: 340 },
+    'tries': { x: 150, y: 440 },
+    'heap': { x: 300, y: 540 },
+    'backtracking': { x: 550, y: 440 },
+    'graphs': { x: 500, y: 540 },
+    'dp': { x: 650, y: 540 },
+  }
+
+  // Static curriculum structure for demo (can be made dynamic)
+  const nodes = [
+    { id: 'arrays-hashing', label: 'Arrays & Hashing', children: ['two-pointers', 'stack'] },
+    { id: 'two-pointers', label: 'Two Pointers', children: ['binary-search', 'sliding-window', 'linked-list'] },
+    { id: 'stack', label: 'Stack', children: ['linked-list'] },
+    { id: 'binary-search', label: 'Binary Search', children: ['trees'] },
+    { id: 'sliding-window', label: 'Sliding Window', children: ['trees'] },
+    { id: 'linked-list', label: 'Linked List', children: ['trees'] },
+    { id: 'trees', label: 'Trees', children: ['tries', 'heap', 'backtracking'] },
+    { id: 'tries', label: 'Tries', children: [] },
+    { id: 'heap', label: 'Heap / Priority Queue', children: [] },
+    { id: 'backtracking', label: 'Backtracking', children: ['graphs', 'dp'] },
+    { id: 'graphs', label: 'Graphs', children: [] },
+    { id: 'dp', label: '1-D DP', children: [] },
+  ]
+
+  // Edges for SVG lines
+  const edges = nodes.flatMap(node => node.children.map(child => ({ from: node.id, to: child })))
+
+  // Sidebar state
+  const [selectedNode, setSelectedNode] = useState(nodes[0])
+
+  // Helper to get node by id
+  const getNode = (id: string) => nodes.find(n => n.id === id)
+
+  // Helper to get children nodes
+  const getChildren = (id: string) => {
+    const node = getNode(id)
+    return node ? node.children.map(getNode).filter(Boolean) : []
+  }
+
+  // Helper to get parent nodes
+  const getParents = (id: string) => nodes.filter(n => n.children.includes(id))
+
+  // Node click handler
+  const handleNodeClick = (node: any) => setSelectedNode(node)
+
+  // Node color
+  const nodeColor = 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white'
+  const nodeBorder = 'border-2 border-blue-700 dark:border-blue-400'
 
   useEffect(() => {
     generateCurriculumTree()
@@ -386,165 +444,122 @@ export default function CurriculumPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none p-4">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Your Learning Path</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Interactive curriculum designed for {level} level learners
-          </p>
-          <div className="flex items-center justify-center space-x-4">
-            <Badge className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700">
-              {level.charAt(0).toUpperCase() + level.slice(1)} Level
-            </Badge>
-            <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700">
-              {score}% Assessment Score
-            </Badge>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* SVG Graph */}
+        <div className="col-span-2 relative">
+          <div className="overflow-x-auto overflow-y-visible" style={{ minHeight: 650 }}>
+            <svg ref={svgRef} width={800} height={650} className="w-full h-[650px]">
+              {/* Edges */}
+              {edges.map((edge, i) => {
+                const from = nodePositions[edge.from]
+                const to = nodePositions[edge.to]
+                if (!from || !to) return null
+                // Arrow offset
+                const dx = to.x - from.x
+                const dy = to.y - from.y
+                const angle = Math.atan2(dy, dx)
+                const r = 60
+                const startX = from.x + r * Math.cos(angle)
+                const startY = from.y + r * Math.sin(angle)
+                const endX = to.x - r * Math.cos(angle)
+                const endY = to.y - r * Math.sin(angle)
+                return (
+                  <g key={i}>
+                    <line
+                      x1={startX}
+                      y1={startY}
+                      x2={endX}
+                      y2={endY}
+                      stroke="#4f8cff"
+                      strokeWidth={3}
+                      markerEnd="url(#arrowhead)"
+                      opacity={0.7}
+                    />
+                  </g>
+                )
+              })}
+              {/* Arrowhead marker */}
+              <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#4f8cff" />
+                </marker>
+              </defs>
+              {/* Nodes */}
+              {nodes.map(node => {
+                const pos = nodePositions[node.id]
+                if (!pos) return null
+                const isSelected = selectedNode?.id === node.id
+                return (
+                  <g key={node.id} style={{ cursor: 'pointer' }} onClick={() => handleNodeClick(node)}>
+                    <rect
+                      x={pos.x - 80}
+                      y={pos.y - 30}
+                      rx={16}
+                      ry={16}
+                      width={160}
+                      height={60}
+                      className={
+                        `${nodeColor} ${nodeBorder} ${isSelected ? 'ring-4 ring-yellow-400 dark:ring-yellow-300' : ''}`
+                      }
+                      style={{ filter: isSelected ? 'drop-shadow(0 0 8px #facc15)' : 'drop-shadow(0 2px 8px #0002)' }}
+                    />
+                    <text
+                      x={pos.x}
+                      y={pos.y}
+                      textAnchor="middle"
+                      alignmentBaseline="middle"
+                      fontSize={18}
+                      fontWeight={600}
+                      fill={isSelected ? '#fffbe6' : '#fff'}
+                      style={{ pointerEvents: 'none', fontFamily: 'inherit' }}
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                )
+              })}
+            </svg>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Curriculum Tree */}
-          <div className="lg:col-span-2">
-            <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 dark:text-gray-100">
-                  <GitBranch className="w-6 h-6 text-green-600" />
-                  <span>Learning Path</span>
-                </CardTitle>
-                <CardDescription className="dark:text-gray-300">
-                  Click on available topics to start learning. Topics build upon each other in a logical progression.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {curriculumTree
-                    .filter(node => node.parents.length === 0) // Root nodes
-                    .map(node => renderTreeNode(node))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Topic Content Panel */}
-          <div className="lg:col-span-1">
-            {isGeneratingContent ? (
-              <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
-                <CardContent className="p-6">
-                  <div className="text-center space-y-4">
-                    <div className="relative">
-                      <div className="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                        <Brain className="w-8 h-8 text-blue-600 animate-pulse" />
-                      </div>
-                      <div className="absolute inset-0 w-16 h-16 mx-auto border-4 border-blue-200 dark:border-blue-700 border-t-blue-600 rounded-full animate-spin"></div>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg dark:text-gray-100">Generating Content</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Our AI is creating personalized learning materials...</p>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                        <span>Writing explanations...</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                        <span>Creating examples...</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                        <span>Generating diagrams...</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : topicContent ? (
-              <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2 dark:text-gray-100">
-                    <BookOpen className="w-5 h-5 text-blue-600" />
-                    <span>{topicContent.title}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Explanation */}
-                  <div>
-                    <h4 className="font-semibold mb-2 dark:text-gray-100">Understanding the Concept</h4>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                      {topicContent.explanation}
-                    </p>
-                  </div>
-
-                  {/* Real World Examples */}
-                  <div>
-                    <h4 className="font-semibold mb-2 flex items-center dark:text-gray-100">
-                      <Lightbulb className="w-4 h-4 mr-2 text-yellow-500" />
-                      Real World Examples
-                    </h4>
-                    <ul className="space-y-1">
-                      {topicContent.realWorldExamples.map((example, index) => (
-                        <li key={index} className="text-sm text-gray-700 dark:text-gray-300 flex items-start space-x-2">
-                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span>{example}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Code Examples */}
-                  <div>
-                    <h4 className="font-semibold mb-2 flex items-center dark:text-gray-100">
-                      <Code className="w-4 h-4 mr-2 text-green-500" />
-                      Code Examples
-                    </h4>
-                    <div className="space-y-2">
-                      {topicContent.codeExamples.map((example, index) => (
-                        <div key={index} className="bg-gray-50 dark:bg-[#181A20] p-3 rounded text-sm font-mono text-gray-800 dark:text-gray-100">
-                          {example}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Practice Problems */}
-                  <div>
-                    <h4 className="font-semibold mb-2 flex items-center dark:text-gray-100">
-                      <Target className="w-4 h-4 mr-2 text-purple-500" />
-                      Practice Problems
-                    </h4>
-                    <div className="space-y-2">
-                      {topicContent.practiceProblems.map((problem, index) => (
-                        <Button
-                          key={index}
-                          variant="outline"
-                          size="sm"
-                          className="w-full justify-start dark:bg-[#23243a] dark:text-gray-100 dark:border-gray-700"
-                          onClick={() => router.push(`/problems?topic=${topicContent?.title}`)}
-                        >
-                          <Play className="w-3 h-3 mr-2" />
-                          {problem}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
-                <CardContent className="p-6">
-                  <div className="text-center space-y-4">
-                    <BookOpen className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto" />
-                    <div>
-                      <h3 className="font-semibold text-lg dark:text-gray-100">Select a Topic</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        Click on any available topic in the learning path to start learning
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+        {/* Sidebar */}
+        <div className="col-span-1">
+          <div className="sticky top-8">
+            <div className="bg-white dark:bg-[#23243a] rounded-xl shadow-lg p-6 border border-blue-100 dark:border-blue-700">
+              <h2 className="text-2xl font-bold mb-2 text-blue-700 dark:text-blue-200">{selectedNode.label}</h2>
+              <p className="text-gray-700 dark:text-gray-200 mb-4">
+                {/* Example description, can be made dynamic */}
+                {selectedNode.label} is a key topic in DSA. Mastering this will help you solve many interview problems.
+              </p>
+              <div className="mb-4">
+                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Subtopics</h3>
+                <ul className="space-y-2">
+                  {getChildren(selectedNode.id).map(child => (
+                    <li key={child.id}>
+                      <button
+                        className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition"
+                        onClick={() => handleNodeClick(child)}
+                      >
+                        {child.label}
+                      </button>
+                    </li>
+                  ))}
+                  {getChildren(selectedNode.id).length === 0 && (
+                    <li className="text-gray-400 dark:text-gray-500">No subtopics</li>
+                  )}
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Prerequisites</h3>
+                <ul className="space-y-2">
+                  {getParents(selectedNode.id).map(parent => (
+                    <li key={parent.id} className="text-blue-700 dark:text-blue-200">{parent.label}</li>
+                  ))}
+                  {getParents(selectedNode.id).length === 0 && (
+                    <li className="text-gray-400 dark:text-gray-500">None</li>
+                  )}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
