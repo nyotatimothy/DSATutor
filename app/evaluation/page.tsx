@@ -70,53 +70,11 @@ interface Curriculum {
   approach: string;
 }
 
-const assessmentQuestions: Question[] = [
-  {
-    id: '1',
-    question: 'What is the time complexity of accessing an element in an array?',
-    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)']
-  },
-  {
-    id: '2',
-    question: 'Which data structure follows LIFO (Last In, First Out) principle?',
-    options: ['Queue', 'Stack', 'Linked List', 'Tree']
-  },
-  {
-    id: '3',
-    question: 'What is the time complexity of binary search?',
-    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)']
-  },
-  {
-    id: '4',
-    question: 'Which sorting algorithm has the best average-case time complexity?',
-    options: ['Bubble Sort', 'Quick Sort', 'Selection Sort', 'Insertion Sort']
-  },
-  {
-    id: '5',
-    question: 'What is the space complexity of a recursive function that calls itself n times?',
-    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)']
-  },
-  {
-    id: '6',
-    question: 'Which algorithm is used to find the shortest path in a weighted graph?',
-    options: ['BFS', 'DFS', 'Dijkstra\'s', 'Binary Search']
-  },
-  {
-    id: '7',
-    question: 'What is the time complexity of the optimal solution for the Fibonacci sequence using dynamic programming?',
-    options: ['O(1)', 'O(n)', 'O(2^n)', 'O(log n)']
-  },
-  {
-    id: '8',
-    question: 'Which data structure is best for implementing a priority queue?',
-    options: ['Array', 'Linked List', 'Heap', 'Stack']
-  }
-];
-
 export default function EvaluationPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<{ [key: string]: number }>({});
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -146,6 +104,17 @@ export default function EvaluationPage() {
     }
   }, [startTime]);
 
+  useEffect(() => {
+    if (currentStep === 1) {
+      fetch('/api/ai/assessment-questions?count=8')
+        .then(res => res.json())
+        .then(data => {
+          setQuestions(data.questions);
+          setAnswers({}); // Reset answers for new attempt
+        });
+    }
+  }, [currentStep]);
+
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers(prev => ({
       ...prev,
@@ -154,7 +123,7 @@ export default function EvaluationPage() {
   };
 
   const handleSubmit = async () => {
-    if (Object.keys(answers).length < assessmentQuestions.length) {
+    if (Object.keys(answers).length < questions.length) {
       alert('Please answer all questions before submitting.');
       return;
     }
@@ -636,7 +605,7 @@ export default function EvaluationPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {assessmentQuestions.map((question, index) => (
+                {questions.map((question, index) => (
                   <div key={question.id} className="space-y-3 p-4 border rounded-lg bg-gray-50 dark:bg-[#23243a] dark:border-gray-700">
                     <h3 className="font-semibold text-lg dark:text-gray-100">
                       Question {index + 1}: {question.question}
@@ -664,7 +633,7 @@ export default function EvaluationPage() {
                 </Button>
                 <Button 
                   onClick={() => setCurrentStep(2)}
-                  disabled={Object.keys(answers).length < assessmentQuestions.length}
+                  disabled={Object.keys(answers).length < questions.length}
                 >
                   Next
                 </Button>
@@ -752,7 +721,7 @@ export default function EvaluationPage() {
               <div className="space-y-4">
                 <h3 className="font-semibold dark:text-gray-100">Quiz Answers:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {assessmentQuestions.map((question, index) => (
+                  {questions.map((question, index) => (
                     <div key={question.id} className="p-3 border rounded-lg dark:bg-[#23243a] dark:border-gray-700">
                       <p className="text-sm font-medium dark:text-gray-100">Q{index + 1}: {question.question}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">

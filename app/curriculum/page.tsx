@@ -385,19 +385,19 @@ export default function CurriculumPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900">Your Learning Path</h1>
-          <p className="text-lg text-gray-600">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Your Learning Path</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Interactive curriculum designed for {level} level learners
           </p>
           <div className="flex items-center justify-center space-x-4">
-            <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+            <Badge className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700">
               {level.charAt(0).toUpperCase() + level.slice(1)} Level
             </Badge>
-            <Badge className="bg-green-100 text-green-800 border-green-200">
+            <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700">
               {score}% Assessment Score
             </Badge>
           </div>
@@ -406,13 +406,13 @@ export default function CurriculumPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Curriculum Tree */}
           <div className="lg:col-span-2">
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 dark:text-gray-100">
                   <GitBranch className="w-6 h-6 text-green-600" />
                   <span>Learning Path</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="dark:text-gray-300">
                   Click on available topics to start learning. Topics build upon each other in a logical progression.
                 </CardDescription>
               </CardHeader>
@@ -429,29 +429,29 @@ export default function CurriculumPage() {
           {/* Topic Content Panel */}
           <div className="lg:col-span-1">
             {isGeneratingContent ? (
-              <Card className="bg-white shadow-lg">
+              <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
                 <CardContent className="p-6">
                   <div className="text-center space-y-4">
                     <div className="relative">
-                      <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                         <Brain className="w-8 h-8 text-blue-600 animate-pulse" />
                       </div>
-                      <div className="absolute inset-0 w-16 h-16 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                      <div className="absolute inset-0 w-16 h-16 mx-auto border-4 border-blue-200 dark:border-blue-700 border-t-blue-600 rounded-full animate-spin"></div>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-lg">Generating Content</h3>
-                      <p className="text-sm text-gray-600">Our AI is creating personalized learning materials...</p>
+                      <h3 className="font-semibold text-lg dark:text-gray-100">Generating Content</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">Our AI is creating personalized learning materials...</p>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                         <Loader2 className="w-3 h-3 animate-spin" />
                         <span>Writing explanations...</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                         <Loader2 className="w-3 h-3 animate-spin" />
                         <span>Creating examples...</span>
                       </div>
-                      <div className="flex items-center space-x-2 text-xs text-gray-500">
+                      <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                         <Loader2 className="w-3 h-3 animate-spin" />
                         <span>Generating diagrams...</span>
                       </div>
@@ -460,9 +460,9 @@ export default function CurriculumPage() {
                 </CardContent>
               </Card>
             ) : topicContent ? (
-              <Card className="bg-white shadow-lg">
+              <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
+                  <CardTitle className="flex items-center space-x-2 dark:text-gray-100">
                     <BookOpen className="w-5 h-5 text-blue-600" />
                     <span>{topicContent.title}</span>
                   </CardTitle>
@@ -470,21 +470,21 @@ export default function CurriculumPage() {
                 <CardContent className="space-y-6">
                   {/* Explanation */}
                   <div>
-                    <h4 className="font-semibold mb-2">Understanding the Concept</h4>
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <h4 className="font-semibold mb-2 dark:text-gray-100">Understanding the Concept</h4>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                       {topicContent.explanation}
                     </p>
                   </div>
 
                   {/* Real World Examples */}
                   <div>
-                    <h4 className="font-semibold mb-2 flex items-center">
+                    <h4 className="font-semibold mb-2 flex items-center dark:text-gray-100">
                       <Lightbulb className="w-4 h-4 mr-2 text-yellow-500" />
                       Real World Examples
                     </h4>
                     <ul className="space-y-1">
                       {topicContent.realWorldExamples.map((example, index) => (
-                        <li key={index} className="text-sm text-gray-700 flex items-start space-x-2">
+                        <li key={index} className="text-sm text-gray-700 dark:text-gray-300 flex items-start space-x-2">
                           <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                           <span>{example}</span>
                         </li>
@@ -494,13 +494,13 @@ export default function CurriculumPage() {
 
                   {/* Code Examples */}
                   <div>
-                    <h4 className="font-semibold mb-2 flex items-center">
+                    <h4 className="font-semibold mb-2 flex items-center dark:text-gray-100">
                       <Code className="w-4 h-4 mr-2 text-green-500" />
                       Code Examples
                     </h4>
                     <div className="space-y-2">
                       {topicContent.codeExamples.map((example, index) => (
-                        <div key={index} className="bg-gray-50 p-3 rounded text-sm font-mono">
+                        <div key={index} className="bg-gray-50 dark:bg-[#181A20] p-3 rounded text-sm font-mono text-gray-800 dark:text-gray-100">
                           {example}
                         </div>
                       ))}
@@ -509,7 +509,7 @@ export default function CurriculumPage() {
 
                   {/* Practice Problems */}
                   <div>
-                    <h4 className="font-semibold mb-2 flex items-center">
+                    <h4 className="font-semibold mb-2 flex items-center dark:text-gray-100">
                       <Target className="w-4 h-4 mr-2 text-purple-500" />
                       Practice Problems
                     </h4>
@@ -519,7 +519,7 @@ export default function CurriculumPage() {
                           key={index}
                           variant="outline"
                           size="sm"
-                          className="w-full justify-start"
+                          className="w-full justify-start dark:bg-[#23243a] dark:text-gray-100 dark:border-gray-700"
                           onClick={() => router.push(`/problems?topic=${topicContent?.title}`)}
                         >
                           <Play className="w-3 h-3 mr-2" />
@@ -531,13 +531,13 @@ export default function CurriculumPage() {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="bg-white shadow-lg">
+              <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
                 <CardContent className="p-6">
                   <div className="text-center space-y-4">
-                    <BookOpen className="w-12 h-12 text-gray-400 mx-auto" />
+                    <BookOpen className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto" />
                     <div>
-                      <h3 className="font-semibold text-lg">Select a Topic</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="font-semibold text-lg dark:text-gray-100">Select a Topic</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
                         Click on any available topic in the learning path to start learning
                       </p>
                     </div>
