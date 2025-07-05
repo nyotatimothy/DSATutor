@@ -8,16 +8,14 @@ import { Badge } from '../../src/components/ui/badge';
 import { Skeleton } from '../../src/components/ui/skeleton';
 import { Input } from '../../src/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../src/components/ui/tabs';
-import { Code, Clock, Users, Star, Search, Play } from 'lucide-react';
+import { Code, Clock, Users, Star, Search, Play, BookOpen } from 'lucide-react';
 
 interface Problem {
   id: string;
   title: string;
-  description: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  category: string;
-  estimatedTime: number;
-  solvedCount: number;
+  topic: string;
+  difficulty: string;
+  status: 'completed' | 'in-progress' | 'not-started';
 }
 
 const categories = [
@@ -41,156 +39,26 @@ export default function ProblemsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   useEffect(() => {
-    // Mock data for now - replace with actual API call
-    setTimeout(() => {
-      setProblems([
-        // Arrays
-        {
-          id: '1',
-          title: 'Two Sum',
-          description: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.',
-          difficulty: 'easy',
-          category: 'Arrays',
-          estimatedTime: 15,
-          solvedCount: 1250
-        },
-        {
-          id: '2',
-          title: 'Maximum Subarray',
-          description: 'Find the contiguous subarray with the largest sum.',
-          difficulty: 'medium',
-          category: 'Arrays',
-          estimatedTime: 20,
-          solvedCount: 890
-        },
-        {
-          id: '3',
-          title: 'Container With Most Water',
-          description: 'Find two lines that together with the x-axis forms a container that would hold the greatest amount of water.',
-          difficulty: 'medium',
-          category: 'Arrays',
-          estimatedTime: 25,
-          solvedCount: 750
-        },
-        // Strings
-        {
-          id: '4',
-          title: 'Valid Parentheses',
-          description: 'Given a string s containing just the characters "(", ")", "{", "}", "[" and "]", determine if the input string is valid.',
-          difficulty: 'easy',
-          category: 'Strings',
-          estimatedTime: 10,
-          solvedCount: 980
-        },
-        {
-          id: '5',
-          title: 'Longest Substring Without Repeating Characters',
-          description: 'Find the length of the longest substring without repeating characters.',
-          difficulty: 'medium',
-          category: 'Strings',
-          estimatedTime: 30,
-          solvedCount: 650
-        },
-        // Linked Lists
-        {
-          id: '6',
-          title: 'Reverse Linked List',
-          description: 'Given the head of a singly linked list, reverse the list, and return the reversed list.',
-          difficulty: 'medium',
-          category: 'Linked Lists',
-          estimatedTime: 20,
-          solvedCount: 750
-        },
-        {
-          id: '7',
-          title: 'Merge Two Sorted Lists',
-          description: 'Merge two sorted linked lists and return it as a sorted list.',
-          difficulty: 'easy',
-          category: 'Linked Lists',
-          estimatedTime: 15,
-          solvedCount: 890
-        },
-        // Stacks & Queues
-        {
-          id: '8',
-          title: 'Implement Stack using Queues',
-          description: 'Implement a last-in-first-out (LIFO) stack using only two queues.',
-          difficulty: 'medium',
-          category: 'Stacks & Queues',
-          estimatedTime: 25,
-          solvedCount: 420
-        },
-        // Trees
-        {
-          id: '9',
-          title: 'Binary Tree Inorder Traversal',
-          description: 'Given the root of a binary tree, return the inorder traversal of its nodes values.',
-          difficulty: 'medium',
-          category: 'Trees',
-          estimatedTime: 25,
-          solvedCount: 620
-        },
-        {
-          id: '10',
-          title: 'Maximum Depth of Binary Tree',
-          description: 'Given the root of a binary tree, return its maximum depth.',
-          difficulty: 'easy',
-          category: 'Trees',
-          estimatedTime: 15,
-          solvedCount: 1100
-        },
-        // Graphs
-        {
-          id: '11',
-          title: 'Number of Islands',
-          description: 'Given an m x n 2D binary grid which represents a map of "1"s (land) and "0"s (water), return the number of islands.',
-          difficulty: 'medium',
-          category: 'Graphs',
-          estimatedTime: 35,
-          solvedCount: 380
-        },
-        // Dynamic Programming
-        {
-          id: '12',
-          title: 'Climbing Stairs',
-          description: 'You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps.',
-          difficulty: 'easy',
-          category: 'Dynamic Programming',
-          estimatedTime: 20,
-          solvedCount: 950
-        },
-        {
-          id: '13',
-          title: 'House Robber',
-          description: 'You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed.',
-          difficulty: 'medium',
-          category: 'Dynamic Programming',
-          estimatedTime: 30,
-          solvedCount: 520
-        },
-        // Sorting & Searching
-        {
-          id: '14',
-          title: 'Binary Search',
-          description: 'Given an array of integers nums which is sorted in ascending order, and an integer target.',
-          difficulty: 'easy',
-          category: 'Sorting & Searching',
-          estimatedTime: 15,
-          solvedCount: 1200
-        },
-        // Bit Manipulation
-        {
-          id: '15',
-          title: 'Single Number',
-          description: 'Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.',
-          difficulty: 'easy',
-          category: 'Bit Manipulation',
-          estimatedTime: 20,
-          solvedCount: 680
-        }
-      ]);
-      setIsLoading(false);
-    }, 1000);
+    // For demo, use static problems and topics from curriculum
+    const curriculumRaw = typeof window !== 'undefined' ? localStorage.getItem('dsatutor_latest_curriculum') : null;
+    let topics: string[] = [];
+    if (curriculumRaw) {
+      const curriculum = JSON.parse(curriculumRaw);
+      topics = (curriculum.topics || []).map((t: any) => t.title);
+    }
+    // Demo problems
+    const demoProblems: Problem[] = [
+      { id: '1', title: 'Two Sum', topic: topics[0] || 'Arrays & Hashing', difficulty: 'Easy', status: 'completed' },
+      { id: '2', title: 'Valid Palindrome', topic: topics[1] || 'Two Pointers', difficulty: 'Easy', status: 'completed' },
+      { id: '3', title: 'Best Time to Buy and Sell Stock', topic: topics[4] || 'Sliding Window', difficulty: 'Easy', status: 'in-progress' },
+      { id: '4', title: 'Reverse Linked List', topic: topics[5] || 'Linked List', difficulty: 'Medium', status: 'not-started' },
+      { id: '5', title: 'Binary Search', topic: topics[2] || 'Binary Search', difficulty: 'Medium', status: 'not-started' },
+      { id: '6', title: 'Maximum Depth of Binary Tree', topic: topics[6] || 'Trees', difficulty: 'Medium', status: 'not-started' },
+      { id: '7', title: 'Word Search', topic: topics[9] || 'Backtracking', difficulty: 'Hard', status: 'not-started' },
+      { id: '8', title: 'Climbing Stairs', topic: topics[11] || '1-D DP', difficulty: 'Easy', status: 'not-started' },
+    ];
+    setProblems(demoProblems);
+    setIsLoading(false);
   }, []);
 
   const getDifficultyColor = (difficulty: string) => {
@@ -209,10 +77,9 @@ export default function ProblemsPage() {
 
   const filteredProblems = problems.filter(problem => {
     const matchesSearch = problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         problem.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         problem.category.toLowerCase().includes(searchTerm.toLowerCase());
+                         problem.topic.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesCategory = selectedCategory === 'All' || problem.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || problem.topic === selectedCategory;
     
     return matchesSearch && matchesCategory;
   });
@@ -241,97 +108,44 @@ export default function ProblemsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Practice Problems</h1>
-          <p className="text-muted-foreground mt-2">Sharpen your DSA skills with our curated problem set</p>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-6">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search problems..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      {/* Category Tabs */}
-      <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-6">
-        <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10">
-          {categories.map((category) => (
-            <TabsTrigger key={category} value={category} className="text-xs">
-              {category}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
-
-      {/* Problems Grid */}
-      {filteredProblems.length === 0 ? (
-        <div className="text-center py-12">
-          <Code className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-4">No problems found</h2>
-          <p className="text-muted-foreground">
-            {searchTerm ? 'Try adjusting your search terms or category filter.' : 'No problems available in this category.'}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProblems.map((problem) => (
-            <Card key={problem.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{problem.title}</CardTitle>
-                  <Badge className={getDifficultyColor(problem.difficulty)}>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8">Problems</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredProblems.map((problem, i) => (
+            <Card key={problem.id} className="flex flex-col justify-between h-full border-2 border-blue-100">
+              <CardHeader className="flex flex-row items-center space-x-4 py-4">
+                <BookOpen className="h-6 w-6 text-blue-500" />
+                <CardTitle className="text-lg font-semibold truncate max-w-[180px]">{problem.title}</CardTitle>
+                <Badge className="bg-blue-100 text-blue-800 border-blue-200 ml-auto">{problem.topic}</Badge>
+              </CardHeader>
+              <CardContent className="flex flex-col space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Badge className={
+                    problem.status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' :
+                    problem.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                    'bg-gray-100 text-gray-800 border-gray-200'
+                  }>
+                    {problem.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </Badge>
+                  <Badge className={
+                    problem.difficulty === 'Easy' ? 'bg-green-50 text-green-700 border-green-200' :
+                    problem.difficulty === 'Medium' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                    'bg-red-50 text-red-700 border-red-200'
+                  }>
                     {problem.difficulty}
                   </Badge>
                 </div>
-                <CardDescription className="line-clamp-2">
-                  {problem.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Category</span>
-                    <Badge variant="outline" className="text-xs">{problem.category}</Badge>
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Estimated Time</span>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{problem.estimatedTime} min</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Solved</span>
-                    <div className="flex items-center space-x-1">
-                      <Star className="h-4 w-4 text-yellow-500" />
-                      <span>{problem.solvedCount.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    className="w-full mt-4 button-gradient"
-                    onClick={() => handleStartProblem(problem.id)}
-                  >
+                <Button asChild className="w-full mt-2">
+                  <Link href={`/problems/${problem.id}/solve`}>
                     <Play className="h-4 w-4 mr-2" />
-                    Start Problem
-                  </Button>
-                </div>
+                    Solve
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 } 

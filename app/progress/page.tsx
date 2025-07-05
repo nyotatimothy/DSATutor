@@ -18,7 +18,9 @@ import {
   Star,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Loader2,
+  Circle
 } from 'lucide-react';
 
 interface ProgressData {
@@ -55,13 +57,33 @@ interface ProgressData {
   }>;
 }
 
+interface Topic {
+  id: string;
+  title: string;
+  status: 'completed' | 'in-progress' | 'not-started';
+}
+
 export default function ProgressPage() {
   const { user } = useAuth();
   const [progressData, setProgressData] = useState<ProgressData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
     fetchProgressData();
+    if (typeof window !== 'undefined') {
+      const curriculumRaw = localStorage.getItem('dsatutor_latest_curriculum');
+      // For demo, mark first as in-progress, next 2 as completed, rest as not started
+      if (curriculumRaw) {
+        const curriculum = JSON.parse(curriculumRaw);
+        const arr = (curriculum.topics || []).map((t: any, i: number) => ({
+          id: t.id || t.title || `topic-${i}`,
+          title: t.title,
+          status: i === 0 ? 'in-progress' : i < 3 ? 'completed' : 'not-started',
+        }));
+        setTopics(arr);
+      }
+    }
   }, []);
 
   const fetchProgressData = async () => {
@@ -389,6 +411,29 @@ export default function ProgressPage() {
             </div>
           </TabsContent>
         </Tabs>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Topic Progress</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {topics.map((topic, i) => (
+              <Card key={topic.id} className="flex items-center">
+                <CardHeader className="flex flex-row items-center space-x-4 py-4">
+                  {topic.status === 'completed' && <CheckCircle className="h-6 w-6 text-green-500" />}
+                  {topic.status === 'in-progress' && <Loader2 className="h-6 w-6 text-yellow-500 animate-spin" />}
+                  {topic.status === 'not-started' && <Circle className="h-6 w-6 text-gray-400" />}
+                  <CardTitle className="text-lg font-semibold">{topic.title}</CardTitle>
+                  <Badge className={
+                    topic.status === 'completed' ? 'bg-green-100 text-green-800 border-green-200' :
+                    topic.status === 'in-progress' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                    'bg-gray-100 text-gray-800 border-gray-200'
+                  }>
+                    {topic.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </Badge>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

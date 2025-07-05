@@ -166,6 +166,12 @@ export default function EvaluationPage() {
         setCurriculum(data.data.curriculum);
         setRecommendations(data.data.recommendations);
         setShowResults(true);
+
+        // Store assessment and curriculum in localStorage for dashboard
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('dsatutor_latest_assessment', JSON.stringify(data.data.evaluation));
+          localStorage.setItem('dsatutor_latest_curriculum', JSON.stringify(data.data.curriculum));
+        }
       } else {
         throw new Error(data.message || 'Assessment failed');
       }
@@ -558,7 +564,14 @@ export default function EvaluationPage() {
             </Button>
             <Button 
               variant="outline"
-              onClick={() => setShowResults(false)}
+              onClick={() => {
+                setShowResults(false);
+                setCurrentStep(1);
+                setResults(null);
+                setCurriculum(null);
+                setRecommendations([]);
+                setAnswers({});
+              }}
             >
               Retake Assessment
             </Button>

@@ -24,9 +24,26 @@ import {
   Circle
 } from 'lucide-react'
 import { Badge } from '../src/components/ui/badge'
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
   const { user } = useAuth();
+  const [progress, setProgress] = useState({ completed: 0, total: 0, percent: 0, currentTopic: '' });
+
+  useEffect(() => {
+    if (user) {
+      // Try to get latest curriculum and progress from localStorage
+      const curriculumRaw = typeof window !== 'undefined' ? localStorage.getItem('dsatutor_latest_curriculum') : null;
+      if (curriculumRaw) {
+        try {
+          const curriculum = JSON.parse(curriculumRaw);
+          const total = curriculum.topics?.length || 0;
+          // For demo, mark 0 as completed
+          setProgress({ completed: 0, total, percent: 0, currentTopic: total > 0 ? curriculum.topics[0].title : '' });
+        } catch {}
+      }
+    }
+  }, [user]);
 
   // If user is not logged in, show marketing page
   if (!user) {
@@ -212,7 +229,7 @@ export default function HomePage() {
                     </CardDescription>
                   </div>
                   <Badge variant="secondary" className="text-sm">
-                    65% Complete
+                    {progress.percent}% Complete
                   </Badge>
                 </div>
               </CardHeader>
@@ -220,22 +237,22 @@ export default function HomePage() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Progress</span>
-                    <span>65%</span>
+                    <span>{progress.percent}%</span>
                   </div>
-                  <Progress value={65} className="h-2" />
+                  <Progress value={progress.percent} className="h-2" />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold text-primary">12/20</div>
+                    <div className="text-2xl font-bold text-primary">{progress.completed}/{progress.total}</div>
                     <div className="text-xs text-muted-foreground">Topics Completed</div>
                   </div>
                   <div className="text-center p-3 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold text-primary">2h 30m</div>
+                    <div className="text-2xl font-bold text-primary">--</div>
                     <div className="text-xs text-muted-foreground">Today's Study Time</div>
                   </div>
                   <div className="text-center p-3 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold text-primary">Arrays</div>
+                    <div className="text-2xl font-bold text-primary">{progress.currentTopic}</div>
                     <div className="text-xs text-muted-foreground">Current Focus</div>
                   </div>
                 </div>

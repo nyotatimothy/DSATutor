@@ -129,6 +129,49 @@ export default function CurriculumPage() {
   const nodeColor = 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white'
   const nodeBorder = 'border-2 border-blue-700 dark:border-blue-400'
 
+  // Example problems for each topic (static for demo)
+  const exampleProblems: { [id: string]: string[] } = {
+    'arrays-hashing': [
+      'Two Sum', 'Group Anagrams', 'Contains Duplicate', 'Valid Sudoku', 'Top K Frequent Elements', 'Product of Array Except Self'
+    ],
+    'two-pointers': [
+      'Valid Palindrome', 'Container With Most Water', 'Trapping Rain Water', '3Sum', 'Remove Duplicates from Sorted Array'
+    ],
+    'stack': [
+      'Valid Parentheses', 'Min Stack', 'Evaluate Reverse Polish Notation', 'Daily Temperatures', 'Largest Rectangle in Histogram'
+    ],
+    'binary-search': [
+      'Binary Search', 'Search in Rotated Sorted Array', 'Find Minimum in Rotated Sorted Array', 'Median of Two Sorted Arrays'
+    ],
+    'sliding-window': [
+      'Best Time to Buy and Sell Stock', 'Longest Substring Without Repeating Characters', 'Minimum Window Substring', 'Permutation in String', 'Longest Repeating Character Replacement'
+    ],
+    'linked-list': [
+      'Reverse Linked List', 'Merge Two Sorted Lists', 'Linked List Cycle', 'Remove Nth Node From End of List', 'Add Two Numbers'
+    ],
+    'trees': [
+      'Maximum Depth of Binary Tree', 'Invert Binary Tree', 'Validate Binary Search Tree', 'Binary Tree Level Order Traversal', 'Serialize and Deserialize Binary Tree'
+    ],
+    'tries': [
+      'Implement Trie', 'Word Search II', 'Design Add and Search Words Data Structure', 'Replace Words'
+    ],
+    'heap': [
+      'Merge K Sorted Lists', 'Top K Frequent Elements', 'Find Median from Data Stream', 'Kth Largest Element in Array'
+    ],
+    'backtracking': [
+      'Subsets', 'Permutations', 'Word Search', 'Combination Sum', 'N-Queens'
+    ],
+    'graphs': [
+      'Number of Islands', 'Clone Graph', 'Course Schedule', 'Pacific Atlantic Water Flow', 'Redundant Connection'
+    ],
+    'dp': [
+      'Climbing Stairs', 'Coin Change', 'Longest Increasing Subsequence', 'House Robber', 'Word Break'
+    ]
+  };
+
+  // Add learning order numbers to nodes
+  const numberedNodes = nodes.map((node, idx) => ({ ...node, order: idx + 1 }));
+
   useEffect(() => {
     generateCurriculumTree()
   }, [level, score])
@@ -480,12 +523,12 @@ export default function CurriculumPage() {
               })}
               {/* Arrowhead marker */}
               <defs>
-                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth">
-                  <polygon points="0 0, 10 3.5, 0 7" fill="#4f8cff" />
+                <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto" markerUnits="strokeWidth">
+                  <polygon points="0 0, 6 2, 0 4" fill="#4f8cff" />
                 </marker>
               </defs>
               {/* Nodes */}
-              {nodes.map(node => {
+              {numberedNodes.map(node => {
                 const pos = nodePositions[node.id]
                 if (!pos) return null
                 const isSelected = selectedNode?.id === node.id
@@ -503,18 +546,12 @@ export default function CurriculumPage() {
                       }
                       style={{ filter: isSelected ? 'drop-shadow(0 0 8px #facc15)' : 'drop-shadow(0 2px 8px #0002)' }}
                     />
-                    <text
-                      x={pos.x}
-                      y={pos.y}
-                      textAnchor="middle"
-                      alignmentBaseline="middle"
-                      fontSize={18}
-                      fontWeight={600}
-                      fill={isSelected ? '#fffbe6' : '#fff'}
-                      style={{ pointerEvents: 'none', fontFamily: 'inherit' }}
-                    >
-                      {node.label}
-                    </text>
+                    <foreignObject x={pos.x - 75} y={pos.y - 25} width={150} height={50}>
+                      <div style={{ display: 'flex', alignItems: 'center', height: '100%', padding: '0 8px', maxWidth: 140, wordBreak: 'break-word', fontWeight: 600, fontSize: 16, color: isSelected ? '#fffbe6' : '#fff' }}>
+                        <span style={{ marginRight: 8, fontWeight: 700, fontSize: 18 }}>{node.order}.</span>
+                        <span style={{ flex: 1 }}>{node.label}</span>
+                      </div>
+                    </foreignObject>
                   </g>
                 )
               })}
@@ -556,6 +593,20 @@ export default function CurriculumPage() {
                   ))}
                   {getParents(selectedNode.id).length === 0 && (
                     <li className="text-gray-400 dark:text-gray-500">None</li>
+                  )}
+                </ul>
+              </div>
+              <div className="mt-6">
+                <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Example Problems</h3>
+                <ul className="space-y-1">
+                  {(exampleProblems[selectedNode.id] || []).slice(0, 5).map((prob, i) => (
+                    <li key={i} className="text-sm text-gray-700 dark:text-gray-200">{prob}</li>
+                  ))}
+                  {(exampleProblems[selectedNode.id]?.length || 0) > 5 && (
+                    <li className="text-gray-400 dark:text-gray-500">...</li>
+                  )}
+                  {(exampleProblems[selectedNode.id]?.length || 0) === 0 && (
+                    <li className="text-gray-400 dark:text-gray-500">No example problems</li>
                   )}
                 </ul>
               </div>
