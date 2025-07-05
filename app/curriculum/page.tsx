@@ -75,17 +75,17 @@ export default function CurriculumPage() {
   // Layout positions for nodes (static for now, can be made dynamic later)
   const nodePositions: { [id: string]: { x: number; y: number } } = {
     'arrays-hashing': { x: 400, y: 40 },
-    'two-pointers': { x: 250, y: 140 },
-    'stack': { x: 550, y: 140 },
-    'binary-search': { x: 150, y: 240 },
-    'sliding-window': { x: 350, y: 240 },
-    'linked-list': { x: 550, y: 240 },
-    'trees': { x: 350, y: 340 },
-    'tries': { x: 150, y: 440 },
-    'heap': { x: 300, y: 540 },
-    'backtracking': { x: 550, y: 440 },
-    'graphs': { x: 500, y: 540 },
-    'dp': { x: 650, y: 540 },
+    'two-pointers': { x: 250, y: 180 },
+    'stack': { x: 550, y: 180 },
+    'binary-search': { x: 150, y: 320 },
+    'sliding-window': { x: 350, y: 320 },
+    'linked-list': { x: 550, y: 320 },
+    'trees': { x: 350, y: 480 },
+    'tries': { x: 150, y: 640 },
+    'heap': { x: 300, y: 800 },
+    'backtracking': { x: 550, y: 640 },
+    'graphs': { x: 500, y: 800 },
+    'dp': { x: 650, y: 800 },
   }
 
   // Static curriculum structure for demo (can be made dynamic)
@@ -98,7 +98,7 @@ export default function CurriculumPage() {
     { id: 'linked-list', label: 'Linked List', children: ['trees'] },
     { id: 'trees', label: 'Trees', children: ['tries', 'heap', 'backtracking'] },
     { id: 'tries', label: 'Tries', children: [] },
-    { id: 'heap', label: 'Heap / Priority Queue', children: [] },
+    { id: 'heap', label: 'Heap / P.Queue', children: [] },
     { id: 'backtracking', label: 'Backtracking', children: ['graphs', 'dp'] },
     { id: 'graphs', label: 'Graphs', children: [] },
     { id: 'dp', label: '1-D DP', children: [] },
