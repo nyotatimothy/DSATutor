@@ -70,6 +70,9 @@ export default function CurriculumPage() {
   const [topicContent, setTopicContent] = useState<TopicContent | null>(null)
   const [isGeneratingContent, setIsGeneratingContent] = useState(false)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
+  const [userProgress, setUserProgress] = useState<{[topicId: string]: string}>({})
+  const [currentActiveTopic, setCurrentActiveTopic] = useState<string | null>(null)
+  const [isLoadingProgress, setIsLoadingProgress] = useState(true)
   const svgRef = useRef<SVGSVGElement>(null)
 
   // Layout positions for nodes (static for now, can be made dynamic later)
@@ -190,6 +193,7 @@ export default function CurriculumPage() {
 
   useEffect(() => {
     generateCurriculumTree()
+    fetchUserProgress()
   }, [level, score])
 
   const generateCurriculumTree = async () => {
@@ -232,7 +236,7 @@ export default function CurriculumPage() {
         const data = await response.json()
         setCurriculumTree(data.data.tree)
         // Expand first few nodes by default
-        const initialExpanded = new Set(data.data.tree.slice(0, 3).map((node: TreeNode) => node.id))
+        const initialExpanded = new Set<string>(data.data.tree.slice(0, 3).map((node: TreeNode) => node.id))
         setExpandedNodes(initialExpanded)
       } else {
         // Fallback to mock data
@@ -474,7 +478,7 @@ export default function CurriculumPage() {
               ? 'hover:shadow-md hover:border-blue-300 bg-white' 
               : 'bg-gray-50 border-gray-200'
           } ${selectedTopic === node.id ? 'ring-2 ring-blue-500' : ''}`}
-          onClick={() => isClickable && handleTopicClick(node.id)}
+          onClick={() => isClickable && handleTopicClick(node)}
         >
           {/* Expand/Collapse Button */}
           {hasChildren && (
@@ -524,7 +528,7 @@ export default function CurriculumPage() {
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
-                handleTopicClick(node.id)
+                handleTopicClick(node)
               }}
             >
               <ExternalLink className="w-4 h-4 mr-1" />
@@ -544,6 +548,89 @@ export default function CurriculumPage() {
         )}
       </div>
     )
+  }
+
+  const fetchUserProgress = async () => {
+    try {
+      setIsLoadingProgress(true)
+      const response = await fetch('/api/progress', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('dsatutor_token')}`
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const progressMap: {[topicId: string]: string} = {}
+        let activeTopic: string | null = null
+
+        data.data.progress.forEach((item: any) => {
+          progressMap[item.topicId] = item.status
+          if (item.status === 'in_progress') {
+            activeTopic = item.topicId
+          }
+        })
+
+        setUserProgress(progressMap)
+        setCurrentActiveTopic(activeTopic)
+      } else {
+        console.error('Failed to fetch user progress')
+      }
+    } catch (error) {
+      console.error('Error fetching user progress:', error)
+    } finally {
+      setIsLoadingProgress(false)
+    }
+  }
+
+  const getTopicStatus = (topicId: string): 'locked' | 'available' | 'completed' | 'in_progress' => {
+    const progress = userProgress[topicId]
+    if (progress === 'complete') return 'completed'
+    if (progress === 'in_progress') return 'in_progress'
+    if (progress === 'not_started') return 'available'
+    return 'locked' // Default for topics not in progress
+  }
+
+  const getNodeColor = (nodeId: string) => {
+    const status = getTopicStatus(nodeId)
+    const isActive = currentActiveTopic === nodeId
+    
+    if (isActive) {
+      return 'bg-green-600 text-white dark:bg-green-500 dark:text-white'
+    }
+    
+    switch (status) {
+      case 'completed':
+        return 'bg-purple-600 text-white dark:bg-purple-500 dark:text-white'
+      case 'in_progress':
+        return 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white'
+      case 'available':
+        return 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white'
+      case 'locked':
+      default:
+        return 'bg-gray-400 text-white dark:bg-gray-500 dark:text-white'
+    }
+  }
+
+  const getNodeBorder = (nodeId: string) => {
+    const status = getTopicStatus(nodeId)
+    const isActive = currentActiveTopic === nodeId
+    
+    if (isActive) {
+      return 'border-2 border-green-700 dark:border-green-400'
+    }
+    
+    switch (status) {
+      case 'completed':
+        return 'border-2 border-purple-700 dark:border-purple-400'
+      case 'in_progress':
+        return 'border-2 border-blue-700 dark:border-blue-400'
+      case 'available':
+        return 'border-2 border-blue-700 dark:border-blue-400'
+      case 'locked':
+      default:
+        return 'border-2 border-gray-600 dark:border-gray-500'
+    }
   }
 
   return (
@@ -631,7 +718,7 @@ export default function CurriculumPage() {
                         width={160}
                         height={60}
                         className={
-                          `${nodeColor} ${nodeBorder} ${isSelected ? 'ring-4 ring-yellow-400 dark:ring-yellow-300' : ''}`
+                          `${getNodeColor(node.id)} ${getNodeBorder(node.id)} ${isSelected ? 'ring-4 ring-yellow-400 dark:ring-yellow-300' : ''}`
                         }
                         style={{ filter: isSelected ? 'drop-shadow(0 0 8px #facc15)' : 'drop-shadow(0 2px 8px #0002)' }}
                       />
@@ -655,21 +742,29 @@ export default function CurriculumPage() {
                 <p className="text-gray-700 dark:text-gray-200 mb-4">
                   {topicDescriptions[selectedNode.id] || `${selectedNode.label} is a key topic in DSA. Mastering this will help you solve many interview problems.`}
                 </p>
-                {/* Example Problems - now above Prerequisites */}
+                {/* Problems - renamed from Example Problems */}
                 <div className="mb-4">
-                  <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Example Problems</h3>
-                  <ul className="space-y-1">
-                    {(exampleProblems[selectedNode.id] || []).slice(0, 5).map((prob, i) => (
-                      <li key={i} className="flex items-center text-gray-700 dark:text-gray-200">
-                        <span className="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full mr-3 flex-shrink-0"></span>
-                        <span className="text-sm">{prob}</span>
+                  <h3 className="font-semibold text-blue-600 dark:text-blue-300 mb-2">Problems</h3>
+                  <ul className="space-y-2">
+                    {(exampleProblems[selectedNode.id] || []).map((prob, i) => (
+                      <li key={i}>
+                        <button
+                          className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 font-medium transition border border-blue-100 dark:border-blue-800"
+                          onClick={() => {
+                            // Navigate to problem solving page
+                            const problemId = i + 1; // Simple mapping for demo
+                            router.push(`/problems/${problemId}/solve`);
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">{prob}</span>
+                            <ArrowUpRight className="h-3 w-3" />
+                          </div>
+                        </button>
                       </li>
                     ))}
-                    {(exampleProblems[selectedNode.id]?.length || 0) > 5 && (
-                      <li className="text-gray-400 dark:text-gray-500 text-sm">...</li>
-                    )}
                     {(exampleProblems[selectedNode.id]?.length || 0) === 0 && (
-                      <li className="text-gray-400 dark:text-gray-500 text-sm">No example problems</li>
+                      <li className="text-gray-400 dark:text-gray-500 text-sm">No problems available</li>
                     )}
                   </ul>
                 </div>
