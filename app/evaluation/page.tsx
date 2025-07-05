@@ -246,7 +246,7 @@ export default function EvaluationPage() {
 
   if (isProcessing) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none flex items-center justify-center">
         <div className="text-center space-y-6 max-w-md">
           <div className="relative">
             <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
@@ -255,8 +255,8 @@ export default function EvaluationPage() {
             <div className="absolute inset-0 w-24 h-24 mx-auto border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
           </div>
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900">Analyzing Your Skills</h2>
-            <p className="text-gray-600">Our AI is carefully evaluating your responses and crafting your personalized learning journey...</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Analyzing Your Skills</h2>
+            <p className="text-gray-600 dark:text-gray-300">Our AI is carefully evaluating your responses and crafting your personalized learning journey...</p>
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -281,16 +281,16 @@ export default function EvaluationPage() {
     const visibleTopics = showFullCurriculum ? curriculum.topics : curriculum.topics.slice(0, 4);
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none p-4">
         <div className="max-w-6xl mx-auto space-y-6">
           {/* Header */}
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold text-gray-900">Your Learning Journey</h1>
-            <p className="text-lg text-gray-600">Personalized curriculum crafted just for you</p>
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Your Learning Journey</h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300">Personalized curriculum crafted just for you</p>
           </div>
 
           {/* Score Overview - Now First */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center space-x-3 mb-4">
                 <span className="text-4xl">{getLevelIcon(results.level)}</span>
@@ -327,7 +327,7 @@ export default function EvaluationPage() {
           </Card>
 
           {/* Curriculum - Now Second */}
-          <Card className="bg-white shadow-lg border-2 border-blue-100">
+          <Card className="bg-white shadow-lg border-2 border-blue-100 dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader className="text-center bg-gradient-to-r from-blue-50 to-indigo-50">
               <div className="flex items-center justify-center space-x-3 mb-4">
                 <GraduationCap className="w-8 h-8 text-blue-600" />
@@ -342,7 +342,7 @@ export default function EvaluationPage() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Approach Description */}
-              <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+              <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200 dark:bg-[#23243a] dark:border-gray-700">
                 <div className="flex items-start space-x-3">
                   <Lightbulb className="w-6 h-6 text-green-600 mt-1 flex-shrink-0" />
                   <div>
@@ -360,7 +360,7 @@ export default function EvaluationPage() {
                   
                   return (
                     <div key={topic.id} className="relative">
-                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-white to-blue-50 rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
+                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-white to-blue-50 rounded-lg border border-blue-200 dark:bg-[#23243a] dark:border-gray-700 hover:shadow-md transition-shadow">
                         <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                           <IconComponent className="w-6 h-6 text-blue-600" />
                         </div>
@@ -442,7 +442,7 @@ export default function EvaluationPage() {
           {/* Performance Analysis */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Strengths */}
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <TrendingUp className="w-5 h-5 text-green-500" />
@@ -466,7 +466,7 @@ export default function EvaluationPage() {
             </Card>
 
             {/* Areas for Improvement */}
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <AlertTriangle className="w-5 h-5 text-orange-500" />
@@ -491,7 +491,7 @@ export default function EvaluationPage() {
           </div>
 
           {/* Category Performance */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader>
               <CardTitle>Performance by Category</CardTitle>
             </CardHeader>
@@ -511,7 +511,7 @@ export default function EvaluationPage() {
           </Card>
 
           {/* Detailed Question Results */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader>
               <CardTitle>Question-by-Question Analysis</CardTitle>
               <CardDescription>Review your answers and learn from mistakes</CardDescription>
@@ -563,7 +563,7 @@ export default function EvaluationPage() {
           </Card>
 
           {/* Recommendations */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader>
               <CardTitle>Recommendations</CardTitle>
             </CardHeader>
@@ -606,13 +606,13 @@ export default function EvaluationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#181A20] dark:bg-none p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900">Skill Assessment</h1>
-          <p className="text-lg text-gray-600">
-            Let's evaluate your current DSA knowledge to create a personalized learning path
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100">Skill Assessment</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            This will take just a few minutes and will help us create the perfect learning plan for you.
           </p>
         </div>
 
@@ -627,18 +627,18 @@ export default function EvaluationPage() {
 
         {/* Step 1: Quiz */}
         {currentStep === 1 && (
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader>
-              <CardTitle>DSA Knowledge Quiz</CardTitle>
-              <CardDescription>
+              <CardTitle className="dark:text-gray-100">DSA Knowledge Quiz</CardTitle>
+              <CardDescription className="dark:text-gray-300">
                 Answer these questions to assess your current understanding. Be honest - this helps us create the best learning path for you.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {assessmentQuestions.map((question, index) => (
-                  <div key={question.id} className="space-y-3 p-4 border rounded-lg bg-gray-50">
-                    <h3 className="font-semibold text-lg">
+                  <div key={question.id} className="space-y-3 p-4 border rounded-lg bg-gray-50 dark:bg-[#23243a] dark:border-gray-700">
+                    <h3 className="font-semibold text-lg dark:text-gray-100">
                       Question {index + 1}: {question.question}
                     </h3>
                     <RadioGroup
@@ -648,7 +648,7 @@ export default function EvaluationPage() {
                       {question.options.map((option, optionIndex) => (
                         <div key={optionIndex} className="flex items-center space-x-2">
                           <RadioGroupItem value={optionIndex.toString()} id={`${question.id}-${optionIndex}`} />
-                          <Label htmlFor={`${question.id}-${optionIndex}`} className="text-sm">
+                          <Label htmlFor={`${question.id}-${optionIndex}`} className="text-sm dark:text-gray-200">
                             {option}
                           </Label>
                         </div>
@@ -675,16 +675,16 @@ export default function EvaluationPage() {
 
         {/* Step 2: Experience */}
         {currentStep === 2 && (
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader>
-              <CardTitle>Your Experience</CardTitle>
-              <CardDescription>
+              <CardTitle className="dark:text-gray-100">Your Experience</CardTitle>
+              <CardDescription className="dark:text-gray-300">
                 Tell us about your programming background to better personalize your learning experience
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="experience">Previous DSA Experience</Label>
+                <Label htmlFor="experience" className="dark:text-gray-200">Previous DSA Experience</Label>
                 <Select value={previousExperience} onValueChange={setPreviousExperience}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your experience level" />
@@ -699,7 +699,7 @@ export default function EvaluationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="attempts">How many DSA problems have you attempted?</Label>
+                <Label htmlFor="attempts" className="dark:text-gray-200">How many DSA problems have you attempted?</Label>
                 <Textarea
                   id="attempts"
                   placeholder="e.g., 50 problems, mostly easy level"
@@ -709,7 +709,7 @@ export default function EvaluationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="language">Preferred Programming Language</Label>
+                <Label htmlFor="language" className="dark:text-gray-200">Preferred Programming Language</Label>
                 <Select value={preferredLanguage} onValueChange={setPreferredLanguage}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose your language" />
@@ -741,21 +741,21 @@ export default function EvaluationPage() {
 
         {/* Step 3: Review & Submit */}
         {currentStep === 3 && (
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white shadow-lg dark:bg-[#23243a] dark:text-gray-100">
             <CardHeader>
-              <CardTitle>Review & Submit</CardTitle>
-              <CardDescription>
+              <CardTitle className="dark:text-gray-100">Review & Submit</CardTitle>
+              <CardDescription className="dark:text-gray-300">
                 Review your answers and submit your assessment
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <h3 className="font-semibold">Quiz Answers:</h3>
+                <h3 className="font-semibold dark:text-gray-100">Quiz Answers:</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {assessmentQuestions.map((question, index) => (
-                    <div key={question.id} className="p-3 border rounded-lg">
-                      <p className="text-sm font-medium">Q{index + 1}: {question.question}</p>
-                      <p className="text-sm text-gray-600 mt-1">
+                    <div key={question.id} className="p-3 border rounded-lg dark:bg-[#23243a] dark:border-gray-700">
+                      <p className="text-sm font-medium dark:text-gray-100">Q{index + 1}: {question.question}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                         Your answer: {answers[question.id] !== undefined ? question.options[answers[question.id]] : 'Not answered'}
                       </p>
                     </div>
@@ -764,11 +764,11 @@ export default function EvaluationPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold">Experience Details:</h3>
+                <h3 className="font-semibold dark:text-gray-100">Experience Details:</h3>
                 <div className="space-y-2">
-                  <p><strong>Experience Level:</strong> {previousExperience}</p>
-                  <p><strong>Problem Attempts:</strong> {problemAttempts || 'Not specified'}</p>
-                  <p><strong>Preferred Language:</strong> {preferredLanguage}</p>
+                  <p className="dark:text-gray-100"><strong>Experience Level:</strong> {previousExperience}</p>
+                  <p className="dark:text-gray-100"><strong>Problem Attempts:</strong> {problemAttempts || 'Not specified'}</p>
+                  <p className="dark:text-gray-100"><strong>Preferred Language:</strong> {preferredLanguage}</p>
                 </div>
               </div>
 
