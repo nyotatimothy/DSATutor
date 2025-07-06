@@ -1,98 +1,205 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ProgressController } from '../../../controllers/progressController'
 import { authenticateToken } from '../../../middlewares/auth'
+import { prisma } from '../../../lib/prisma'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+// Topic ID mapping from curriculum to database
+const topicIdMapping: { [curriculumId: string]: string } = {
+  'arrays-hashing': 'arrays-hashing-topic',
+  'two-pointers': 'two-pointers-topic',
+  'stack': 'stack-topic',
+  'binary-search': 'binary-search-topic',
+  'sliding-window': 'sliding-window-topic',
+  'linked-list': 'linked-list-topic',
+  'trees': 'trees-topic',
+  'tries': 'tries-topic',
+  'heap': 'heap-topic',
+  'backtracking': 'backtracking-topic',
+  'graphs': 'graphs-topic',
+  'dp': 'dp-topic',
+}
+
+// Helper function to get or create topic
+async function getOrCreateTopic(curriculumId: string, title: string) {
+  // First try to find existing topic with the mapped ID
+  let topic = await prisma.topic.findFirst({
+    where: {
+      OR: [
+        { id: topicIdMapping[curriculumId] },
+        { title: title }
+      ]
+    }
+  })
+
+  if (!topic) {
+    // Create a new topic if it doesn't exist
+    // First get or create a default course
+    let course = await prisma.course.findFirst({
+      where: { title: 'DSA Fundamentals' }
+    })
+
+    if (!course) {
+      course = await prisma.course.create({
+        data: {
+          title: 'DSA Fundamentals',
+          description: 'Core Data Structures and Algorithms',
+          createdBy: 'system', // You might want to use an actual user ID
+          isActive: true,
+          isPremium: false
+        }
+      })
+    }
+
+    topic = await prisma.topic.create({
+      data: {
+        id: topicIdMapping[curriculumId] || curriculumId,
+        title: title,
+        description: `${title} - Core DSA topic`,
+        order: 0,
+        courseId: course.id
+      }
+    })
   }
 
-  try {
-    // Mock progress data
-    const mockProgressData = {
-      totalProblems: 150,
-      solvedProblems: 87,
-      totalCourses: 8,
-      completedCourses: 3,
-      currentStreak: 12,
-      totalStudyTime: 156, // hours
-      averageScore: 78,
-      weakAreas: ['Dynamic Programming', 'Graph Algorithms', 'Advanced Data Structures'],
-      strongAreas: ['Arrays', 'Strings', 'Basic Algorithms'],
-      recentActivity: [
-        {
-          id: 1,
-          type: 'problem',
-          title: 'Reverse Linked List',
-          date: '2024-01-15',
-          score: 85,
-          timeSpent: 25
-        },
-        {
-          id: 2,
-          type: 'course',
-          title: 'Data Structures Fundamentals',
-          date: '2024-01-14',
-          timeSpent: 120
-        },
-        {
-          id: 3,
-          type: 'achievement',
-          title: '7-Day Streak',
-          date: '2024-01-13'
-        },
-        {
-          id: 4,
-          type: 'problem',
-          title: 'Two Sum',
-          date: '2024-01-12',
-          score: 92,
-          timeSpent: 15
-        }
-      ],
-      monthlyProgress: [
-        { month: 'Jan', problemsSolved: 25, studyTime: 45, averageScore: 82 },
-        { month: 'Feb', problemsSolved: 32, studyTime: 52, averageScore: 78 },
-        { month: 'Mar', problemsSolved: 28, studyTime: 48, averageScore: 85 },
-        { month: 'Apr', problemsSolved: 35, studyTime: 61, averageScore: 79 },
-        { month: 'May', problemsSolved: 42, studyTime: 68, averageScore: 83 },
-        { month: 'Jun', problemsSolved: 38, studyTime: 55, averageScore: 81 }
-      ],
-      courseProgress: [
-        {
-          id: 1,
-          title: 'Data Structures Fundamentals',
-          progress: 75,
-          completedTopics: 6,
-          totalTopics: 8,
-          lastAccessed: '2024-01-15'
-        },
-        {
-          id: 2,
-          title: 'Algorithms & Complexity',
-          progress: 45,
-          completedTopics: 4,
-          totalTopics: 10,
-          lastAccessed: '2024-01-14'
-        },
-        {
-          id: 3,
-          title: 'Advanced Problem Solving',
-          progress: 20,
-          completedTopics: 2,
-          totalTopics: 12,
-          lastAccessed: '2024-01-10'
-        }
-      ]
-    };
+  return topic
+}
 
-    res.status(200).json(mockProgressData);
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Apply authentication middleware
+  await authenticateToken(req, res, () => {
+    // This will be called if authentication succeeds
+  })
+
+  // Check if user is attached to request
+  if (!(req as any).user) {
+    return res.status(401).json({
+      success: false,
+      error: 'Unauthorized',
+      message: 'Please provide a valid authentication token'
+    })
+  }
+
+  switch (req.method) {
+    case 'GET':
+      return ProgressController.getUserProgress(req, res)
+    case 'POST':
+      return handleCreateProgress(req, res)
+    default:
+      return res.status(405).json({
+        success: false,
+        error: 'Method not allowed',
+        message: 'Only GET and POST methods are allowed'
+      })
+  }
+}
+
+async function handleCreateProgress(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const userId = (req as any).user?.id
+    const { topicId, status } = req.body as {
+      topicId: string
+      status: string
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized'
+      })
+    }
+
+    // Validation
+    if (!topicId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Topic ID is required'
+      })
+    }
+
+    if (!status || !['not_started', 'in_progress', 'complete'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Status must be not_started, in_progress, or complete'
+      })
+    }
+
+    // Get or create the topic
+    const topicTitle = topicId.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ')
+    
+    const topic = await getOrCreateTopic(topicId, topicTitle)
+
+    // Check if progress already exists
+    const existingProgress = await prisma.progress.findFirst({
+      where: {
+        userId,
+        topicId: topic.id
+      }
+    })
+
+    let progress
+    if (existingProgress) {
+      // Update existing progress
+      progress = await prisma.progress.update({
+        where: { id: existingProgress.id },
+        data: {
+          status,
+          updatedAt: new Date()
+        },
+        include: {
+          topic: {
+            select: {
+              id: true,
+              title: true,
+              order: true,
+              course: {
+                select: {
+                  id: true,
+                  title: true
+                }
+              }
+            }
+          }
+        }
+      })
+    } else {
+      // Create new progress
+      progress = await prisma.progress.create({
+        data: {
+          userId,
+          topicId: topic.id,
+          status,
+          updatedAt: new Date()
+        },
+        include: {
+          topic: {
+            select: {
+              id: true,
+              title: true,
+              order: true,
+              course: {
+                select: {
+                  id: true,
+                  title: true
+                }
+              }
+            }
+          }
+        }
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: { progress }
+    })
   } catch (error) {
-    console.error('Error fetching progress data:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Internal server error' 
-    });
+    console.error('Create progress error:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    })
   }
 } 
  

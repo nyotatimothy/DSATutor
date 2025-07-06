@@ -3,6 +3,32 @@ import { ProgressController } from '../../../controllers/progressController'
 import { authenticateToken } from '../../../middlewares/auth'
 import { prisma } from '../../../lib/prisma'
 
+// Topic ID mapping from curriculum to database (same as in index.ts)
+const topicIdMapping: { [curriculumId: string]: string } = {
+  'arrays-hashing': 'arrays-hashing-topic',
+  'two-pointers': 'two-pointers-topic',
+  'stack': 'stack-topic',
+  'binary-search': 'binary-search-topic',
+  'sliding-window': 'sliding-window-topic',
+  'linked-list': 'linked-list-topic',
+  'trees': 'trees-topic',
+  'tries': 'tries-topic',
+  'heap': 'heap-topic',
+  'backtracking': 'backtracking-topic',
+  'graphs': 'graphs-topic',
+  'dp': 'dp-topic',
+}
+
+// Helper function to map database topic ID back to curriculum ID
+function mapTopicIdToCurriculumId(dbTopicId: string): string {
+  for (const [curriculumId, mappedId] of Object.entries(topicIdMapping)) {
+    if (mappedId === dbTopicId) {
+      return curriculumId
+    }
+  }
+  return dbTopicId // Return as-is if no mapping found
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Apply authentication middleware
   await authenticateToken(req, res, () => {
@@ -117,7 +143,7 @@ async function getCurrentPosition(req: NextApiRequest, res: NextApiResponse) {
         currentTopic,
         nextTopic,
         hasProgress: progress.length > 0,
-        redirectTo: currentTopic ? `/problems/${currentTopic.topic.id}/solve` : '/curriculum'
+        redirectTo: currentTopic ? `/problems/${mapTopicIdToCurriculumId(currentTopic.topic.id)}/solve` : '/curriculum'
       }
     })
 
