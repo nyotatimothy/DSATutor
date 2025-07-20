@@ -61,6 +61,121 @@ function generatePersonalizedCurriculumTree(
   weaknesses: string[] = [], 
   categoryPerformance: any = {}
 ): TreeNode[] {
+  
+  // Advanced curriculum for highly proficient users
+  if (level === 'advanced' || score >= 90) {
+    return [
+      {
+        id: 'advanced-graphs',
+        title: 'Advanced Graph Algorithms',
+        description: 'Master complex graph problems including MST, shortest paths, and network flows',
+        difficulty: 'Hard',
+        estimatedTime: 180,
+        prerequisites: [],
+        children: ['advanced-dp', 'system-design-fundamentals'],
+        parents: [],
+        category: 'Advanced Topics',
+        status: 'available'
+      },
+      {
+        id: 'advanced-dp',
+        title: 'Advanced Dynamic Programming',
+        description: 'Complex DP patterns: digit DP, bitmask DP, tree DP, and optimization techniques',
+        difficulty: 'Hard',
+        estimatedTime: 240,
+        prerequisites: ['advanced-graphs'],
+        children: ['competitive-programming', 'advanced-trees'],
+        parents: ['advanced-graphs'],
+        category: 'Advanced Topics',
+        status: 'locked'
+      },
+      {
+        id: 'system-design-fundamentals',
+        title: 'System Design Fundamentals',
+        description: 'Scalability, distributed systems, and architectural patterns for interviews',
+        difficulty: 'Hard',
+        estimatedTime: 300,
+        prerequisites: ['advanced-graphs'],
+        children: ['advanced-algorithms'],
+        parents: ['advanced-graphs'],
+        category: 'System Design',
+        status: 'locked'
+      },
+      {
+        id: 'competitive-programming',
+        title: 'Competitive Programming Techniques',
+        description: 'Advanced algorithms and data structures for competitive programming',
+        difficulty: 'Hard',
+        estimatedTime: 200,
+        prerequisites: ['advanced-dp'],
+        children: ['advanced-string-algorithms'],
+        parents: ['advanced-dp'],
+        category: 'Competitive Programming',
+        status: 'locked'
+      },
+      {
+        id: 'advanced-trees',
+        title: 'Advanced Tree Algorithms',
+        description: 'Heavy-light decomposition, centroid decomposition, and advanced tree DP',
+        difficulty: 'Hard',
+        estimatedTime: 160,
+        prerequisites: ['advanced-dp'],
+        children: ['advanced-string-algorithms'],
+        parents: ['advanced-dp'],
+        category: 'Advanced Data Structures',
+        status: 'locked'
+      },
+      {
+        id: 'advanced-algorithms',
+        title: 'Advanced Algorithms & Optimization',
+        description: 'Linear programming, network flows, and advanced optimization techniques',
+        difficulty: 'Hard',
+        estimatedTime: 220,
+        prerequisites: ['system-design-fundamentals'],
+        children: ['bit-manipulation-advanced'],
+        parents: ['system-design-fundamentals'],
+        category: 'Advanced Algorithms',
+        status: 'locked'
+      },
+      {
+        id: 'advanced-string-algorithms',
+        title: 'Advanced String Processing',
+        description: 'KMP, Z-algorithm, suffix arrays, and advanced string matching',
+        difficulty: 'Hard',
+        estimatedTime: 140,
+        prerequisites: ['competitive-programming', 'advanced-trees'],
+        children: ['mathematical-algorithms'],
+        parents: ['competitive-programming', 'advanced-trees'],
+        category: 'String Algorithms',
+        status: 'locked'
+      },
+      {
+        id: 'bit-manipulation-advanced',
+        title: 'Advanced Bit Manipulation',
+        description: 'Complex bit manipulation techniques and bit-level optimizations',
+        difficulty: 'Hard',
+        estimatedTime: 100,
+        prerequisites: ['advanced-algorithms'],
+        children: ['mathematical-algorithms'],
+        parents: ['advanced-algorithms'],
+        category: 'Bit Manipulation',
+        status: 'locked'
+      },
+      {
+        id: 'mathematical-algorithms',
+        title: 'Mathematical Algorithms',
+        description: 'Number theory, combinatorics, and mathematical problem solving',
+        difficulty: 'Hard',
+        estimatedTime: 180,
+        prerequisites: ['advanced-string-algorithms', 'bit-manipulation-advanced'],
+        children: [],
+        parents: ['advanced-string-algorithms', 'bit-manipulation-advanced'],
+        category: 'Mathematics',
+        status: 'locked'
+      }
+    ]
+  }
+
   const baseTopics = [
     {
       id: 'arrays-hashing',
@@ -358,4 +473,4 @@ function personalizeTreeForUser(
   }
 
   return personalizedTree
-} 
+}

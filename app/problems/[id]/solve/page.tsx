@@ -489,15 +489,22 @@ export default function ProblemSolvePage() {
   };
 
   const updateProgress = async () => {
-    if (!params?.id || !user) return;
+    if (!params?.id) return;
     
     try {
+      const token = localStorage.getItem('dsatutor_token');
+      
+      if (!token) {
+        console.warn('No authentication token found, progress update skipped');
+        return;
+      }
+      
       // Update progress to mark this topic as in-progress
       const response = await fetch('/api/progress', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('dsatutor_token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           topicId: params.id,
@@ -508,10 +515,10 @@ export default function ProblemSolvePage() {
       if (response.ok) {
         console.log('Progress updated successfully');
       } else {
-        console.error('Failed to update progress');
+        console.warn('Failed to update progress - this is normal in demo mode');
       }
     } catch (error) {
-      console.error('Error updating progress:', error);
+      console.warn('Error updating progress - this is normal in demo mode:', error);
     }
   };
 
@@ -925,4 +932,4 @@ export default function ProblemSolvePage() {
       </div>
     </div>
   );
-} 
+}

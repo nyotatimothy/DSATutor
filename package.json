@@ -75,9 +75,13 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "vm2": "^3.9.19",
-    "zod": "^3.25.71"
+    "zod": "^3.25.71",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22",
@@ -86,6 +90,8 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
+    "jest": "^30.0.4",
+    "jest-environment-jsdom": "^30.0.4",
     "postcss": "^8.5.6",
     "prisma": "^5.6.0",
     "tsx": "^4.6.0",

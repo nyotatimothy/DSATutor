@@ -35,11 +35,24 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Call the login function from useAuth hook
-        await login(email, password);
-        router.push('/dashboard');
+        // Store assessment data if provided
+        if (data.data?.assessmentData) {
+          localStorage.setItem('dsatutor_latest_assessment', JSON.stringify(data.data.assessmentData));
+        }
+        
+        // Store user and token directly since our API already validated
+        if (data.data?.user && data.data?.token) {
+          localStorage.setItem('token', data.data.token);
+          localStorage.setItem('user', JSON.stringify(data.data.user));
+          localStorage.setItem('dsatutor_token', data.data.token);
+          
+          // Force a page reload to trigger useAuth initialization
+          window.location.href = '/';
+        } else {
+          router.push('/');
+        }
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.error || data.message || 'Login failed');
       }
     } catch (err) {
       setError('An error occurred during login');
@@ -110,4 +123,4 @@ export default function LoginPage() {
       </Card>
     </div>
   );
-} 
+}

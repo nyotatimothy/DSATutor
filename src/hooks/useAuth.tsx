@@ -39,12 +39,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const response = await apiClient.login(email, password)
 
     if (response.success && response.data) {
-      const { user: userData, token: userToken } = response.data
+      const { user: userData, token: userToken, assessmentData } = response.data
       setUser(userData)
       setToken(userToken)
 
       localStorage.setItem("token", userToken)
       localStorage.setItem("user", JSON.stringify(userData))
+      localStorage.setItem("dsatutor_token", userToken)
+      
+      // Store assessment data if provided
+      if (assessmentData) {
+        localStorage.setItem("dsatutor_latest_assessment", JSON.stringify(assessmentData))
+      }
+      
       apiClient.setToken(userToken)
     } else {
       throw new Error(response.message)
